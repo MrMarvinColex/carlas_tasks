@@ -2,7 +2,7 @@
 
 This is the portable context package for the test assignment “Using LLMs with the CARLA Autonomous Driving Simulator.” It was prepared on 16 September 2026 from the original PDF and the user’s clarifications. The working deadline is 21 September; the PDF does not state a year, and 2026 is inferred from the current context.
 
-**This package contains documentation, tracking templates, an environment-variable example, and a local copy of the original assignment. It does not contain the Python client, installation scripts, data-recording code, or LLM executor.** Do not treat referenced future commands or scripts as already implemented.
+**This package contains documentation, tracking templates, a minimal reproducible stage-0 CARLA client, and a local copy of the original assignment. It does not yet contain route generation, 18-camera recording, a dataset validator, or an LLM executor.** Do not treat later-stage commands as already implemented.
 
 ## What the Project Builds
 
@@ -73,7 +73,23 @@ Run stages as separate tasks and preserve each result. Literature review and rep
 - Google Drive: final report and dataset after preparation and authorized publication.
 - API keys: server-side `.env`, ignored by Git; restore through the user’s secure source.
 
-External storage has not yet been selected. Choose it and verify a transfer before bulk recording. `.gitignore` prevents new matching files from being tracked, but does not scan already tracked files for secrets.
+The Mac `rsync` hierarchy is the selected operational backup path; the stage-0 smoke copy was checksum-verified. Use the same method for every completed run before bulk recording. `.gitignore` prevents new matching files from being tracked, but does not scan already tracked files for secrets.
+
+## Stage-0 Commands
+
+Run these commands on the GPU VM from the repository root. `scripts/setup.sh` creates only `.venv`; it does not alter system Python. `scripts/run_carla.sh` starts one local offscreen server named `carla-server`; `scripts/stop_carla.sh` stops only that named CARLA 0.9.16 container. Both require the passwordless Docker `sudo` access verified during stage 0.
+
+```sh
+bash env_setup_and_tests/00_preflight.sh
+bash scripts/setup.sh
+bash scripts/run_carla.sh
+run_dir="$(.venv/bin/python scripts/create_run.py --stage 0 --label smoke)"
+.venv/bin/python scripts/smoke_rgb.py --run-dir "$run_dir"
+.venv/bin/python scripts/finalize_run.py "$run_dir" --state complete
+bash scripts/stop_carla.sh
+```
+
+The path was smoke-tested on 16 September 2026 in `runs/20260916T210617Z-carla-smoke-beb230`: it produced a readable 800×600 PNG with CARLA client/server 0.9.16. The run directory contains configuration, metadata, one `rgb/front.png`, diagnostics, and a SHA-256 manifest. To verify a copy made by the user-selected external mechanism, run `scripts/verify_export.py SOURCE_RUN EXTERNAL_COPY`; it compares every file and does not copy or delete anything. Do not call a second directory on this VM an external backup.
 
 ## Current Starting Point
 

@@ -52,6 +52,8 @@ Compare GPT-Astra, a Qwen model around 27B, and one around 8B. `gpt-6-astra`, `Q
 
 Code and documents go to Git. Large results go to the Mac or external storage. Verify an independent copy before VM deletion. A new VM downloads the Docker image again; that is expected. Do not deploy local LLMs; use the GPU for CARLA.
 
+**2026-09-16 implementation decision, user-selected:** use pull-based `rsync` from the Mac as the primary operational backup. The Mac connects with SSH alias `carla-vm`; runs are copied under `/Users/madness/Научка/CARLA/runs/<run_id>/` without `--delete`, then verified against their manifest. The stage-0 smoke-run copy passed this check. Google Drive remains a later final-delivery or secondary-copy option, not a substitute for measured and verified run export.
+
 ### D09. Separate Tasks and Automatic Recording
 
 **Status:** user requirement.

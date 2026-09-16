@@ -24,18 +24,18 @@ After experiments, replace this section with a short abstract of the actual resu
 
 | Reproduction parameter | Actual value |
 |---|---|
-| Docker image digest | Not recorded |
-| Server/client version | Must be checked through the API |
-| Python / pinned dependencies | Not selected |
-| Launch command | Absent from the package; add after verification |
-| Code / commit | No implementation yet |
-| Verification run | Not created |
+| Docker image digest | `carlasim/carla@sha256:aaf1df22702780ece072069e23d03c4879b002ae028c79744b09c4c7ddbae953` (stage-0 check) |
+| Server/client version | Both `0.9.16` in run `20260916T210617Z-carla-smoke-beb230` |
+| Python / pinned dependencies | Python 3.10.12; isolated `.venv`; `carla==0.9.16` |
+| Launch command | `bash scripts/run_carla.sh` (same-VM smoke verified; see `docs/runbook.md`) |
+| Code / commit | Run began from `0e52c6a8ef7cb4bbb6116c6c40a72e772a7b6a1d`, with uncommitted stage-0 implementation changes |
+| Verification run | `20260916T210617Z-carla-smoke-beb230`; verified Mac copy and manifest check at 2026-09-16 21:19 UTC |
 
 ### 1.2. Basic Use
 
 Describe Client, World, Actor, Blueprint, and actor lifecycle using a genuinely completed minimal example. Attach a connection log and a reference RGB frame. State separately how synchronisation and shutdown were handled.
 
-**Result:** not completed within the project; the initial server launch was reported by the user.
+**Completed minimal smoke result:** an isolated client connected to the offscreen server, spawned temporary vehicle/camera actors, saved a readable 800×600 RGB PNG, and cleaned the actors up. The server and client reported 0.9.16. The run used CARLA's default `Town10HD_Opt`; it is only a connection/frame test and does not validate Town01, sensors beyond one RGB camera, or synchronous recording. The run manifest passed local verification and the user verified its Mac copy with `rsync` plus SHA-256 checks for all manifest files. The source location and external copy are registered in `artifacts/index.csv`.
 
 ### 1.3. Loading Town01
 

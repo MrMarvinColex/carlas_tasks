@@ -1,18 +1,22 @@
 # Current Project Status
 
-Context-transfer date: **2026-09-16**, user timezone: Europe/Moscow. This is the initial state for a new Codex task, not a fresh inspection of the remote server.
+Last inspected: **2026-09-16 21:19 UTC**; user timezone: Europe/Moscow.
 
 ## Current Position
 
-A portable documentation package has been prepared. No project code was implemented. The user reported a successful infrastructure check on the current VM: CARLA 0.9.16 started in Docker using the GPU in offscreen mode, then the test container was stopped. The image remains on the VM. Raw logs were not provided.
+Stage 0 acceptance is complete. The actual project root is `/home/Ubuntu/carlas_tasks` (not the historical `~/carla_test_task` path), under user `Ubuntu`, branch `00_-_stage`; the worktree was clean before this stage's edits. The private `origin` is reachable and `origin/main` resolved to `0e52c6a` before these stage-0 changes.
 
-**Next action:** open the server-side `~/carla_test_task`, inspect its contents and applicable instructions, integrate this package without overwriting existing work, and complete the missing part of stage 0.
+The reproducible client uses `.venv` with Python 3.10.12 and `carla==0.9.16`. The local image is `carlasim/carla:0.9.16@sha256:aaf1df22702780ece072069e23d03c4879b002ae028c79744b09c4c7ddbae953`; the server/container versions were both 0.9.16. Run `20260916T210617Z-carla-smoke-beb230` captured and visually inspected one 800×600 RGB PNG, wrote a manifest, and passed local manifest verification. Its default map was `Town10HD_Opt`; this does not satisfy the separate Town01 test in stage 1. The `carla-server` container created for that run was stopped; no CARLA container is running.
+
+**External-copy evidence:** the user ran `rsync` from Mac via the `carla-vm` SSH alias to `/Users/madness/Научка/CARLA/runs/20260916T210617Z-carla-smoke-beb230/`. The dry run listed 7 entries; the transfer completed; Mac-side SHA-256 validation reported `OK` for `config.json`, `metadata.json`, and `rgb/front.png`. The destination and manifest are registered in `artifacts/index.csv`.
+
+**Next action:** commit and push the verified stage-0 scripts and documentation to the existing private remote, then begin stage 1 only when separately requested. New data runs must be copied to the same Mac hierarchy and checksum-verified before the VM is treated as disposable.
 
 ## Stage Status
 
 | Stage | Status | Known state / remaining work |
 |---|---|---|
-| 0. Environment and data safety | IN_PROGRESS | Server launch is user-reported; bootstrap scripts, Git remote, and a verified external copy are not confirmed |
+| 0. Environment and data safety | DONE | Bootstrap and repeat-safe setup, CARLA server/client RGB smoke test, run tracking/manifest, actual image digest, private Git remote, and verified Mac `rsync` copy are recorded; new-VM recovery remains untested |
 | 1. Map and API | TODO | Town01, road-marking removal, and animal assets have not been tested in this project |
 | 2. Routes | TODO | No routes or validated drives are included |
 | 3. Cameras and recording | TODO | No AV2 log/calibration is selected; 18 cameras are untested |
@@ -26,32 +30,30 @@ A portable documentation package has been prepared. No project code was implemen
 ## Known Infrastructure
 
 - Massed Compute full VM, Ubuntu 22.04.5 LTS.
-- RTX A6000 48 GB, 6 vCPU, 96 GB RAM, 300 GB SSD; user-reported rate: $0.57/hour, Premium.
-- SSH user: `Ubuntu`; working directory: `~/carla_test_task`.
-- Docker through `sudo`; image `carlasim/carla:0.9.16` is cached on the current VM.
-- The user reported that the test container was stopped. Verify the current state; do not treat it as a permanent fact.
+- RTX A6000 49,140 MiB, 6 vCPU, 94 GiB RAM, 295 GiB filesystem; 246 GiB free at the stage-0 check. The user-reported rate remains $0.57/hour, Premium.
+- SSH user: `Ubuntu`; actual working directory: `/home/Ubuntu/carlas_tasks`.
+- Docker 29.1.5 works through passwordless `sudo`; image and digest are recorded above.
+- The stage-0 `carla-server` test container was stopped at 21:06 UTC. Do not assume this state persists; check before a later stage.
 - According to the provider-panel warning relayed by the user, stopping a container or VM does not end billing; deleting the instance does and is irreversible.
 
 Full version information and limits: [environment.md](environment.md).
 
 ## Missing Access and Decisions
 
-1. Private Git remote URL and actual project Git state.
-2. External storage destination, Mac path or cloud bucket, access, and validated transfer.
-3. Secure API-key restoration after VM deletion; actual providers/IDs and spending limits.
-4. Availability of Town01/Town01_Opt in the current image and a working method to hide all markings.
-5. Whether an animal can appear without Unreal editing.
-6. Specific AV2 calibration and alignment of its ego origin with the chosen CARLA vehicle.
-7. Route length, weather-condition count, and repeats after the first timing/size measurement.
+1. Secure API-key restoration after VM deletion; actual providers/IDs and spending limits.
+2. Availability of Town01/Town01_Opt in the current image and a working method to hide all markings.
+3. Whether an animal can appear without Unreal editing.
+4. Specific AV2 calibration and alignment of its ego origin with the chosen CARLA vehicle.
+5. Route length, weather-condition count, and repeats after the first timing/size measurement.
 
 Do not ask the user for all of these at once. Check available facts independently and ask only for a decision required by the current stage that is absent from the project.
 
 ## Latest Data Check
 
-- Dataset: not created.
-- `artifacts/index.csv`: header only; no experiment artifacts registered.
-- Verified external experiment-data copy: absent or unconfirmed.
-- Code pushed to remote Git: unknown.
+- Dataset: not created; the stage-0 smoke artifact is not a dataset.
+- `artifacts/index.csv`: contains the smoke artifact with `backup_status=verified`.
+- Verified off-VM copy: `/Users/madness/Научка/CARLA/runs/20260916T210617Z-carla-smoke-beb230/`, confirmed by user-provided `rsync` and SHA-256 output at 21:19 UTC.
+- Remote Git accessibility was verified; these stage-0 edits have not been committed or pushed.
 - Ready to delete VM: **not confirmed**. Documentation on the Mac does not prove that existing server work is preserved.
 
 ## How to Update This File

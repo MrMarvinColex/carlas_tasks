@@ -1,6 +1,6 @@
 # Environment and Infrastructure Facts
 
-This file describes the environment **as reported by the user on 16 September 2026**. The documentation-package author did not connect to the server. Replace assumptions with current checks after migration while keeping dates and log references.
+This file began as a user report. The entries labelled **artifact-confirmed** below were checked on the current VM on 2026-09-16 21:01–21:07 UTC; retain the user report where a fact was not independently checked.
 
 ## Current Server VM
 
@@ -13,13 +13,13 @@ This file describes the environment **as reported by the user on 16 September 20
 | CPU / RAM / SSD | 6 vCPU / 96 GB / 300 GB | User-reported |
 | OS | Ubuntu 22.04.5 LTS | User-reported |
 | SSH user | `Ubuntu` | User-reported; preserve case |
-| Working directory | `~/carla_test_task` | User-reported |
+| Working directory | `/home/Ubuntu/carlas_tasks` | Artifact-confirmed; differs from the historical path in the transfer package |
 | Client | Mac + VS Code Remote SSH + Codex extension | User-selected workflow |
 | NVIDIA driver | 580.126.09 | Check result relayed by user |
 | CUDA shown by GPU tools | 13.0 | Does not prove that this CUDA Toolkit is installed in the container |
 | Docker | 29.1.5, available through `sudo` | Check result relayed by user |
 | NVIDIA Container Toolkit | `nvidia-container-cli` 1.18.1 | Check result relayed by user |
-| CARLA image | `carlasim/carla:0.9.16`, downloaded | Digest not yet recorded |
+| CARLA image | `carlasim/carla:0.9.16@sha256:aaf1df22702780ece072069e23d03c4879b002ae028c79744b09c4c7ddbae953` | Artifact-confirmed; local image ID `98d224…83b5`, 20,705,974,366 bytes |
 
 ## Checks Already Run by the User
 
@@ -29,7 +29,15 @@ This file describes the environment **as reported by the user on 16 September 20
 4. The test container was then stopped; the pulled image remains on the current VM.
 5. `vulkaninfo` was unavailable. This is not blocking because real rendering has already launched.
 
-The VRAM figure is from a small test run; it cannot estimate 18 full-resolution cameras. Client Python, frame retrieval, Town01, synchronisation, and animal assets have not been confirmed by project artifacts.
+The VRAM figure is from a small test run; it cannot estimate 18 full-resolution cameras. Client frame retrieval is now confirmed by the stage-0 smoke run; Town01, synchronisation, 18 cameras, road markings, and animal assets remain untested.
+
+## 2026-09-16 Stage-0 Actual Check
+
+- **artifact-confirmed:** Ubuntu 22.04.5, kernel 6.8.0-90-generic; 94 GiB RAM with 92 GiB available; 246 GiB free of a 295 GiB filesystem.
+- **artifact-confirmed:** NVIDIA RTX A6000, driver 580.126.09, 49,140 MiB VRAM, compute capability 8.6; no GPU process at check time. Docker 29.1.5 and NVIDIA Container Toolkit 1.18.1 are usable via passwordless `sudo`.
+- **artifact-confirmed:** no CARLA container or listener on ports 2000–2002 existed before the smoke run. The temporary `carla-server` was stopped afterwards.
+- **artifact-confirmed:** Python 3.10.12 client environment at `.venv`, with `carla==0.9.16`. Installing `python3.10-venv` was required because the original OS image lacked `ensurepip`.
+- **artifact-confirmed:** run `20260916T210617Z-carla-smoke-beb230` connected to CARLA, recorded matching client/server 0.9.16 versions, saved an 800×600 RGB PNG, and passed its local manifest check. Its default map was `Carla/Maps/Town10HD_Opt`; no Town01 operation was performed.
 
 ## Selected Execution Model
 

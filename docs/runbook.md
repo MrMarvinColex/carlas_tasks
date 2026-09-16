@@ -1,6 +1,6 @@
 # Project Transfer, VM Operation, and Result Preservation
 
-This document must become a tested operational guide. At transfer time it contains only procedures: setup/start/record/backup scripts do not yet exist. Add working commands here only after testing them, with date and log reference.
+This document contains stage-0 procedures and scripts. Mark each command as verified only after the cited run proves it on the current VM; a new-VM recovery remains a separate test.
 
 ## 1. Initial Transfer From This Chat
 
@@ -36,6 +36,18 @@ After stage 0 implementation, the recovery procedure must:
 6. Resume the stage recorded in STATUS rather than rebuilding the project from scratch.
 
 Until this procedure is tested, never state “recovery on a new VM has been verified.” Repeating setup on the same VM and recovering on a new VM are different evidence levels.
+
+### Current stage-0 implementation (same-VM smoke verified)
+
+From the repository root, run `bash scripts/setup.sh` to create the ignored `.venv` and install the pinned `carla==0.9.16` client. Start the local GPU server with `bash scripts/run_carla.sh`; the script refuses an existing `carla-server` container or occupied port 2000. Create and capture a short test run with `scripts/create_run.py` and `scripts/smoke_rgb.py` as shown in `README.md`, then use `scripts/finalize_run.py` to write a manifest and status. `bash scripts/stop_carla.sh` stops only a container named `carla-server` whose configured image is `carlasim/carla:0.9.16`.
+
+This path was verified on the same VM in `runs/20260916T210617Z-carla-smoke-beb230`: the client received a readable RGB PNG and client/server both reported 0.9.16. It does not prove recovery on a new VM, multi-camera recording, or an external backup.
+
+`scripts/verify_export.py SOURCE_RUN EXTERNAL_COPY` recomputes hashes in the chosen destination. It is verification only: the actual export must use the selected external-storage method. No `.env` is exported; restore it from the user's secure channel after copying `.env.example` to `.env` and filling it locally.
+
+### Verified Mac export (stage 0)
+
+The primary operational destination is the user's Mac: `/Users/madness/Научка/CARLA/runs/<run_id>/`. From the Mac, the SSH configuration names the VM `carla-vm`; pull a completed run with `rsync -avP carla-vm:/home/Ubuntu/carlas_tasks/runs/<run_id>/ "/Users/madness/Научка/CARLA/runs/<run_id>/"`. Do not add `--delete`. For the stage-0 smoke run, a dry-run listed 7 entries, the transfer completed, and Mac-side checksum output reported `OK` for all three manifest entries. The precise record is `stage0-smoke-20260916` in `artifacts/index.csv`.
 
 ## 4. Structure of One Recorded Run
 

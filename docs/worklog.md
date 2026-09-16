@@ -54,6 +54,37 @@ The user rented a Massed Compute VM with an RTX A6000 48 GB, Ubuntu 22.04.5, 6 v
 
 **Result:** the package is ready for an English-document workflow while the user may continue giving Codex instructions in Russian.
 
+## 2026-09-16 21:00–21:07 UTC — Stage 0 Environment Bootstrap and CARLA RGB Smoke Run
+
+**Type:** completed and verified on the current VM, except external-copy verification.
+
+- Confirmed the actual project root as `/home/Ubuntu/carlas_tasks` under user `Ubuntu`; branch `00_-_stage` and private `origin` were inspected. `origin/main` was reachable at `0e52c6a` before the stage-0 documentation/code edits.
+- Inspected the actual VM: Ubuntu 22.04.5, RTX A6000 (driver 580.126.09, 49,140 MiB), Docker 29.1.5 with passwordless `sudo`, NVIDIA Container Toolkit 1.18.1, and 246 GiB free disk. Before the test no CARLA containers, CARLA processes, or listeners on ports 2000–2002 existed.
+- Recorded local CARLA image `carlasim/carla:0.9.16@sha256:aaf1df22702780ece072069e23d03c4879b002ae028c79744b09c4c7ddbae953` (image ID `98d224…83b5`).
+- Added `scripts/setup.sh`, CARLA start/stop scripts, run metadata/manifest utilities, export verifier, and an RGB smoke client. The initial bootstrap correctly exposed a missing OS `python3.10-venv` dependency; it was installed, after which `.venv` was built with Python 3.10.12 and `carla==0.9.16`. A failed partial `.venv` exposed and led to a safe repair path that rebuilds only the default project-local virtual environment.
+- Started temporary `carla-server`, ran `20260916T210617Z-carla-smoke-beb230`, captured `rgb/front.png` (800×600 RGBA PNG), visually inspected it, and stopped the container. Metadata records matching CARLA client/server 0.9.16 and default map `Carla/Maps/Town10HD_Opt`. The map was not changed, so this is not a Town01 result.
+- The first local export-verifier run found a self-invalidating manifest caused by mutable metadata. The finalizer was corrected, the same artifact was re-finalized, and verification passed: 3 files match `manifest.sha256` (`8def61758b358578ea2a00a77f52e684aa0caf75b2219150dc4208c101ca87ca`), 1,112,700 bytes including the manifest.
+
+**Artifacts:** local ignored run directory `runs/20260916T210617Z-carla-smoke-beb230`; registry row `stage0-smoke-20260916`. The frame is intentionally not committed. No external location exists yet.
+
+**Result and limitation:** client startup and one rendered RGB frame are reproducible on this VM. Recovery on a new VM, 18-camera recording, Town01, and any external-copy claim remain untested. Stage 0 remains `IN_PROGRESS` solely because the user has not selected/authorized an off-VM storage destination.
+
+**Next action:** export this small run to the user-selected destination, run `scripts/verify_export.py` there, record the destination and verification time, then close stage 0.
+
+## 2026-09-16 21:19 UTC — Verified Mac Copy; Stage 0 Acceptance Completed
+
+**Type:** user-operated external verification with supplied command output.
+
+- The user created and tested SSH alias `carla-vm` from their Mac. It connected to the current VM as `Ubuntu` and reported the expected host and `/home/Ubuntu` home directory.
+- A dry-run `rsync` listed 7 entries for `runs/20260916T210617Z-carla-smoke-beb230/`; the subsequent `rsync -avP` transfer completed to `/Users/madness/Научка/CARLA/runs/20260916T210617Z-carla-smoke-beb230/` without `--delete`.
+- On the Mac, the user converted the run's three-column manifest into `shasum` check input. `config.json`, `metadata.json`, and `rgb/front.png` each reported `OK`. The transferred file total was 1,100,412 bytes; the manifest SHA-256 is `8def61758b358578ea2a00a77f52e684aa0caf75b2219150dc4208c101ca87ca`.
+
+**Artifacts:** registry row `stage0-smoke-20260916` now records the external Mac location and `backup_status=verified`.
+
+**Result:** Stage 0 acceptance is satisfied: startup/client RGB smoke, reproducible setup and run tracking, image/version evidence, and a verified off-VM test copy exist. Recovery on a newly rented VM was not tested and is explicitly not claimed.
+
+**Next action:** commit and push the stage-0 scripts and updated documentation to the existing private Git remote. Do not automatically begin stage 1; Town01, marking removal, and animal capability remain separate untested work.
+
 ## Template for the Next Entry
 
 ```text
