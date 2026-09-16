@@ -1,0 +1,206 @@
+# Using LLMs to Edit CARLA Scenes
+
+**Working report. Status: the structure is prepared; project experiments have not been completed.**
+
+Document start date: 16 September 2026. Target deadline: 21 September 2026 in the current context; the source PDF specifies only day and month, without a year. Author/executor: complete before submission.
+
+Recording rule: distinguish planned methods from completed experiments. For every result, provide the run ID, commit, parameters, and artifact link. Never replace `not measured` with zero. Do not put keys, private endpoints, or full machine logs in this report.
+
+## Summary and Current Status
+
+The assignment requires controlling CARLA through Python, recording five routes using cameras placed as in Argoverse 2, and studying natural-language scene editing with several LLMs. Per the user’s clarification, changes are limited to CARLA runtime capabilities and models are called through APIs. The selected rig has nine positions and two sensor types per position, recorded at 2 Hz of simulation time. Ego-vehicle poses are stored separately.
+
+The user reported a successful CARLA 0.9.16 offscreen test on the GPU VM. The raw logs from that check were not supplied with this package; full camera recording and all research outcomes remain unconfirmed. This document therefore records the plan and locations for future evidence.
+
+After experiments, replace this section with a short abstract of the actual results, data volume, and limitations.
+
+## 1. CARLA Experiments
+
+### 1.1. Version Choice and Installation
+
+**Decision:** CARLA 0.9.16 in Docker. The official description of the packaged 0.10.0 release lists the absence of Town01 and limitations in needed functionality, so a UE4-branch release was selected. This is rationale for the choice, not a result of an independent test of 0.10.0. [CARLA 0.10.0 release](https://carla.org/2024/12/19/release-0.10.0/), [CARLA 0.9.16 release](https://carla.org/2025/09/16/release-0.9.16/).
+
+**Environment reported by the user:** Massed Compute; Ubuntu 22.04.5 LTS; RTX A6000 48 GB; 6 vCPU; 96 GB RAM; 300 GB SSD. Docker 29.1.5, NVIDIA driver 580.126.09, and `nvidia-container-cli` 1.18.1. Complete this with actual logs and versions during implementation.
+
+| Reproduction parameter | Actual value |
+|---|---|
+| Docker image digest | Not recorded |
+| Server/client version | Must be checked through the API |
+| Python / pinned dependencies | Not selected |
+| Launch command | Absent from the package; add after verification |
+| Code / commit | No implementation yet |
+| Verification run | Not created |
+
+### 1.2. Basic Use
+
+Describe Client, World, Actor, Blueprint, and actor lifecycle using a genuinely completed minimal example. Attach a connection log and a reference RGB frame. State separately how synchronisation and shutdown were handled.
+
+**Result:** not completed within the project; the initial server launch was reported by the user.
+
+### 1.3. Loading Town01
+
+Record the list of available maps, the actual name of the loaded map, and, if `Town01_Opt` is used, the rationale and its correspondence to Town01. Attach an overview image and launch metadata.
+
+**Result:** not checked.
+
+### 1.4. Removing Road Markings
+
+The goal is to hide visual road markings while preserving the road and navigation topology. Before implementation, environment objects, map layers, and textures will be investigated. No method is confirmed yet.
+
+| Method under test | Map/version | RGB before/after | Semantic before/after | Side effects | Conclusion |
+|---|---|---|---|---|---|
+| To be completed after an experiment | Not checked | — | — | — | No result |
+
+Specify the inspected areas, removed and remaining markings, and evidence that waypoints were preserved. If only repainting is used, disclose how it differs from hiding geometry and semantic labels. Do not claim a performance gain without measurement.
+
+### 1.5. Waypoints and Five Routes
+
+Describe discretisation resolution, route provenance, and visualisation of the complete waypoint sample. Each route must contain at least ten consecutive points. Disable debug drawings before dataset recording.
+
+| Route | Waypoint count | Length, m | Start/finish | Provenance | File/commit |
+|---|---|---|---|---|---|
+| Not selected yet | Not measured | Not measured | — | — | — |
+
+### 1.6. Traffic Manager Autopilot
+
+Describe vehicle spawning, path assignment, TM settings, completion criterion, timeout, and stuck-vehicle handling. Attach actual trajectories for five drives and deviations from routes.
+
+**Result:** not completed. Interpretation clarification: TM uses simulator state; this experiment alone does not evaluate the learned visual perception of an autonomous-driving system.
+
+### 1.7. Camera and Transform Recording at 2 Hz
+
+Plan: synchronous simulation, cameras with a 0.5 s period, and frame-ID matching to the ego pose from the same snapshot. Both simulation and wall-clock time are recorded separately. A complete `transforms.json` is written at the end of a drive.
+
+Describe the actual world step, phase/warm-up, semantic-ID encoding, handling of camera delay, capture window, omissions, and recovery after interruption.
+
+| Check | Measurement | Artifact |
+|---|---|---|
+| Simulation-timestamp interval | Not measured | — |
+| Completeness of 18 frames per timestamp | Not measured | — |
+| Ego-pose/frame alignment | Not checked | — |
+| Drops/duplicates | Not measured | — |
+| JSON/images are readable | Not checked | — |
+
+### 1.8. Argoverse 2 Cameras
+
+Nine viewpoints: `ring_front_center`, `ring_front_left`, `ring_front_right`, `ring_side_left`, `ring_side_right`, `ring_rear_left`, `ring_rear_right`, `stereo_front_left`, and `stereo_front_right`. Each gets RGB and semantic sensors, for 18 synthetic sensors. [AV2 sensors and calibration guide](https://argoverse.github.io/user-guide/datasets/sensor.html).
+
+| Item | Actual selection |
+|---|---|
+| AV2 log ID / calibration source | Not selected |
+| CARLA vehicle | Not selected |
+| Ego-origin transform | Not calculated |
+| Extrinsics for nine cameras | Not applied |
+| Intrinsics / FOV / resolutions | Not configured |
+| Verification of all views | Not completed |
+
+After implementation, attach the source and applied calibration, axis/unit definition, rotation conversion, numerical checks, and a contact sheet of all nine views. List optical-model differences if exact equivalence cannot be achieved.
+
+### 1.9. Baseline Drives and Weather
+
+Record the route × weather × repeat matrix, seeds, and actual weather settings. Cover all five routes. The number of conditions is decided after a pilot recording; a proposal of two weather modes per route is not yet an experiment.
+
+Explain the limits of seasonality: changing rain, clouds, and sun is not a full seasonal change. State the measured number of drives, duration, size, recording speed, resource usage, and validator result.
+
+**Result:** dataset not created.
+
+## 2. Review of Publications and Repositories
+
+**Status:** the research review has not yet been completed. The initial technical links in `docs/knowledge.md` do not replace a method review.
+
+| Paper/repository | Year/version | LLM role | What changes | CARLA/code | Limitations | Applicability |
+|---|---|---|---|---|---|---|
+| Complete from primary sources | — | — | — | — | — | — |
+
+Compare runtime scenarios, geometry editing, and image post-processing. For nearby but non-identical tasks, state the distinction explicitly. The section’s conclusion should justify the project architecture.
+
+## 3. Natural-Language Scene Editing
+
+### 3.1. Proposed Architecture
+
+The user request and description of available capabilities are sent to an LLM API. The model returns a structured scene description. A validator checks syntax, parameters, and action feasibility; an executor then applies permitted CARLA operations. A saved configuration can replay the scene without another model call.
+
+This is a project design. Concrete components, SceneSpec version, refusal handling, and scene reset are recorded after implementation. Arbitrary code from a model response is never executed.
+
+### 3.2. Comparison Protocol
+
+| Parameter | Fixed selection |
+|---|---|
+| Model A / provider / ID | Target: GPT-Astra; access not verified |
+| Model B / provider / ID | Target: Qwen around 27B; access not verified |
+| Model C / provider / ID | Target: Qwen around 8B; access not verified |
+| API versions / regions | Not selected |
+| Prompt set / schema | Not written |
+| Repeats / retries / timeout | Not selected |
+| Metrics | Schema validity, execution, fulfilment, latency, errors; usage/cost where available |
+
+Use equivalent scene context and tasks for all variants. Record the raw response, parsed specification, validation result, executor result, complete response latency, and model/provider settings. Separate first-attempt success from success after retries. Do not substitute a manually corrected successful scene for the actual model outcome.
+
+### 3.3. Results Table
+
+| Model | Task/prompt ID | Attempts | Schema-valid | Executed | Request fulfilled | End-to-end latency | API latency | CARLA time | Artifact |
+|---|---|---:|---|---|---|---:|---:|---:|---|
+| Not run | — | — | — | — | — | — | — | — | — |
+
+**Results and conclusions:** unavailable until experiments are conducted.
+
+## 4. Adding a Moving Animal
+
+The edited scene must contain an actual animal, visible on the cameras, whose presence affects the scene. First establish whether the selected CARLA package has a usable animal asset. The simplest acceptable solution may have kinematic movement without leg animation, but asset, visibility, movement, semantics, collision/response, and impact on the ego vehicle must each be checked separately. If Traffic Manager does not brake for a prop, report that fact; do not infer a reaction from a single frame.
+
+Use the same request set for the animal’s appearance and motion across LLMs. Store its parameters and trajectory separately from the ego JSON. Add confirming frames/video and measurements.
+
+**Results and conclusions:** unavailable until experiments are conducted.
+
+## 5. Repeated Drives on Edited Scenes
+
+Define scene versions that cover the outcomes of sections 3 and 4. Recheck waypoints and the applicability of the same five routes, then record the same weather conditions and camera rig.
+
+| Scene version | LLM provenance/attempt | Routes/weather | Drive success | Data validated | Link |
+|---|---|---|---|---|---|
+| Not created yet | — | — | Not measured | No | — |
+
+Compare completion time, collisions, animal visibility, data completeness, and agreement of edits with requests. Preserve failed drives. Separate the count of LLM attempts from the count of replayed drives. Do not attribute changes caused by another seed, weather, or control setting to visual editing.
+
+## 6. Dataset and Reproducibility
+
+After implementation, describe the actual format, JSON schema, frame/timestamp convention, coordinate units, calibrations, semantic IDs, and real launch commands. Documentation must not retain commands for scripts that do not exist.
+
+| Metric | Actual value |
+|---|---|
+| Number of scenes / routes / weather conditions | Not measured |
+| Number of complete and failed drives | Not measured |
+| Total simulation time | Not measured |
+| Image / pose-record count | Not measured |
+| Data volume | Not measured |
+| Validator / version | Not implemented |
+| Verified external copy | Not confirmed |
+
+State the Git commit/tag, image digest, pinned dependencies, configurations, and seeds. Data and code must be usable without the current VM. Include checksum manifests in the submission.
+
+## 7. Limitations and Conclusions
+
+There are no final conclusions before experiments are complete. Later, explicitly discuss:
+
+- runtime-editing limits and marking removal;
+- animal availability, movement realism, semantics, and TM response;
+- differences between the camera model and AV2;
+- completeness of seasonal simulation;
+- effects of provider/network/reasoning settings on LLM latency;
+- sample size, repeatability, and failed attempts;
+- reproducibility on a new VM.
+
+## 8. Submission Materials
+
+| Material | Link | Access verified |
+|---|---|---|
+| Public Git repository | Not published | No |
+| Report on Google Drive | Not published | No |
+| Dataset on Google Drive | Not published | No |
+| Manifests/instructions | Not published | No |
+
+Publication occurs only after explicit instruction. Before publishing, check secrets, personal information, and rights to third-party materials.
+
+## Appendices and Sources
+
+The primary assignment document is retained in the local package; requirements are captured in `docs/requirements.md`. The technical-source index is `docs/knowledge.md`; research sources must be added after stage 5. Screenshots and tables must point to a concrete run ID and immutable configuration.

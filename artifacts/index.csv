@@ -1,0 +1,1 @@
+artifact_id,run_id,stage,kind,created_at_utc,git_commit,source_relative_path,external_location,manifest_sha256,bytes,validation_status,backup_status,verified_at_utc,notes

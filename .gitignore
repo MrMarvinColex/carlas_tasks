@@ -1,0 +1,53 @@
+# Secrets and local environment
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+secrets/
+credentials/
+
+# Python / tooling
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+*.egg-info/
+build/
+dist/
+
+# Large or transient experiment artifacts (keep small index.csv in Git)
+/runs/
+/data/
+/dataset/
+/datasets/
+/logs/
+/work/
+/tmp/
+/outputs/
+/downloads/
+/models/
+/backups/
+/artifacts/raw/
+*.log
+*.zip
+*.tar
+*.tar.gz
+*.tgz
+*.7z
+
+# Original assignment: local context, public redistribution not assumed
+/docs/source/assignment.pdf
+
+# Local machine / IDE state
+.DS_Store
+.idea/
+.vscode/
+
+# Small report figures may be committed deliberately under report/figures/.
+# This ignore file does not remove secrets that have already been tracked.
