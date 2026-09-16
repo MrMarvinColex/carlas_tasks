@@ -85,6 +85,17 @@ The user rented a Massed Compute VM with an RTX A6000 48 GB, Ubuntu 22.04.5, 6 v
 
 **Next action:** commit and push the stage-0 scripts and updated documentation to the existing private Git remote. Do not automatically begin stage 1; Town01, marking removal, and animal capability remain separate untested work.
 
+## 2026-09-16 21:20 UTC — Stage-0 Code Preserved in Private Git
+
+**Type:** completed and verified Git operation.
+
+- Reviewed the staged paths: only stage-0 scripts, `requirements.txt`, configuration template, documentation, report, and artifact registry were included. `.venv`, `logs`, and `runs` remained ignored and were not staged.
+- Created commit `ce26b8e` (`Complete reproducible stage 0 setup`) and pushed it to the new private remote branch `origin/00_-_stage`. GitHub offered an optional pull request; none was created. `main` was not changed and repository visibility was not altered.
+
+**Result:** code and documentation needed to recreate the stage-0 workflow are now preserved outside the VM, separately from the verified Mac artifact copy.
+
+**Next action:** await a separate stage-1 request.
+
 ## Template for the Next Entry
 
 ```text

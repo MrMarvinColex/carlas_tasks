@@ -10,7 +10,9 @@ The reproducible client uses `.venv` with Python 3.10.12 and `carla==0.9.16`. Th
 
 **External-copy evidence:** the user ran `rsync` from Mac via the `carla-vm` SSH alias to `/Users/madness/Научка/CARLA/runs/20260916T210617Z-carla-smoke-beb230/`. The dry run listed 7 entries; the transfer completed; Mac-side SHA-256 validation reported `OK` for `config.json`, `metadata.json`, and `rgb/front.png`. The destination and manifest are registered in `artifacts/index.csv`.
 
-**Next action:** commit and push the verified stage-0 scripts and documentation to the existing private remote, then begin stage 1 only when separately requested. New data runs must be copied to the same Mac hierarchy and checksum-verified before the VM is treated as disposable.
+The stage-0 implementation is preserved in private remote branch `origin/00_-_stage` at commit `ce26b8e`; no pull request, merge to `main`, visibility change, or publication was performed.
+
+**Next action:** begin stage 1 only when separately requested. New data runs must be copied to the same Mac hierarchy and checksum-verified before the VM is treated as disposable.
 
 ## Stage Status
 
@@ -53,7 +55,7 @@ Do not ask the user for all of these at once. Check available facts independentl
 - Dataset: not created; the stage-0 smoke artifact is not a dataset.
 - `artifacts/index.csv`: contains the smoke artifact with `backup_status=verified`.
 - Verified off-VM copy: `/Users/madness/Научка/CARLA/runs/20260916T210617Z-carla-smoke-beb230/`, confirmed by user-provided `rsync` and SHA-256 output at 21:19 UTC.
-- Remote Git accessibility was verified; these stage-0 edits have not been committed or pushed.
+- Stage-0 scripts and documentation were committed and pushed to private `origin/00_-_stage` at `ce26b8e`.
 - Ready to delete VM: **not confirmed**. Documentation on the Mac does not prove that existing server work is preserved.
 
 ## How to Update This File

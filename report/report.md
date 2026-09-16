@@ -28,7 +28,7 @@ After experiments, replace this section with a short abstract of the actual resu
 | Server/client version | Both `0.9.16` in run `20260916T210617Z-carla-smoke-beb230` |
 | Python / pinned dependencies | Python 3.10.12; isolated `.venv`; `carla==0.9.16` |
 | Launch command | `bash scripts/run_carla.sh` (same-VM smoke verified; see `docs/runbook.md`) |
-| Code / commit | Run began from `0e52c6a8ef7cb4bbb6116c6c40a72e772a7b6a1d`, with uncommitted stage-0 implementation changes |
+| Code / commit | Run began from `0e52c6a8ef7cb4bbb6116c6c40a72e772a7b6a1d`; reproducible stage-0 implementation was subsequently preserved in private branch `00_-_stage` at `ce26b8e` |
 | Verification run | `20260916T210617Z-carla-smoke-beb230`; verified Mac copy and manifest check at 2026-09-16 21:19 UTC |
 
 ### 1.2. Basic Use
