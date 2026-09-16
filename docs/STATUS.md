@@ -1,6 +1,6 @@
 # Current Project Status
 
-Last inspected: **2026-09-16 21:19 UTC**; user timezone: Europe/Moscow.
+Last inspected: **2026-09-16 21:27 UTC**; user timezone: Europe/Moscow.
 
 ## Current Position
 
@@ -11,6 +11,8 @@ The reproducible client uses `.venv` with Python 3.10.12 and `carla==0.9.16`. Th
 **External-copy evidence:** the user ran `rsync` from Mac via the `carla-vm` SSH alias to `/Users/madness/Научка/CARLA/runs/20260916T210617Z-carla-smoke-beb230/`. The dry run listed 7 entries; the transfer completed; Mac-side SHA-256 validation reported `OK` for `config.json`, `metadata.json`, and `rgb/front.png`. The destination and manifest are registered in `artifacts/index.csv`.
 
 The stage-0 implementation is preserved in private remote branch `origin/00_-_stage` at commit `ce26b8e`; no pull request, merge to `main`, visibility change, or publication was performed.
+
+The maintained environment entry points are `scripts/preflight.sh`, `scripts/setup.sh`, `scripts/run_carla.sh`, and `scripts/stop_carla.sh`. `scripts/preflight.sh` was rerun successfully after the move at 21:27 UTC. The older `env_setup_and_tests` copies were removed because the client-less smoke test was superseded and the tmux helper was unrelated to the project.
 
 **Next action:** begin stage 1 only when separately requested. New data runs must be copied to the same Mac hierarchy and checksum-verified before the VM is treated as disposable.
 

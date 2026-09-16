@@ -80,7 +80,7 @@ The Mac `rsync` hierarchy is the selected operational backup path; the stage-0 s
 Run these commands on the GPU VM from the repository root. `scripts/setup.sh` creates only `.venv`; it does not alter system Python. `scripts/run_carla.sh` starts one local offscreen server named `carla-server`; `scripts/stop_carla.sh` stops only that named CARLA 0.9.16 container. Both require the passwordless Docker `sudo` access verified during stage 0.
 
 ```sh
-bash env_setup_and_tests/00_preflight.sh
+bash scripts/preflight.sh
 bash scripts/setup.sh
 bash scripts/run_carla.sh
 run_dir="$(.venv/bin/python scripts/create_run.py --stage 0 --label smoke)"

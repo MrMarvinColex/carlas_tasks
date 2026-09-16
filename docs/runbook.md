@@ -39,7 +39,7 @@ Until this procedure is tested, never state “recovery on a new VM has been ver
 
 ### Current stage-0 implementation (same-VM smoke verified)
 
-From the repository root, run `bash scripts/setup.sh` to create the ignored `.venv` and install the pinned `carla==0.9.16` client. Start the local GPU server with `bash scripts/run_carla.sh`; the script refuses an existing `carla-server` container or occupied port 2000. Create and capture a short test run with `scripts/create_run.py` and `scripts/smoke_rgb.py` as shown in `README.md`, then use `scripts/finalize_run.py` to write a manifest and status. `bash scripts/stop_carla.sh` stops only a container named `carla-server` whose configured image is `carlasim/carla:0.9.16`.
+From the repository root, run `bash scripts/preflight.sh` to inspect the VM without changing it, then run `bash scripts/setup.sh` to create the ignored `.venv` and install the pinned `carla==0.9.16` client. Start the local GPU server with `bash scripts/run_carla.sh`; the script refuses an existing `carla-server` container or occupied port 2000. Create and capture a short test run with `scripts/create_run.py` and `scripts/smoke_rgb.py` as shown in `README.md`, then use `scripts/finalize_run.py` to write a manifest and status. `bash scripts/stop_carla.sh` stops only a container named `carla-server` whose configured image is `carlasim/carla:0.9.16`.
 
 This path was verified on the same VM in `runs/20260916T210617Z-carla-smoke-beb230`: the client received a readable RGB PNG and client/server both reported 0.9.16. It does not prove recovery on a new VM, multi-camera recording, or an external backup.
 

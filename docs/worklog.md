@@ -96,6 +96,20 @@ The user rented a Massed Compute VM with an RTX A6000 48 GB, Ubuntu 22.04.5, 6 v
 
 **Next action:** await a separate stage-1 request.
 
+## 2026-09-16 21:26 UTC — Consolidated Environment Utilities
+
+**Type:** project-structure cleanup; no CARLA run.
+
+- Moved the useful read-only VM diagnostics from `env_setup_and_tests/00_preflight.sh` to `scripts/preflight.sh` and added it to the documented stage-0 entry points.
+- Removed the old `01_carla_smoke_test.sh`: it pulled an image on every invocation, only checked port/log readiness, and produced neither a client RGB frame nor run metadata/manifest. Its purpose is covered by the tested `run_carla.sh` → `smoke_rgb.py` → `finalize_run.py` workflow.
+- Removed `setup_tmux_comfort.sh`: it changed a user's personal `~/.tmux.conf` and had no bearing on CARLA reproducibility or project results.
+
+**How checked:** reviewed all previous and retained script contents; old-path mentions remain only in this historical explanation. Shell syntax passed. The new `scripts/preflight.sh` was rerun at 21:27 UTC on the VM and reported the expected Ubuntu 22.04.5, RTX A6000/driver 580.126.09, Docker 29.1.5 with passwordless `sudo`, and no GPU process; it made no changes.
+
+**Result:** one canonical `scripts/` directory now contains every maintained project utility. Historical scripts remain retrievable from Git commit `0e52c6a` if needed.
+
+**Next action:** await a separate stage-1 request.
+
 ## Template for the Next Entry
 
 ```text
