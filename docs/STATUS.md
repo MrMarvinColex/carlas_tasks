@@ -20,7 +20,7 @@ Visible road-marking removal is **not achieved**. On Town01, hiding 259 `RoadLin
 
 The temporary `carla-server` used for stage 1 was stopped at 15:07 UTC; no CARLA container or listener is running. New data runs must be copied to the same Mac hierarchy and checksum-verified before the VM is treated as disposable.
 
-**Next action:** preserve the uncommitted stage-1 scripts/docs in private Git and export the four small probe runs. Item 1.4 needs a user-approved change of approach (for example, a verified compatible packaged material/asset method) or an explicit acceptance that it remains a limitation; neither Unreal authoring nor OpenDRIVE edits are authorized by the current scope.
+**Next action:** commit `470dbb0` preserves the stage-1 scripts/docs locally; its push to the private remote was not performed because the required elevated network execution was denied. Export the four small probe runs, then push the local commits when authorized. Item 1.4 needs a user-approved change of approach (for example, a verified compatible packaged material/asset method) or an explicit acceptance that it remains a limitation; neither Unreal authoring nor OpenDRIVE edits are authorized by the current scope.
 
 ## Stage Status
 
@@ -64,6 +64,7 @@ Do not ask the user for all of these at once. Check available facts independentl
 - `artifacts/index.csv`: contains the smoke artifact with `backup_status=verified`.
 - Verified off-VM copy: `/Users/madness/Научка/CARLA/runs/20260916T210617Z-carla-smoke-beb230/`, confirmed by user-provided `rsync` and SHA-256 output at 21:19 UTC.
 - Stage-0 scripts and documentation were committed and pushed to private `origin/00_-_stage` at `ce26b8e`.
+- Stage-1 code/docs are committed locally at `470dbb0` but have not been pushed to `origin`.
 - Four stage-1 probe sets are locally manifest-verified but **not copied externally**: `20260917T110520Z-map-api-676d` (6,307,929 bytes), `20260917T111200Z-town01-opt-decals-5a62` (1,813,284 bytes), `20260917T145900Z-town01-texture-ead1` (4,331,674 bytes), and `20260917T150510Z-town01-opt-direct-638d` (1,782,334 bytes). Their total is 14,235,221 bytes.
 - Ready to delete VM: **not confirmed**. Documentation on the Mac does not prove that existing server work is preserved.
 

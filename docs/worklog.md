@@ -128,7 +128,9 @@ The user rented a Massed Compute VM with an RTX A6000 48 GB, Ubuntu 22.04.5, 6 v
 
 **Result and limitation:** items 1.1–1.3/basic use are supported by stage-0/1 evidence. Item 1.4 is blocked: all tested runtime candidates (`RoadLines`, `Decals`, direct hide on Town01_Opt, and supported Diffuse texture replacement) fail the required visible-RGB removal. A semantic-only change is explicitly not treated as success. Stage 1 cannot be `DONE` under the present scope.
 
-**Next action:** push the stage-1 scripts and documentation to the private remote, and copy/verify the four probe runs on the Mac. To remove the item-1.4 blocker, obtain user direction on a compatible prebuilt runtime asset/material method or explicitly accept the limitation; Unreal authoring and OpenDRIVE modification are not authorized. The route/camera work can later proceed only with this limitation kept explicit.
+**Handoff update:** stage-1 scripts and documentation were committed locally as `470dbb0` after the experiments. The remote push was not performed because the required elevated network execution was denied; `origin/00_-_stage` therefore still lacks this stage.
+
+**Next action:** copy/verify the four probe runs on the Mac, then push local commits when authorized. To remove the item-1.4 blocker, obtain user direction on a compatible prebuilt runtime asset/material method or explicitly accept the limitation; Unreal authoring and OpenDRIVE modification are not authorized. The route/camera work can later proceed only with this limitation kept explicit.
 
 ## Template for the Next Entry
 
