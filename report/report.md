@@ -1,6 +1,6 @@
 # Using LLMs to Edit CARLA Scenes
 
-**Working report. Status: the structure is prepared; project experiments have not been completed.**
+**Working report. Status: Stage 1 is completed; route, camera, recording, LLM, animal, and comparison experiments remain.**
 
 Document start date: 16 September 2026. Target deadline: 21 September 2026 in the current context; the source PDF specifies only day and month, without a year. Author/executor: complete before submission.
 
@@ -10,7 +10,7 @@ Recording rule: distinguish planned methods from completed experiments. For ever
 
 The assignment requires controlling CARLA through Python, recording five routes using cameras placed as in Argoverse 2, and studying natural-language scene editing with several LLMs. Per the user’s clarification, changes are limited to CARLA runtime capabilities and models are called through APIs. The selected rig has nine positions and two sensor types per position, recorded at 2 Hz of simulation time. Ego-vehicle poses are stored separately.
 
-The user reported a successful CARLA 0.9.16 offscreen test on the GPU VM. Stage 1 subsequently verified Town01 loading, basic World/Actor/Blueprint operations, rendered weather changes, and the exposed map/object catalogues. However, no permitted runtime operation tested so far removes road markings from both RGB and raw semantic observations; item 1.4 remains blocked. Full camera recording and all later research outcomes remain unconfirmed.
+The user reported a successful CARLA 0.9.16 offscreen test on the GPU VM. Stage 1 subsequently verified Town01 loading, basic World/Actor/Blueprint operations, rendered weather changes, and the exposed map/object catalogues. Base Town01 direct RoadLines hiding was semantic-only, but the installed `Town01_Opt` passed paired RGB/raw-semantic checks at a straight road, intersection, and traffic-control location using direct RoadLines hiding; sampled navigation remained available. Full camera recording and all later research outcomes remain unconfirmed.
 
 After experiments, replace this section with a short abstract of the actual results, data volume, and limitations.
 
@@ -28,7 +28,7 @@ After experiments, replace this section with a short abstract of the actual resu
 | Server/client version | Both `0.9.16` in run `20260916T210617Z-carla-smoke-beb230` |
 | Python / pinned dependencies | Python 3.10.12; isolated `.venv`; `carla==0.9.16` |
 | Launch command | `bash scripts/run_carla.sh` (same-VM smoke verified; see `docs/runbook.md`) |
-| Code / commit | Run began from `0e52c6a8ef7cb4bbb6116c6c40a72e772a7b6a1d`; reproducible stage-0 implementation was subsequently preserved in private branch `00_-_stage` at `ce26b8e` |
+| Code / commit | Run began from `0e52c6a8ef7cb4bbb6116c6c40a72e772a7b6a1d`; reproducible stage-0 implementation was subsequently preserved at `ce26b8e`, now in private branch `Dev` after the branch rename |
 | Verification run | `20260916T210617Z-carla-smoke-beb230`; verified Mac copy and manifest check at 2026-09-16 21:19 UTC |
 
 ### 1.2. Basic Use
@@ -47,17 +47,17 @@ Record the list of available maps, the actual name of the loaded map, and, if `T
 
 ### 1.4. Removing Road Markings
 
-The goal is to hide visual road markings while preserving the road and navigation topology. Stage 1 tested the installed runtime APIs using paired RGB/raw-semantic observations and visual review. No tested method is sufficient; the requirement remains blocked.
+The goal is to hide visual road markings while preserving the road and navigation topology. Stage 1 tested the installed runtime APIs using paired RGB/raw-semantic observations and visual review. The selected runtime method is direct RoadLines hiding on the explicitly recorded `Town01_Opt` map; its coverage is three observations rather than a map-wide assertion.
 
 | Method under test | Map/version | RGB before/after | Semantic before/after | Side effects | Conclusion |
 |---|---|---|---|---|---|
 | `enable_environment_objects` for all RoadLines | Town01 / 0.9.16 | Yellow markings remained at straight road, intersection, traffic control | Class 24: 605→0, 512→0, 565→0 pixels | Topology stayed 160 edges; sampled driving waypoints remained available | Semantic-only; fails visible removal |
 | `unload_map_layer(Decals)` | Town01_Opt / 0.9.16 | Yellow markings remained | Not a sufficient semantic removal check | Broad unrelated scene changes | Not targeted; fails |
-| `enable_environment_objects` for RoadLines | Town01_Opt / 0.9.16 | Yellow markings remained | Class 24: 604→0 pixels | Topology stayed 160 edges | Semantic-only; fails |
+| `enable_environment_objects` for RoadLines | Town01_Opt / 0.9.16 | Yellow markings disappeared at straight road, intersection, traffic-control location | Class 24: 604→0, 512→0, 550→0 pixels | 25 objects hidden; topology 160 edges; sampled driving waypoints remained available | Passes declared coverage; selected method |
 | Diffuse `TextureColor` on all resolved RoadLines materials plus hiding | Town01 / 0.9.16 | Target and three coverage views retained yellow markings | Target: 402→402 with texture; combined capture class 24 = 0 | 259 calls returned without API error | No usable visual effect; fails |
 | 64×64 all-channel `apply_textures_to_object` | Town01 / 0.9.16 | Target marking remained yellow | Class 24: 402→402 | Diffuse, emissive, normal, and AO/roughness/metallic/emissive texture calls accepted | No usable visual effect; fails |
 
-Evidence: `20260917T110520Z-map-api-676d`, `20260917T111200Z-town01-opt-decals-5a62`, `20260917T145900Z-town01-texture-ead1`, `20260917T150510Z-town01-opt-direct-638d`, and `20260917T151600Z-town01-full-texture-1c2f`. Each has matched PNGs, raw semantic counts, a visual review, and local manifest verification; none has an external copy yet. These observations cover samples only, but a visible remaining marking is already enough to reject a claim of complete removal. No performance effect was measured.
+Evidence: `20260917T110520Z-map-api-676d`, `20260917T111200Z-town01-opt-decals-5a62`, `20260917T145900Z-town01-texture-ead1`, `20260917T150510Z-town01-opt-direct-638d` (corrected review), `20260917T151600Z-town01-full-texture-1c2f`, and `20260917T153000Z-town01-opt-coverage-b6e3` (three-location confirmation). Each has matched PNGs, raw semantic counts, a visual review, and local manifest verification; none has an external copy yet. The successful observations cover samples only: the map returned no crosswalk API point, so no claim covers crosswalks/stop lines or every map marking. No performance effect was measured.
 
 ### 1.5. Waypoints and Five Routes
 

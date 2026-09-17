@@ -66,13 +66,21 @@ Every task restores context through `AGENTS.md` and documents. Stage numbers are
 
 Development stays in private Git. Before the final step, inspect contents and history, then publish code only with authorization. Put report and dataset on Google Drive. Keep a local assignment copy; do not publish it automatically. Billing shutdown and VM deletion are independent of publication.
 
-### D11. Do Not Treat Semantic-Only Hiding as Road-Marking Removal
+### D11. Require Both RGB and Raw-Semantic Evidence for Road-Marking Removal
 
-**Status:** accepted after stage-1 evidence on 2026-09-17.
+**Status:** accepted and corrected after stage-1 evidence on 2026-09-17.
 
-In CARLA 0.9.16, `World.enable_environment_objects(RoadLines_ids, False)` removed the RoadLines semantic class from saved raw segmentation images but did not remove the same yellow markings from RGB views on Town01 or Town01_Opt. `MapLayer.Decals` on Town01_Opt, the tested `apply_color_texture_to_object(..., Diffuse, TextureColor)` calls, and a 64×64 all-channel `apply_textures_to_object` call also failed the visible-RGB criterion; Decals additionally changed unrelated scene content. Therefore a scene is never described as “without road markings” unless both RGB and raw semantic checks pass at its declared coverage. Current evidence: runs `20260917T110520Z-map-api-676d`, `20260917T111200Z-town01-opt-decals-5a62`, `20260917T145900Z-town01-texture-ead1`, `20260917T150510Z-town01-opt-direct-638d`, and `20260917T151600Z-town01-full-texture-1c2f`.
+On base Town01, `World.enable_environment_objects(RoadLines_ids, False)` removed the RoadLines semantic class from saved raw segmentation images but not the yellow markings in captured RGB. `MapLayer.Decals` on Town01_Opt, the tested `apply_color_texture_to_object(..., Diffuse, TextureColor)` calls, and a 64×64 all-channel `apply_textures_to_object` call also failed the visible-RGB criterion; Decals additionally changed unrelated scene content. Conversely, direct RoadLines hiding on Town01_Opt passed a repeated visual review and a three-location confirmation: each RGB pair lost the visible yellow markings and raw class 24 became zero. Therefore a scene is never described as “without road markings” unless both RGB and raw semantic checks pass at its declared coverage. Current evidence: runs `20260917T110520Z-map-api-676d`, `20260917T111200Z-town01-opt-decals-5a62`, `20260917T145900Z-town01-texture-ead1`, `20260917T150510Z-town01-opt-direct-638d` (corrected visual verdict), `20260917T151600Z-town01-full-texture-1c2f`, and `20260917T153000Z-town01-opt-coverage-b6e3`.
 
-This does not change D02: OpenDRIVE and Unreal authoring remain out of scope. It replaces the untested assumption that a `RoadLines`, `Decals`, or simple texture operation would complete D03.
+This does not change D02: OpenDRIVE and Unreal authoring remain out of scope. It replaces the untested assumption that a `RoadLines`, `Decals`, or simple texture operation would complete D03; the operation is valid only on the actual map and coverage for which it passed.
+
+### D12. Use Town01_Opt for the Runtime Marking-Free Scene
+
+**Status:** accepted after Stage 1 evidence on 2026-09-17.
+
+The required base map `Carla/Maps/Town01` was loaded and tested. Its captured RGB views did not pass road-marking removal. The installed `Carla/Maps/Town01_Opt` is an allowed candidate for layer/runtime operations and, after explicit testing, is selected for later route and recording work. After each Town01_Opt map load, apply `World.enable_environment_objects(RoadLines_ids, False)` to the 25 observed RoadLines environment objects.
+
+The selection is limited to the declared three-observation coverage (straight road, intersection, traffic-control location); `get_crosswalks()` returned no point, so it is not a proof that every marking across the map is removed. Preserve the exact `Carla/Maps/Town01_Opt` name and run the RGB/raw-semantic and navigation checks in downstream runs. Evidence: `20260917T153000Z-town01-opt-coverage-b6e3`, with the earlier one-location review correction in `20260917T150510Z-town01-opt-direct-638d`.
 
 ## Proposed Project Decisions
 

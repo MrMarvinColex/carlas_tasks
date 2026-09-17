@@ -651,32 +651,56 @@ def opt_direct_road_lines_probe(
         road_line_id = enum_number(road_line_label) if road_line_label is not None else None
         road_line_objects = list(world.get_environment_objects(road_line_label)) if road_line_label is not None else []
         spots, warnings = find_capture_spots(world)
-        straight_spot = next(spot for spot in spots if spot["name"] == "straight_road")
-        before = capture_pair(
-            world, straight_spot, run_dir / "snapshots" / "town01_opt_direct" / "before" / "straight_road",
-            run_dir, width, height, timeout, road_line_id,
-        )
+        before = {
+            str(spot["name"]): capture_pair(
+                world, spot, run_dir / "snapshots" / "town01_opt_direct" / "before" / str(spot["name"]),
+                run_dir, width, height, timeout, road_line_id,
+            )
+            for spot in spots
+        }
         if road_line_objects:
             world.enable_environment_objects({int(item.id) for item in road_line_objects}, False)
             for _ in range(3):
                 world.tick()
-            after = capture_pair(
-                world, straight_spot, run_dir / "snapshots" / "town01_opt_direct" / "after_roadlines" / "straight_road",
-                run_dir, width, height, timeout, road_line_id,
-            )
+            after = {
+                str(spot["name"]): capture_pair(
+                    world, spot, run_dir / "snapshots" / "town01_opt_direct" / "after_roadlines" / str(spot["name"]),
+                    run_dir, width, height, timeout, road_line_id,
+                )
+                for spot in spots
+            }
+            waypoint_checks = []
+            for spot in spots:
+                location = spot["location"]
+                assert isinstance(location, dict)
+                waypoint = world.get_map().get_waypoint(
+                    carla.Location(x=float(location["x"]), y=float(location["y"]), z=float(location["z"])),
+                    project_to_road=True,
+                    lane_type=carla.LaneType.Driving,
+                )
+                waypoint_checks.append({
+                    "spot": spot["name"],
+                    "available": waypoint is not None,
+                    "road_id": int(waypoint.road_id) if waypoint is not None else None,
+                    "lane_id": int(waypoint.lane_id) if waypoint is not None else None,
+                })
             direct_hide: dict[str, object] = {
                 "attempted": True,
                 "method": "World.enable_environment_objects(ids, False)",
                 "object_count": len(road_line_objects),
-                "comparison": compare_captures(before, after, road_line_id),
-                "before": before.metadata,
-                "after": after.metadata,
+                "captures_before": {name: capture.metadata for name, capture in before.items()},
+                "captures_after": {name: capture.metadata for name, capture in after.items()},
+                "comparisons": {
+                    name: compare_captures(before[name], after[name], road_line_id)
+                    for name in before
+                },
+                "navigation_waypoint_checks_after": waypoint_checks,
             }
         else:
             direct_hide = {
                 "attempted": False,
                 "reason": "Town01_Opt returned no RoadLines environment-object IDs.",
-                "before": before.metadata,
+                "captures_before": {name: capture.metadata for name, capture in before.items()},
             }
         return {
             "requested_map": map_name,
@@ -776,24 +800,53 @@ def validate_opt_direct_probe(probe: dict[str, object], run_dir: Path) -> dict[s
     direct_hide = opt.get("road_lines_direct_hide_test", {})
     assert isinstance(direct_hide, dict)
     image_paths: list[str] = []
-    for key in ("before", "after"):
-        capture = direct_hide.get(key)
-        if not isinstance(capture, dict):
+    for capture_set_key in ("captures_before", "captures_after"):
+        capture_set = direct_hide.get(capture_set_key, {})
+        if not isinstance(capture_set, dict):
             continue
-        rgb = capture.get("rgb", {})
-        semantic = capture.get("semantic", {})
-        assert isinstance(rgb, dict) and isinstance(semantic, dict)
-        image_paths.extend([str(rgb["path"]), str(semantic["raw_path"]), str(semantic["preview_path"])])
+        for capture in capture_set.values():
+            assert isinstance(capture, dict)
+            rgb = capture.get("rgb", {})
+            semantic = capture.get("semantic", {})
+            assert isinstance(rgb, dict) and isinstance(semantic, dict)
+            image_paths.extend([str(rgb["path"]), str(semantic["raw_path"]), str(semantic["preview_path"])])
     invalid_paths = [
         path for path in image_paths
         if not (run_dir / path).is_file() or (run_dir / path).read_bytes()[:8] != PNG_SIGNATURE
     ]
+    comparisons = direct_hide.get("comparisons", {})
+    assert isinstance(comparisons, dict)
+    semantic_counts_removed = bool(comparisons) and all(
+        isinstance(comparison, dict)
+        and comparison.get("road_lines_pixel_count_before", 0) > 0
+        and comparison.get("road_lines_pixel_count_after") == 0
+        for comparison in comparisons.values()
+    )
+    rgb_changed_at_all_spots = bool(comparisons) and all(
+        isinstance(comparison, dict)
+        and comparison.get("rgb_changed_byte_fraction", 0) > 0
+        for comparison in comparisons.values()
+    )
+    navigation_checks = direct_hide.get("navigation_waypoint_checks_after", [])
+    assert isinstance(navigation_checks, list)
     return {
-        "status": "passed" if direct_hide.get("attempted") and not invalid_paths else "failed",
+        "status": "passed" if (
+            direct_hide.get("attempted")
+            and not invalid_paths
+            and semantic_counts_removed
+            and rgb_changed_at_all_spots
+            and navigation_checks
+            and all(check.get("available") for check in navigation_checks)
+        ) else "failed",
         "checks": {
             "town01_opt_loaded": short_map_name(str(opt.get("actual_map", ""))).lower() == "town01_opt",
             "road_lines_direct_hide_attempted": direct_hide.get("attempted") is True,
             "all_images_have_png_signature": not invalid_paths,
+            "road_lines_semantic_pixels_removed_at_all_spots": semantic_counts_removed,
+            "rgb_changed_at_all_spots": rgb_changed_at_all_spots,
+            "navigation_waypoints_available_after": bool(navigation_checks) and all(
+                check.get("available") for check in navigation_checks
+            ),
         },
         "missing_or_invalid_png_paths": invalid_paths,
         "scope": "This optional Town01_Opt probe is separate from proof of the required Town01 map.",

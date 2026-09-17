@@ -1,6 +1,6 @@
 # Current Project Status
 
-Last inspected: **2026-09-17 15:08 UTC**; user timezone: Europe/Moscow.
+Last inspected: **2026-09-17 15:35 UTC**; user timezone: Europe/Moscow.
 
 ## Current Position
 
@@ -10,24 +10,24 @@ The reproducible client uses `.venv` with Python 3.10.12 and `carla==0.9.16`. Th
 
 **External-copy evidence:** the user ran `rsync` from Mac via the `carla-vm` SSH alias to `/Users/madness/Научка/CARLA/runs/20260916T210617Z-carla-smoke-beb230/`. The dry run listed 7 entries; the transfer completed; Mac-side SHA-256 validation reported `OK` for `config.json`, `metadata.json`, and `rgb/front.png`. The destination and manifest are registered in `artifacts/index.csv`.
 
-The stage-0 implementation is preserved in private remote branch `origin/00_-_stage` at commit `ce26b8e`; no pull request, merge to `main`, visibility change, or publication was performed.
+The stage-0 implementation is preserved in the private `origin/Dev` history (initially commit `ce26b8e`); no pull request, merge to `main`, visibility change, or publication was performed.
 
 The maintained environment entry points are `scripts/preflight.sh`, `scripts/setup.sh`, `scripts/run_carla.sh`, and `scripts/stop_carla.sh`. `scripts/preflight.sh` was rerun successfully after the move at 21:27 UTC. The older `env_setup_and_tests` copies were removed because the client-less smoke test was superseded and the tmux helper was unrelated to the project.
 
 **Stage-1 result:** `Town01` and `Town01_Opt` are present and loaded successfully in CARLA 0.9.16. The basic World/Actor/Blueprint lifecycle passed; weather changes were visible in RGB; the Town01 library contained 214 blueprints (41 vehicle, 52 walker, 19 sensor) and no names matching the documented animal-candidate pattern. This is evidence that an animal is not available through the exposed blueprint library, not proof that no compatible prebuilt extension exists.
 
-Visible road-marking removal is **not achieved**. On Town01, hiding 259 `RoadLines` objects removed raw semantic class ID 24 at straight-road, intersection, and traffic-control observations while yellow lines remained in RGB. On Town01_Opt, `Decals` also left markings and changed unrelated scene content; direct hiding of its 25 `RoadLines` objects again removed class 24 but not yellow RGB lines. A Diffuse texture call accepted all 259 resolved Town01 material names without error but did not visibly modify the target or three coverage views; the all-channel `apply_textures_to_object` API with 64×64 textures likewise left a target marking and its semantic label unchanged. Road topology remained at 160 edges and tested driving waypoints stayed available after direct hiding. Exact results and visual verdicts are in the five local run directories registered below.
+**Stage-1 road-marking result:** base `Town01` direct RoadLines hiding is semantic-only in the captured RGB views, and Decals/texture variants failed. However, direct `World.enable_environment_objects(RoadLines_ids, False)` on the installed `Carla/Maps/Town01_Opt` removed the visible yellow markings in three identical-position RGB pairs and raw semantic class ID 24 at all three observations: straight road 604→0 pixels, intersection 512→0, and traffic-control location 550→0. A driving waypoint remained available at each location; `Town01_Opt` topology was 160 edges. The actual selected map for later runtime work is therefore **`Town01_Opt`**, recorded explicitly rather than silently substituted for the required Town01. This is tested coverage, not a map-wide claim: the API returned no crosswalk point, so crosswalk/stop-line coverage remains unclaimed. Exact results and visual reviews are in the six local run directories registered below.
 
-The temporary `carla-server` used for stage 1 was stopped at 15:07 UTC; no CARLA container or listener is running. New data runs must be copied to the same Mac hierarchy and checksum-verified before the VM is treated as disposable.
+The direct Town01_Opt one-location review was initially recorded incorrectly as a failure; the paired PNGs show that the markings had disappeared. Its correction and the independent three-location confirmation are preserved rather than rewriting history. The temporary `carla-server` used for stage 1 is stopped; no CARLA container is running. New data runs must be copied to the same Mac hierarchy and checksum-verified before the VM is treated as disposable.
 
-**Next action:** export the five small probe runs and verify them on the Mac. Item 1.4 needs a user-approved change of approach (for example, a verified compatible packaged material/asset method) or an explicit acceptance that it remains a limitation; neither Unreal authoring nor OpenDRIVE edits are authorized by the current scope.
+**Next action:** export the six small probe runs and verify them on the Mac; then begin Stage 2 with `Town01_Opt`, applying the validated direct RoadLines operation after each map load and retaining the stated coverage limit.
 
 ## Stage Status
 
 | Stage | Status | Known state / remaining work |
 |---|---|---|
 | 0. Environment and data safety | DONE | Bootstrap and repeat-safe setup, CARLA server/client RGB smoke test, run tracking/manifest, actual image digest, private Git remote, and verified Mac `rsync` copy are recorded; new-VM recovery remains untested |
-| 1. Map and API | BLOCKED | Town01/API/weather/basic actor checks passed; all tested permitted marking methods failed visible RGB removal. Blueprint catalogue has no animal candidate; external compatible asset status remains open. |
+| 1. Map and API | DONE | Town01 load/API/weather/basic actor checks passed. On explicitly selected Town01_Opt, direct RoadLines hiding passed RGB and raw-semantic checks at straight/intersection/traffic-control observations with sampled navigation intact. Blueprint catalogue has no animal candidate; compatible external asset status remains open for Stage 7. |
 | 2. Routes | TODO | No routes or validated drives are included |
 | 3. Cameras and recording | TODO | No AV2 log/calibration is selected; 18 cameras are untested |
 | 4. Baseline dataset | TODO | No recordings exist |
@@ -51,10 +51,9 @@ Full version information and limits: [environment.md](environment.md).
 ## Missing Access and Decisions
 
 1. Secure API-key restoration after VM deletion; actual providers/IDs and spending limits.
-2. A working runtime-only method to hide all visible markings without changing OpenDRIVE/Unreal. Town01/Town01_Opt availability is now artifact-confirmed; `RoadLines`, `Decals`, and the tested texture call are not sufficient.
-3. Whether a compatible prebuilt animal asset can appear without Unreal editing. The installed blueprint catalogue has no candidate.
-4. Specific AV2 calibration and alignment of its ego origin with the chosen CARLA vehicle.
-5. Route length, weather-condition count, and repeats after the first timing/size measurement.
+2. Whether a compatible prebuilt animal asset can appear without Unreal editing. The installed blueprint catalogue has no candidate.
+3. Specific AV2 calibration and alignment of its ego origin with the chosen CARLA vehicle.
+4. Route length, weather-condition count, and repeats after the first timing/size measurement.
 
 Do not ask the user for all of these at once. Check available facts independently and ask only for a decision required by the current stage that is absent from the project.
 
@@ -63,9 +62,8 @@ Do not ask the user for all of these at once. Check available facts independentl
 - Dataset: not created; the stage-0 smoke artifact and stage-1 probes are not a dataset.
 - `artifacts/index.csv`: contains the smoke artifact with `backup_status=verified`.
 - Verified off-VM copy: `/Users/madness/Научка/CARLA/runs/20260916T210617Z-carla-smoke-beb230/`, confirmed by user-provided `rsync` and SHA-256 output at 21:19 UTC.
-- Stage-0 scripts and documentation were committed and pushed to private `origin/00_-_stage` at `ce26b8e`.
-- Stage-1 map/API code/docs at commits `470dbb0` and `31c4e94` were pushed to private `origin/Dev` during the branch rename. The all-material texture follow-up is recorded below and will be included in the next `Dev` commit.
-- Five stage-1 probe sets are locally manifest-verified but **not copied externally**: `20260917T110520Z-map-api-676d` (6,307,929 bytes), `20260917T111200Z-town01-opt-decals-5a62` (1,813,284 bytes), `20260917T145900Z-town01-texture-ead1` (4,331,674 bytes), `20260917T150510Z-town01-opt-direct-638d` (1,782,334 bytes), and `20260917T151600Z-town01-full-texture-1c2f` (1,675,533 bytes). Their total is 15,910,754 bytes.
+- Stage-0 scripts and documentation are preserved in private `origin/Dev` history from `ce26b8e`; stage-1 work at commits `470dbb0`, `31c4e94`, and the next pending Stage-1 completion commit is on the same branch.
+- Six stage-1 probe sets are locally manifest-verified but **not copied externally**: `20260917T110520Z-map-api-676d` (6,307,929 bytes), `20260917T111200Z-town01-opt-decals-5a62` (1,813,284 bytes), `20260917T145900Z-town01-texture-ead1` (4,331,674 bytes), `20260917T150510Z-town01-opt-direct-638d` (1,783,290 bytes, corrected review), `20260917T151600Z-town01-full-texture-1c2f` (1,675,533 bytes), and `20260917T153000Z-town01-opt-coverage-b6e3` (5,374,757 bytes, successful three-location confirmation). Their total is 21,286,467 bytes.
 - Ready to delete VM: **not confirmed**. Documentation on the Mac does not prove that existing server work is preserved.
 
 ## How to Update This File

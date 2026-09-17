@@ -131,7 +131,22 @@ The user rented a Massed Compute VM with an RTX A6000 48 GB, Ubuntu 22.04.5, 6 v
 
 **Handoff update:** stage-1 scripts and documentation were committed as `470dbb0` and `31c4e94`. Later on 2026-09-17, the private branch was renamed from `00_-_stage` to `Dev`; both commits were pushed to `origin/Dev`, and the former remote branch was removed as part of that rename.
 
-**Next action:** copy/verify the five probe runs on the Mac. To remove the item-1.4 blocker, obtain user direction on a compatible prebuilt runtime asset/material method or explicitly accept the limitation; Unreal authoring and OpenDRIVE modification are not authorized. The route/camera work can later proceed only with this limitation kept explicit.
+**Next action:** retained as historical handoff. The correction below supersedes its road-marking conclusion.
+
+## 2026-09-17 15:08–15:35 UTC — Correction and Three-Location Town01_Opt Confirmation
+
+**Type:** completed and verified CARLA evidence correction.
+
+- The user pointed to the saved pair in `20260917T150510Z-town01-opt-direct-638d`: the yellow markings visible in `before/straight_road/rgb.png` are absent in `after_roadlines/straight_road/rgb.png`. Re-inspection confirmed that the previous visual-review conclusion was erroneous. The original review remains in the run; `visual_review_correction.json` records the correction and the run manifest was regenerated.
+- Extended `scripts/stage1_map_api.py` so the isolated Town01_Opt direct-RoadLines probe captures and compares every available coverage location rather than only the straight road. It now records post-operation driving-waypoint checks and validates that raw RoadLines pixels were present before, zero after, RGB bytes changed, and navigation remains available.
+- Created run `20260917T153000Z-town01-opt-coverage-b6e3` on `Carla/Maps/Town01_Opt`. Hiding its 25 RoadLines objects removed the visible yellow markings in each identical-position RGB pair. Raw semantic class 24 changed straight road 604→0 pixels, intersection 512→0, and traffic-control location 550→0. Driving waypoints remained available at all three locations; topology was 160 edges. `get_crosswalks()` returned no point, so no crosswalk/stop-line or map-wide removal claim is made.
+- Local manifest verification passed for the corrected one-location run (12 signed files) and the confirmation run (23 signed files). The temporary CARLA container was checked and was not running after the work.
+
+**Artifacts:** six local-only Stage-1 probe sets total 21,286,467 bytes. The new successful evidence is `20260917T153000Z-town01-opt-coverage-b6e3`; its manifest SHA-256 is `8e22318a752ceb20eb63c8af79982de9ef8b13f9b0c1bd72268f4105de9f7853`. No off-VM copy exists yet.
+
+**Result and limitation:** Stage 1 acceptance is satisfied. Town01 was loaded separately; later runtime work selects the explicitly named `Town01_Opt` because it is the tested variant that passes the declared RGB/raw-semantic/navigation coverage. Animal availability remains a recorded risk for Stage 7, not a Stage-1 blocker.
+
+**Next action:** copy and hash-verify the six probes on the Mac, then start Stage 2 routes on Town01_Opt and apply the validated RoadLines operation after every map load.
 
 ## Template for the Next Entry
 
