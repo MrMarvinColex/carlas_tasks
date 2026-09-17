@@ -160,6 +160,27 @@ The user rented a Massed Compute VM with an RTX A6000 48 GB, Ubuntu 22.04.5, 6 v
 
 **Next action:** on a later API-responsive CARLA startup, rerun this supplemental Town10HD_Opt probe and inspect whether the yellow grid and crossing disappear. Keep its conclusion separate from the Town01_Opt Stage-1 acceptance evidence.
 
+## 2026-09-17 19:38–19:45 UTC — Stage 2 Route Construction and DebugHelper Verification
+
+**Type:** completed and locally verified CARLA route-selection experiment; autopilot driving is not included.
+
+**Goal:** apply the selected Town01_Opt RoadLines operation, choose and persist five connected routes, and verify their geometry with temporary DebugHelper drawings before implementing Traffic Manager control.
+
+- Rechecked the actual VM: RTX A6000, Docker through passwordless `sudo`, no competing CARLA container/listener, and 246 GiB free disk. Started one offscreen `carla-server`, used CARLA client/server 0.9.16, and stopped it after the run.
+- Added `scripts/stage2_routes.py`. It loads the explicit `Carla/Maps/Town01_Opt`, hides the 25 returned RoadLines object IDs, switches temporarily to a 0.05 s synchronous world, and writes a complete sorted `Map.generate_waypoints(2.0)` sample. The selected map returned 3,266 waypoints.
+- With seed `20260917`, sorted native spawn points, and direct `Waypoint.next(2.0)` calls, selected five routes. Every route has 60 driving waypoints (59 edges) and is 114.841–121.110 m long. For every stored edge the script independently reissued `predecessor.next(2.0)` and confirmed membership of the successor; all 295 checks passed.
+- Wrote `routes.json`, five coordinate/order/start/finish/road/lane JSON files, `network_waypoints.json`, and `validation.json`. The final run has both a full-network DebugHelper view and a clean map-wide route view plus five close per-route views. Debug shapes were created with finite lifetimes and were explicitly cleared after capture.
+- Visually inspected all five close top-down route images. They show the intended continuous paths: one straight route and four paths containing bends/turns. This is a visual geometry check only, not evidence that a vehicle can follow them.
+- Two earlier same-session route-view iterations are retained locally (`20260917T193903Z-town01-opt-routes-b168cc`, `20260917T194057Z-town01-opt-routes-readable-d601e3`). The final run is adopted because it separates dense full-network drawing from route-only and close per-route views.
+
+**How checked:** `scripts/stage2_routes.py` compiled with `py_compile`; `git diff --check` passed before final documentation edits. Run `20260917T194300Z-town01-opt-routes-final-c5b492` passed every machine validation: exact map, RoadLines operation, non-empty complete/driving samples, exactly five routes, ≥10 waypoints each, direct `next()` connectivity, distinct starts, valid overview PNGs, temporary debug state, and five valid per-route PNGs. It was finalized with manifest SHA-256 `99a2e111469b0efabbf93b12ca508598e2bdb940268766f9344a8ce2f2712654` and totals 12,884,530 bytes.
+
+**Artifacts and external copy:** local ignored run `runs/20260917T194300Z-town01-opt-routes-final-c5b492`, registry row `stage2-town01-opt-routes-20260917`, `validation_status=passed`, `backup_status=not_copied`. No claim of an external backup is made.
+
+**Decisions / limitations:** D13 supersedes GlobalRoutePlanner as the route-*selection* mechanism; direct waypoint adjacency is the recorded connectivity proof. It does not validate native actor spawning, Traffic Manager `set_path`, intersection decisions, completion, timeout, stuck detection, collision handling, or post-finish stopping. No camera rig or dataset recording was run.
+
+**Next action:** implement and test Traffic Manager driving over these exact saved routes, starting with one short route before all five.
+
 ## Template for the Next Entry
 
 ```text

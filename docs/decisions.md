@@ -82,6 +82,14 @@ The required base map `Carla/Maps/Town01` was loaded and tested. Its captured RG
 
 The selection is limited to the declared three-observation coverage (straight road, intersection, traffic-control location); `get_crosswalks()` returned no point, so it is not a proof that every marking across the map is removed. Preserve the exact `Carla/Maps/Town01_Opt` name and run the RGB/raw-semantic and navigation checks in downstream runs. Evidence: `20260917T153000Z-town01-opt-coverage-b6e3`, with the earlier one-location review correction in `20260917T150510Z-town01-opt-direct-638d`.
 
+### D13. Seeded Direct-Waypoint Routes for Stage-2 Selection
+
+**Status:** accepted and artifact-confirmed on 2026-09-17.
+
+For route selection, generate the complete finite `Map.generate_waypoints(2.0)` sample, then start from native map spawn points and form each route through direct `Waypoint.next(2.0)` edges. The deterministic seed is `20260917`; route files retain the spawn index, branch seed, every point's transform/road/lane identifiers, and each branch choice. The adopted set has five distinct 60-point routes and was independently revalidated by asking the predecessor for `next(2.0)` again for every edge. DebugHelper drawings use finite lifetimes and are explicitly cleared after saved views.
+
+This replaces proposal P04's use of GlobalRoutePlanner for *route selection*. It does not prove that Traffic Manager accepts or follows these locations; Stage 2 drive validation must submit the stored routes and measure actual behaviour before this decision is used for data collection. Evidence: `20260917T194300Z-town01-opt-routes-final-c5b492`.
+
 ## Proposed Project Decisions
 
 Implement these unless evidence calls for a revision. Do not attribute them to the assignment author.
@@ -91,7 +99,7 @@ Implement these unless evidence calls for a revision. Do not attribute them to t
 | P01 | LLM → validated SceneSpec → restricted CARLA executor | Schema must cover real operations and impossible requests |
 | P02 | Fixed world step, synchronous TM, sensor period 0.5 s | 18-camera performance, frame delivery, physics substeps |
 | P03 | One concrete AV2 calibration with preserved raw data | Source/log ID, ego origin, rotations, intrinsics compatibility |
-| P04 | Custom routes through GlobalRoutePlanner | Connectivity, TM following, enough duration for events |
+| P04 | Superseded by D13 for route selection; use direct `Waypoint.next()` routes and retain GlobalRoutePlanner only as a later fallback if Traffic Manager path submission requires it | Valid actor spawn, TM following, enough duration for events |
 | P05 | At least two weather configurations per route | Time, disk, meaningful comparison, reproducible randomization |
 | P06 | Around three LLM repeats per request/model | Cost and limits; fix count before running |
 | P07 | Append-only pose log then final JSON conversion | Interruption recovery and no loss of final frame |

@@ -1,6 +1,6 @@
 # Using LLMs to Edit CARLA Scenes
 
-**Working report. Status: Stage 1 is completed; route, camera, recording, LLM, animal, and comparison experiments remain.**
+**Working report. Status: Stage 1 is completed; Stage 2 route selection is completed but autopilot drives, cameras, recording, LLM, animal, and comparison experiments remain.**
 
 Document start date: 16 September 2026. Target deadline: 21 September 2026 in the current context; the source PDF specifies only day and month, without a year. Author/executor: complete before submission.
 
@@ -10,7 +10,7 @@ Recording rule: distinguish planned methods from completed experiments. For ever
 
 The assignment requires controlling CARLA through Python, recording five routes using cameras placed as in Argoverse 2, and studying natural-language scene editing with several LLMs. Per the user’s clarification, changes are limited to CARLA runtime capabilities and models are called through APIs. The selected rig has nine positions and two sensor types per position, recorded at 2 Hz of simulation time. Ego-vehicle poses are stored separately.
 
-The user reported a successful CARLA 0.9.16 offscreen test on the GPU VM. Stage 1 subsequently verified Town01 loading, basic World/Actor/Blueprint operations, rendered weather changes, and the exposed map/object catalogues. Base Town01 direct RoadLines hiding was semantic-only, but the installed `Town01_Opt` passed paired RGB/raw-semantic checks at a straight road, intersection, and traffic-control location using direct RoadLines hiding; sampled navigation remained available. Full camera recording and all later research outcomes remain unconfirmed.
+The user reported a successful CARLA 0.9.16 offscreen test on the GPU VM. Stage 1 subsequently verified Town01 loading, basic World/Actor/Blueprint operations, rendered weather changes, and the exposed map/object catalogues. Base Town01 direct RoadLines hiding was semantic-only, but the installed `Town01_Opt` passed paired RGB/raw-semantic checks at a straight road, intersection, and traffic-control location using direct RoadLines hiding; sampled navigation remained available. Stage 2 then constructed five connected 60-waypoint routes on `Town01_Opt` and saved their full geometry plus DebugHelper views. No vehicle has yet driven them, and full camera recording and all later research outcomes remain unconfirmed.
 
 After experiments, replace this section with a short abstract of the actual results, data volume, and limitations.
 
@@ -65,13 +65,19 @@ Describe discretisation resolution, route provenance, and visualisation of the c
 
 | Route | Waypoint count | Length, m | Start/finish | Provenance | File/commit |
 |---|---|---|---|---|---|
-| Not selected yet | Not measured | Not measured | — | — | — |
+| `route_01` | 60 | 118.000 | (131.730, 59.495) → (249.730, 59.481) | Native spawn point + direct `Waypoint.next(2.0)` | `routes/route_01.json`, run `20260917T194300Z-town01-opt-routes-final-c5b492` |
+| `route_02` | 60 | 121.097 | (268.586, -2.032) → (154.070, 8.580) | Native spawn point + direct `Waypoint.next(2.0)` | `routes/route_02.json`, same run |
+| `route_03` | 60 | 121.110 | (-1.986, 228.692) → (22.396, 330.547) | Native spawn point + direct `Waypoint.next(2.0)` | `routes/route_03.json`, same run |
+| `route_04` | 60 | 117.842 | (210.867, 199.150) → (328.709, 199.182) | Native spawn point + direct `Waypoint.next(2.0)` | `routes/route_04.json`, same run |
+| `route_05` | 60 | 114.841 | (173.120, 326.597) → (92.414, 288.545) | Native spawn point + direct `Waypoint.next(2.0)` | `routes/route_05.json`, same run |
+
+**Completed route-selection result:** after reapplying RoadLines hiding to 25 objects, the probe sampled all 3,266 values returned by `Map.generate_waypoints(2.0)`. A fixed selection seed (`20260917`) chose distinct native spawn anchors. Each of the 295 transitions was rechecked by confirming that the stored successor appeared in the predecessor's `next(2.0)` response. The run retains the full network sample, a route index, five complete route files, a full-network DebugHelper view, and one temporary DebugHelper overview per route. Drawings were cleared before exit. This establishes only map-graph connectivity and visual route inspection; the run used no ego actor or Traffic Manager. Client/server version was 0.9.16; it began at `de16360` with uncommitted Stage-2 code, which is recorded in its metadata.
 
 ### 1.6. Traffic Manager Autopilot
 
 Describe vehicle spawning, path assignment, TM settings, completion criterion, timeout, and stuck-vehicle handling. Attach actual trajectories for five drives and deviations from routes.
 
-**Result:** not completed. Interpretation clarification: TM uses simulator state; this experiment alone does not evaluate the learned visual perception of an autonomous-driving system.
+**Result:** not completed. The five stored route geometries are available, but no ego vehicle has been spawned and Traffic Manager has not accepted a path. The next test must record valid spawn, synchronous TM settings, intersection behaviour, route deviation, finish threshold, timeout, stuck/collision handling, and no unintended post-finish continuation. Interpretation clarification: TM uses simulator state; this experiment alone does not evaluate the learned visual perception of an autonomous-driving system.
 
 ### 1.7. Camera and Transform Recording at 2 Hz
 

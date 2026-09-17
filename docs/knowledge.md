@@ -52,6 +52,8 @@ Route criteria: at least 10 waypoints, usable start, connectivity, suitable dire
 
 DebugHelper is for route-selection verification. Remove or expire debug markings before dataset recording, because they may appear in RGB.
 
+**EXPERIMENT (2026-09-17, CARLA 0.9.16):** On `Carla/Maps/Town01_Opt`, after hiding 25 RoadLines objects, `Map.generate_waypoints(2.0)` returned a complete finite sample of 3,266 waypoints. Five seeded native-spawn routes were created with direct `Waypoint.next(2.0)` calls; every route has 60 driving waypoints, 59 rechecked direct edges, and length 114.841–121.110 m. Complete-network and per-route DebugHelper views were captured, then cleared. This verifies graph construction only; no actor spawn, Traffic Manager path submission, or actual drive is implied. Run `20260917T194300Z-town01-opt-routes-final-c5b492`.
+
 ## 5. Argoverse 2 Camera Rig
 
 **DOC:** AV2 Sensor Dataset provides seven ring cameras, two front stereo cameras, sensor-to-ego calibration, and camera intrinsics. The full dataset is very large; this project needs a selected calibration, not every sensor log. S09, S10.
