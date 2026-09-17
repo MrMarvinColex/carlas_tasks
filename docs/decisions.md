@@ -66,6 +66,14 @@ Every task restores context through `AGENTS.md` and documents. Stage numbers are
 
 Development stays in private Git. Before the final step, inspect contents and history, then publish code only with authorization. Put report and dataset on Google Drive. Keep a local assignment copy; do not publish it automatically. Billing shutdown and VM deletion are independent of publication.
 
+### D11. Do Not Treat Semantic-Only Hiding as Road-Marking Removal
+
+**Status:** accepted after stage-1 evidence on 2026-09-17.
+
+In CARLA 0.9.16, `World.enable_environment_objects(RoadLines_ids, False)` removed the RoadLines semantic class from saved raw segmentation images but did not remove the same yellow markings from RGB views on Town01 or Town01_Opt. `MapLayer.Decals` on Town01_Opt and the tested `apply_color_texture_to_object(..., Diffuse, TextureColor)` calls also failed the visible-RGB criterion; Decals additionally changed unrelated scene content. Therefore a scene is never described as “without road markings” unless both RGB and raw semantic checks pass at its declared coverage. Current evidence: runs `20260917T110520Z-map-api-676d`, `20260917T111200Z-town01-opt-decals-5a62`, `20260917T145900Z-town01-texture-ead1`, and `20260917T150510Z-town01-opt-direct-638d`.
+
+This does not change D02: OpenDRIVE and Unreal authoring remain out of scope. It replaces the untested assumption that a `RoadLines`, `Decals`, or simple texture operation would complete D03.
+
 ## Proposed Project Decisions
 
 Implement these unless evidence calls for a revision. Do not attribute them to the assignment author.

@@ -32,6 +32,14 @@ Do not alter OpenDRIVE to achieve a visual result. Save before/after frames from
 
 If the method cannot meet the requirement, keep the item blocked. Do not present a code fragment suggested in chat as a tested implementation.
 
+**EXPERIMENT (2026-09-17, CARLA 0.9.16):** Town01 exposes 259 `RoadLines` environment objects. Hiding them with `World.enable_environment_objects(ids, False)` reduced raw semantic class ID 24 to zero at a straight road (605→0 pixels), intersection (512→0), and traffic-control location (565→0), while visual inspection of the paired RGB files found yellow markings still present at all three locations. Topology remained 160 edges and the tested driving waypoints remained available. Run `20260917T110520Z-map-api-676d`.
+
+**EXPERIMENT (2026-09-17, CARLA 0.9.16):** `Town01_Opt` exists. Unloading `MapLayer.Decals` left yellow markings visible and changed unrelated scene content (run `20260917T111200Z-town01-opt-decals-5a62`). Directly hiding its 25 `RoadLines` objects again changed class 24 from 604 to 0 pixels but left the same yellow RGB markings visible (run `20260917T150510Z-town01-opt-direct-638d`).
+
+**EXPERIMENT (2026-09-17, CARLA 0.9.16):** Texture API material targets use `Road_Marking_Town01_N`, while `EnvironmentObject.name` adds `_SM_0`. Resolving and applying a 2×2 neutral `TextureColor` through `MaterialParameter.Diffuse` succeeded without API errors for all 259 target names, but visual inspection found no usable change to a target marking or three coverage observations. Combining this call with RoadLines hiding still left markings visible in RGB. Run `20260917T145900Z-town01-texture-ead1`.
+
+**EXPERIMENT (2026-09-17, CARLA 0.9.16):** Town01's blueprint library contained 214 entries (41 `vehicle.*`, 52 `walker.*`, 19 `sensor.*`) and zero IDs matching `animal`, `dog`, `cat`, `deer`, `horse`, `cow`, `sheep`, `goat`, `pig`, `bird`, `bear`, `wolf`, or `fox` as name components. This is an exposed-catalogue result only; it does not establish absence of every compatible prebuilt extension. Run `20260917T110520Z-map-api-676d`.
+
 ## 4. Waypoints and Routes
 
 **DOC:** a waypoint is an oriented point on a road lane, with transform and road identifiers. A continuous road is discretized at a declared resolution. Traffic Manager `set_path` receives a sequence of Locations; an arbitrary list can be topologically impossible. S03, S07.

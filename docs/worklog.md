@@ -110,6 +110,26 @@ The user rented a Massed Compute VM with an RTX A6000 48 GB, Ubuntu 22.04.5, 6 v
 
 **Next action:** await a separate stage-1 request.
 
+## 2026-09-17 10:53–15:08 UTC — Stage 1 Map/API Capability Probe
+
+**Type:** completed and verified CARLA experiments on the current VM; requirement 1.4 remains incomplete.
+
+**Goal:** load Town01, exercise basic API operations, inspect visible road-marking controls and early animal availability, and preserve before/after evidence.
+
+- Rechecked the VM before the run: Ubuntu 22.04.5, RTX A6000 (driver 580.126.09), Docker 29.1.5, 246 GiB free disk, no competing CARLA container. Started one offscreen `carla-server` at a time and stopped the final container after the probes.
+- Added `scripts/stage1_map_api.py`. It records all maps returned by the installed server, loads Town01, captures 800×600 RGB plus unmodified/raw and CityScapes-preview semantic PNGs at a generated straight road, junction, and traffic-control fallback (the map returned no crosswalk API point), tests basic vehicle actor creation/destruction, validates rendered weather change, and catalogues environment objects/blueprints.
+- Artifact-confirmed: `Town01` and `Town01_Opt` are available. Town01 loaded as `Carla/Maps/Town01`; client/server were both 0.9.16. The actor lifecycle passed, weather differed in rendered RGB, and map topology had 160 edges. Town01 had 259 `RoadLines` objects; hiding them made raw semantic class 24 disappear at all three locations (605→0, 512→0, 565→0) with topology and sampled driving waypoints preserved. Visual inspection of the paired RGB frames found the yellow markings still present. The run therefore is `incomplete`, not a successful removal.
+- Tested `Town01_Opt` as an allowed optional map-layer candidate. `MapLayer.Decals` left markings visible and made unrelated scene changes. Direct hiding of its 25 `RoadLines` objects likewise changed class 24 from 604 to 0 but left yellow RGB lines visible. These runs do not substitute Town01 for the assignment requirement.
+- Added `scripts/stage1_texture_probe.py`. Its first attempt failed because environment-object names use `_SM_0` while texture API names omit that suffix; this failed run was retained. The corrected probe resolved all 259 material names and applied a 2×2 neutral Diffuse `TextureColor` without API errors. RGB inspection found no usable alteration to the target marking or the straight/intersection/traffic-control coverage; combined texture plus hiding still retained visible lines. No OpenDRIVE, Unreal asset, or texture file was edited.
+- The exposed Town01 blueprint library held 214 IDs (41 vehicle, 52 walker, 19 sensor) and no candidate animal ID under the documented name pattern. This is not proof that a compatible prebuilt animal extension is unavailable; it is a stage-1 risk result.
+- Finalized all complete, incomplete, and failed probe directories with manifest hashes. Local manifest verification passed for the four main evidence sets: `20260917T110520Z-map-api-676d`, `20260917T111200Z-town01-opt-decals-5a62`, `20260917T145900Z-town01-texture-ead1`, and `20260917T150510Z-town01-opt-direct-638d`. Two interrupted Town01_Opt transitions and the initial texture-name failure remain retained as failed runs.
+
+**Artifacts:** the four main local-only runs total 14,235,221 bytes and are registered in `artifacts/index.csv`; each has `backup_status=not_copied`. Visual verdicts are stored in each main run's `visual_review.json`. No external copy was made in this task.
+
+**Result and limitation:** items 1.1–1.3/basic use are supported by stage-0/1 evidence. Item 1.4 is blocked: all tested runtime candidates (`RoadLines`, `Decals`, direct hide on Town01_Opt, and supported Diffuse texture replacement) fail the required visible-RGB removal. A semantic-only change is explicitly not treated as success. Stage 1 cannot be `DONE` under the present scope.
+
+**Next action:** push the stage-1 scripts and documentation to the private remote, and copy/verify the four probe runs on the Mac. To remove the item-1.4 blocker, obtain user direction on a compatible prebuilt runtime asset/material method or explicitly accept the limitation; Unreal authoring and OpenDRIVE modification are not authorized. The route/camera work can later proceed only with this limitation kept explicit.
+
 ## Template for the Next Entry
 
 ```text

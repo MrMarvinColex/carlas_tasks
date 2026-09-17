@@ -2,7 +2,7 @@
 
 This is the portable context package for the test assignment “Using LLMs with the CARLA Autonomous Driving Simulator.” It was prepared on 16 September 2026 from the original PDF and the user’s clarifications. The working deadline is 21 September; the PDF does not state a year, and 2026 is inferred from the current context.
 
-**This package contains documentation, tracking templates, a minimal reproducible stage-0 CARLA client, and a local copy of the original assignment. It does not yet contain route generation, 18-camera recording, a dataset validator, or an LLM executor.** Do not treat later-stage commands as already implemented.
+**This package contains documentation, tracking templates, a minimal reproducible stage-0 CARLA client, and stage-1 map/API probes. It does not yet contain route generation, 18-camera recording, a dataset validator, or an LLM executor.** Do not treat later-stage commands as already implemented.
 
 ## What the Project Builds
 
@@ -91,8 +91,14 @@ bash scripts/stop_carla.sh
 
 The path was smoke-tested on 16 September 2026 in `runs/20260916T210617Z-carla-smoke-beb230`: it produced a readable 800×600 PNG with CARLA client/server 0.9.16. The run directory contains configuration, metadata, one `rgb/front.png`, diagnostics, and a SHA-256 manifest. To verify a copy made by the user-selected external mechanism, run `scripts/verify_export.py SOURCE_RUN EXTERNAL_COPY`; it compares every file and does not copy or delete anything. Do not call a second directory on this VM an external backup.
 
+## Stage-1 Evidence
+
+`scripts/stage1_map_api.py` is a small, synchronous capability probe: it loads Town01, creates/destroys a vehicle actor, captures paired RGB/raw-semantic views, checks rendered weather, catalogues environment objects/blueprints, and tests `RoadLines`. `scripts/stage1_texture_probe.py` tests the documented material-texture API only against resolved Town01 RoadLines names. Both create an auditable run directory and leave no actors behind.
+
+On 17 September 2026, these probes confirmed Town01/Town01_Opt availability but did **not** find a valid runtime-only road-marking removal: RoadLines hiding changes semantic class 24 without removing yellow RGB lines; Decals has unrelated side effects; the tested Diffuse texture update has no visible effect. See `docs/STATUS.md` and the four stage-1 registry rows. Do not use the scripts to claim a marking-free map until a method passes both RGB and raw-semantic checks. The stage-1 probe runs are local-only until copied and hash-verified on the Mac.
+
 ## Current Starting Point
 
-The user reported a successful offscreen CARLA 0.9.16 launch on an RTX A6000 48 GB GPU. The test container is stopped, and its image remains on the current VM. Raw logs and code from that check were not included. Cameras, routes, road-marking removal, and animal assets have not been tested in this project. See [STATUS](docs/STATUS.md) for details.
+The user reported a successful offscreen CARLA 0.9.16 launch on an RTX A6000 48 GB GPU. The stage-1 container is stopped and its image remains on the current VM. Town01/map API capabilities are now tested, while routes, camera rig/recording, a working visual marking-removal method, and a usable animal asset remain outstanding. See [STATUS](docs/STATUS.md) for details.
 
 Before deleting a VM, push code and verify an external copy of results. According to the user, Stop does not end billing and Delete is irreversible. This package performs no VM operations.

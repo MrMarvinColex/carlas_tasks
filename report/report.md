@@ -10,7 +10,7 @@ Recording rule: distinguish planned methods from completed experiments. For ever
 
 The assignment requires controlling CARLA through Python, recording five routes using cameras placed as in Argoverse 2, and studying natural-language scene editing with several LLMs. Per the user’s clarification, changes are limited to CARLA runtime capabilities and models are called through APIs. The selected rig has nine positions and two sensor types per position, recorded at 2 Hz of simulation time. Ego-vehicle poses are stored separately.
 
-The user reported a successful CARLA 0.9.16 offscreen test on the GPU VM. The raw logs from that check were not supplied with this package; full camera recording and all research outcomes remain unconfirmed. This document therefore records the plan and locations for future evidence.
+The user reported a successful CARLA 0.9.16 offscreen test on the GPU VM. Stage 1 subsequently verified Town01 loading, basic World/Actor/Blueprint operations, rendered weather changes, and the exposed map/object catalogues. However, no permitted runtime operation tested so far removes road markings from both RGB and raw semantic observations; item 1.4 remains blocked. Full camera recording and all later research outcomes remain unconfirmed.
 
 After experiments, replace this section with a short abstract of the actual results, data volume, and limitations.
 
@@ -37,21 +37,26 @@ Describe Client, World, Actor, Blueprint, and actor lifecycle using a genuinely 
 
 **Completed minimal smoke result:** an isolated client connected to the offscreen server, spawned temporary vehicle/camera actors, saved a readable 800×600 RGB PNG, and cleaned the actors up. The server and client reported 0.9.16. The run used CARLA's default `Town10HD_Opt`; it is only a connection/frame test and does not validate Town01, sensors beyond one RGB camera, or synchronous recording. The run manifest passed local verification and the user verified its Mac copy with `rsync` plus SHA-256 checks for all manifest files. The source location and external copy are registered in `artifacts/index.csv`.
 
+**Stage-1 basic API result:** run `20260917T110520Z-map-api-676d` loaded Town01, created and destroyed a vehicle actor from the blueprint library, saved paired RGB/semantic captures, and changed weather parameters before verifying an RGB byte-level change. It used temporary synchronous settings (0.05 s) only for deterministic captures and restored settings afterwards. Client/server versions were both 0.9.16. This is a map/API probe, not a multi-camera recording result.
+
 ### 1.3. Loading Town01
 
 Record the list of available maps, the actual name of the loaded map, and, if `Town01_Opt` is used, the rationale and its correspondence to Town01. Attach an overview image and launch metadata.
 
-**Result:** not checked.
+**Result:** artifact-confirmed in run `20260917T110520Z-map-api-676d`. `get_available_maps()` contained `Town01` and `Town01_Opt`; the required map was loaded as `Carla/Maps/Town01`. `Town01_Opt` was investigated separately as an optional map-layer candidate, not silently substituted for Town01. The 800×600 nadir captures cover a generated straight road, a generated junction, and a traffic-control location; `get_crosswalks()` returned no point, so there is no claim that a crosswalk was captured.
 
 ### 1.4. Removing Road Markings
 
-The goal is to hide visual road markings while preserving the road and navigation topology. Before implementation, environment objects, map layers, and textures will be investigated. No method is confirmed yet.
+The goal is to hide visual road markings while preserving the road and navigation topology. Stage 1 tested the installed runtime APIs using paired RGB/raw-semantic observations and visual review. No tested method is sufficient; the requirement remains blocked.
 
 | Method under test | Map/version | RGB before/after | Semantic before/after | Side effects | Conclusion |
 |---|---|---|---|---|---|
-| To be completed after an experiment | Not checked | — | — | — | No result |
+| `enable_environment_objects` for all RoadLines | Town01 / 0.9.16 | Yellow markings remained at straight road, intersection, traffic control | Class 24: 605→0, 512→0, 565→0 pixels | Topology stayed 160 edges; sampled driving waypoints remained available | Semantic-only; fails visible removal |
+| `unload_map_layer(Decals)` | Town01_Opt / 0.9.16 | Yellow markings remained | Not a sufficient semantic removal check | Broad unrelated scene changes | Not targeted; fails |
+| `enable_environment_objects` for RoadLines | Town01_Opt / 0.9.16 | Yellow markings remained | Class 24: 604→0 pixels | Topology stayed 160 edges | Semantic-only; fails |
+| Diffuse `TextureColor` on all resolved RoadLines materials plus hiding | Town01 / 0.9.16 | Target and three coverage views retained yellow markings | Target: 402→402 with texture; combined capture class 24 = 0 | 259 calls returned without API error | No usable visual effect; fails |
 
-Specify the inspected areas, removed and remaining markings, and evidence that waypoints were preserved. If only repainting is used, disclose how it differs from hiding geometry and semantic labels. Do not claim a performance gain without measurement.
+Evidence: `20260917T110520Z-map-api-676d`, `20260917T111200Z-town01-opt-decals-5a62`, `20260917T145900Z-town01-texture-ead1`, and `20260917T150510Z-town01-opt-direct-638d`. Each has matched PNGs, raw semantic counts, a visual review, and local manifest verification; none has an external copy yet. These observations cover samples only, but a visible remaining marking is already enough to reject a claim of complete removal. No performance effect was measured.
 
 ### 1.5. Waypoints and Five Routes
 
@@ -142,7 +147,7 @@ Use equivalent scene context and tasks for all variants. Record the raw response
 |---|---|---:|---|---|---|---:|---:|---:|---|
 | Not run | — | — | — | — | — | — | — | — | — |
 
-**Results and conclusions:** unavailable until experiments are conducted.
+**Early capability result:** Town01's exposed blueprint catalogue contained 214 entries (41 vehicle, 52 walker, 19 sensor) and no name matching the project animal-candidate pattern. This does not prove that no compatible prebuilt animal package exists; mesh/asset spawning, visibility, motion, collision, and Traffic Manager response remain untested. Evidence: `20260917T110520Z-map-api-676d`.
 
 ## 4. Adding a Moving Animal
 
