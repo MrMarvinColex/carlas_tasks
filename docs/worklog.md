@@ -149,6 +149,17 @@ The user rented a Massed Compute VM with an RTX A6000 48 GB, Ubuntu 22.04.5, 6 v
 
 **Next action:** copy and hash-verify the six probes on the Mac, then start Stage 2 routes on Town01_Opt and apply the validated RoadLines operation after every map load.
 
+## 2026-09-17 15:35–15:54 UTC — Attempted Supplemental Check of the Old Smoke View
+
+**Type:** incomplete diagnostic; no image result.
+
+- The user identified the yellow box grid and an adjacent crossing in `runs/20260916T210617Z-carla-smoke-beb230/rgb/front.png`. Inspection confirmed that this is a front-camera image from `Carla/Maps/Town10HD_Opt`, whereas the selected project map is `Town01_Opt`. The old smoke metadata has no vehicle transform, so an exact camera-pose replay is not provable.
+- Added `scripts/stage1_reference_marking_probe.py`: it is designed to use the smoke script's first-free-spawn loop, first vehicle blueprint, and 800×600, 90-degree front camera at `x=1.6,z=2.3`; it captures RGB/raw semantic before and after hiding all RoadLines and records the newly used transform. It compiled, but has not yet reached a CARLA capture.
+- Started one temporary CARLA container. Ports 2000–2002 opened and the Unreal process used the GPU, but repeated client `get_world()` attempts with 5–20-second timeouts did not receive an API response. No probe images or result JSON were created. The container was stopped rather than left consuming GPU resources.
+- Finalized and locally verified the incomplete 9,331-byte run `20260917T154728Z-town10hd-reference-marking-8cb727`; it contains only configuration and metadata. This is not evidence about marking removal.
+
+**Next action:** on a later API-responsive CARLA startup, rerun this supplemental Town10HD_Opt probe and inspect whether the yellow grid and crossing disappear. Keep its conclusion separate from the Town01_Opt Stage-1 acceptance evidence.
+
 ## Template for the Next Entry
 
 ```text

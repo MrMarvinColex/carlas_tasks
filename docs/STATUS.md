@@ -1,6 +1,6 @@
 # Current Project Status
 
-Last inspected: **2026-09-17 15:35 UTC**; user timezone: Europe/Moscow.
+Last inspected: **2026-09-17 15:54 UTC**; user timezone: Europe/Moscow.
 
 ## Current Position
 
@@ -18,9 +18,9 @@ The maintained environment entry points are `scripts/preflight.sh`, `scripts/set
 
 **Stage-1 road-marking result:** base `Town01` direct RoadLines hiding is semantic-only in the captured RGB views, and Decals/texture variants failed. However, direct `World.enable_environment_objects(RoadLines_ids, False)` on the installed `Carla/Maps/Town01_Opt` removed the visible yellow markings in three identical-position RGB pairs and raw semantic class ID 24 at all three observations: straight road 604→0 pixels, intersection 512→0, and traffic-control location 550→0. A driving waypoint remained available at each location; `Town01_Opt` topology was 160 edges. The actual selected map for later runtime work is therefore **`Town01_Opt`**, recorded explicitly rather than silently substituted for the required Town01. This is tested coverage, not a map-wide claim: the API returned no crosswalk point, so crosswalk/stop-line coverage remains unclaimed. Exact results and visual reviews are in the six local run directories registered below.
 
-The direct Town01_Opt one-location review was initially recorded incorrectly as a failure; the paired PNGs show that the markings had disappeared. Its correction and the independent three-location confirmation are preserved rather than rewriting history. The temporary `carla-server` used for stage 1 is stopped; no CARLA container is running. New data runs must be copied to the same Mac hierarchy and checksum-verified before the VM is treated as disposable.
+The direct Town01_Opt one-location review was initially recorded incorrectly as a failure; the paired PNGs show that the markings had disappeared. Its correction and the independent three-location confirmation are preserved rather than rewriting history. A user-requested supplementary check of the old smoke view is not yet an observation: the old frame is from `Town10HD_Opt`, not the selected map, and its vehicle transform was not recorded. A new first-free-spawn reproduction attempt opened CARLA ports but the server did not answer `get_world()` within repeated 5–20-second timeouts, so no frames were created and the container was stopped. The new reusable probe is retained as untested code. No CARLA container is running. New data runs must be copied to the same Mac hierarchy and checksum-verified before the VM is treated as disposable.
 
-**Next action:** export the six small probe runs and verify them on the Mac; then begin Stage 2 with `Town01_Opt`, applying the validated direct RoadLines operation after each map load and retaining the stated coverage limit.
+**Next action:** when CARLA starts responding to API clients again, rerun the supplementary Town10HD_Opt reference-view probe to test the yellow grid/adjacent crossing visible in the old smoke image; then export the runs and begin Stage 2 with `Town01_Opt`, applying the validated direct RoadLines operation after each map load and retaining the stated coverage limit.
 
 ## Stage Status
 
@@ -64,6 +64,7 @@ Do not ask the user for all of these at once. Check available facts independentl
 - Verified off-VM copy: `/Users/madness/Научка/CARLA/runs/20260916T210617Z-carla-smoke-beb230/`, confirmed by user-provided `rsync` and SHA-256 output at 21:19 UTC.
 - Stage-0 scripts and documentation are preserved in private `origin/Dev` history from `ce26b8e`; the completed Stage-1 correction and validation are preserved at `0ade213` on the same branch.
 - Six stage-1 probe sets are locally manifest-verified but **not copied externally**: `20260917T110520Z-map-api-676d` (6,307,929 bytes), `20260917T111200Z-town01-opt-decals-5a62` (1,813,284 bytes), `20260917T145900Z-town01-texture-ead1` (4,331,674 bytes), `20260917T150510Z-town01-opt-direct-638d` (1,783,290 bytes, corrected review), `20260917T151600Z-town01-full-texture-1c2f` (1,675,533 bytes), and `20260917T153000Z-town01-opt-coverage-b6e3` (5,374,757 bytes, successful three-location confirmation). Their total is 21,286,467 bytes.
+- The locally verified 9,331-byte run `20260917T154728Z-town10hd-reference-marking-8cb727` is incomplete: it has configuration/metadata only because its Town10HD_Opt server never became API-responsive. It is separate from the six Stage-1 evidence probes and is not copied externally.
 - Ready to delete VM: **not confirmed**. Documentation on the Mac does not prove that existing server work is preserved.
 
 ## How to Update This File
