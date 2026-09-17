@@ -38,6 +38,8 @@ If the method cannot meet the requirement, keep the item blocked. Do not present
 
 **EXPERIMENT (2026-09-17, CARLA 0.9.16):** Texture API material targets use `Road_Marking_Town01_N`, while `EnvironmentObject.name` adds `_SM_0`. Resolving and applying a 2×2 neutral `TextureColor` through `MaterialParameter.Diffuse` succeeded without API errors for all 259 target names, but visual inspection found no usable change to a target marking or three coverage observations. Combining this call with RoadLines hiding still left markings visible in RGB. Run `20260917T145900Z-town01-texture-ead1`.
 
+**EXPERIMENT (2026-09-17, CARLA 0.9.16):** A separate 64×64 `apply_textures_to_object` call set Diffuse, Emissive, Normal, and AO/Roughness/Metallic/Emissive textures on resolved material `Road_Marking_Town01_1`. The call succeeded, but the matched target RGB pair retained yellow segments and its RoadLines class count remained 402→402. This closes the tested all-material texture API variant; it does not imply that no future compatible packaged material solution exists. Run `20260917T151600Z-town01-full-texture-1c2f`.
+
 **EXPERIMENT (2026-09-17, CARLA 0.9.16):** Town01's blueprint library contained 214 entries (41 `vehicle.*`, 52 `walker.*`, 19 `sensor.*`) and zero IDs matching `animal`, `dog`, `cat`, `deer`, `horse`, `cow`, `sheep`, `goat`, `pig`, `bird`, `bear`, `wolf`, or `fox` as name components. This is an exposed-catalogue result only; it does not establish absence of every compatible prebuilt extension. Run `20260917T110520Z-map-api-676d`.
 
 ## 4. Waypoints and Routes

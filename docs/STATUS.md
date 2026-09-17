@@ -4,7 +4,7 @@ Last inspected: **2026-09-17 15:08 UTC**; user timezone: Europe/Moscow.
 
 ## Current Position
 
-Stage 0 acceptance is complete. The actual project root is `/home/Ubuntu/carlas_tasks` (not the historical `~/carla_test_task` path), under user `Ubuntu`, branch `00_-_stage`; the private `origin` is reachable and `origin/main` resolved to `0e52c6a` before the stage-0 changes. Stage-1 scripts and documentation are currently uncommitted.
+Stage 0 acceptance is complete. The actual project root is `/home/Ubuntu/carlas_tasks` (not the historical `~/carla_test_task` path), under user `Ubuntu`, branch `Dev`; the private `origin` is reachable and its former `00_-_stage` branch was renamed to `Dev` on 2026-09-17. `origin/main` remains at the historical `0e52c6a`; stage work is intentionally accumulated on private `Dev`.
 
 The reproducible client uses `.venv` with Python 3.10.12 and `carla==0.9.16`. The local image is `carlasim/carla:0.9.16@sha256:aaf1df22702780ece072069e23d03c4879b002ae028c79744b09c4c7ddbae953`; the server/container versions were both 0.9.16. Run `20260916T210617Z-carla-smoke-beb230` captured and visually inspected one 800×600 RGB PNG, wrote a manifest, and passed local manifest verification. Its default map was `Town10HD_Opt`; this does not satisfy the separate Town01 test in stage 1. The `carla-server` container created for that run was stopped; no CARLA container is running.
 
@@ -16,11 +16,11 @@ The maintained environment entry points are `scripts/preflight.sh`, `scripts/set
 
 **Stage-1 result:** `Town01` and `Town01_Opt` are present and loaded successfully in CARLA 0.9.16. The basic World/Actor/Blueprint lifecycle passed; weather changes were visible in RGB; the Town01 library contained 214 blueprints (41 vehicle, 52 walker, 19 sensor) and no names matching the documented animal-candidate pattern. This is evidence that an animal is not available through the exposed blueprint library, not proof that no compatible prebuilt extension exists.
 
-Visible road-marking removal is **not achieved**. On Town01, hiding 259 `RoadLines` objects removed raw semantic class ID 24 at straight-road, intersection, and traffic-control observations while yellow lines remained in RGB. On Town01_Opt, `Decals` also left markings and changed unrelated scene content; direct hiding of its 25 `RoadLines` objects again removed class 24 but not yellow RGB lines. A texture call accepted all 259 resolved Town01 material names without error but did not visibly modify the target or three coverage views. Road topology remained at 160 edges and tested driving waypoints stayed available after direct hiding. Exact results and visual verdicts are in the four local run directories registered below.
+Visible road-marking removal is **not achieved**. On Town01, hiding 259 `RoadLines` objects removed raw semantic class ID 24 at straight-road, intersection, and traffic-control observations while yellow lines remained in RGB. On Town01_Opt, `Decals` also left markings and changed unrelated scene content; direct hiding of its 25 `RoadLines` objects again removed class 24 but not yellow RGB lines. A Diffuse texture call accepted all 259 resolved Town01 material names without error but did not visibly modify the target or three coverage views; the all-channel `apply_textures_to_object` API with 64×64 textures likewise left a target marking and its semantic label unchanged. Road topology remained at 160 edges and tested driving waypoints stayed available after direct hiding. Exact results and visual verdicts are in the five local run directories registered below.
 
 The temporary `carla-server` used for stage 1 was stopped at 15:07 UTC; no CARLA container or listener is running. New data runs must be copied to the same Mac hierarchy and checksum-verified before the VM is treated as disposable.
 
-**Next action:** commit `470dbb0` preserves the stage-1 scripts/docs locally; its push to the private remote was not performed because the required elevated network execution was denied. Export the four small probe runs, then push the local commits when authorized. Item 1.4 needs a user-approved change of approach (for example, a verified compatible packaged material/asset method) or an explicit acceptance that it remains a limitation; neither Unreal authoring nor OpenDRIVE edits are authorized by the current scope.
+**Next action:** export the five small probe runs and verify them on the Mac. Item 1.4 needs a user-approved change of approach (for example, a verified compatible packaged material/asset method) or an explicit acceptance that it remains a limitation; neither Unreal authoring nor OpenDRIVE edits are authorized by the current scope.
 
 ## Stage Status
 
@@ -64,8 +64,8 @@ Do not ask the user for all of these at once. Check available facts independentl
 - `artifacts/index.csv`: contains the smoke artifact with `backup_status=verified`.
 - Verified off-VM copy: `/Users/madness/Научка/CARLA/runs/20260916T210617Z-carla-smoke-beb230/`, confirmed by user-provided `rsync` and SHA-256 output at 21:19 UTC.
 - Stage-0 scripts and documentation were committed and pushed to private `origin/00_-_stage` at `ce26b8e`.
-- Stage-1 code/docs are committed locally at `470dbb0` but have not been pushed to `origin`.
-- Four stage-1 probe sets are locally manifest-verified but **not copied externally**: `20260917T110520Z-map-api-676d` (6,307,929 bytes), `20260917T111200Z-town01-opt-decals-5a62` (1,813,284 bytes), `20260917T145900Z-town01-texture-ead1` (4,331,674 bytes), and `20260917T150510Z-town01-opt-direct-638d` (1,782,334 bytes). Their total is 14,235,221 bytes.
+- Stage-1 map/API code/docs at commits `470dbb0` and `31c4e94` were pushed to private `origin/Dev` during the branch rename. The all-material texture follow-up is recorded below and will be included in the next `Dev` commit.
+- Five stage-1 probe sets are locally manifest-verified but **not copied externally**: `20260917T110520Z-map-api-676d` (6,307,929 bytes), `20260917T111200Z-town01-opt-decals-5a62` (1,813,284 bytes), `20260917T145900Z-town01-texture-ead1` (4,331,674 bytes), `20260917T150510Z-town01-opt-direct-638d` (1,782,334 bytes), and `20260917T151600Z-town01-full-texture-1c2f` (1,675,533 bytes). Their total is 15,910,754 bytes.
 - Ready to delete VM: **not confirmed**. Documentation on the Mac does not prove that existing server work is preserved.
 
 ## How to Update This File

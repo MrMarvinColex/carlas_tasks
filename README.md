@@ -95,7 +95,7 @@ The path was smoke-tested on 16 September 2026 in `runs/20260916T210617Z-carla-s
 
 `scripts/stage1_map_api.py` is a small, synchronous capability probe: it loads Town01, creates/destroys a vehicle actor, captures paired RGB/raw-semantic views, checks rendered weather, catalogues environment objects/blueprints, and tests `RoadLines`. `scripts/stage1_texture_probe.py` tests the documented material-texture API only against resolved Town01 RoadLines names. Both create an auditable run directory and leave no actors behind.
 
-On 17 September 2026, these probes confirmed Town01/Town01_Opt availability but did **not** find a valid runtime-only road-marking removal: RoadLines hiding changes semantic class 24 without removing yellow RGB lines; Decals has unrelated side effects; the tested Diffuse texture update has no visible effect. See `docs/STATUS.md` and the four stage-1 registry rows. Do not use the scripts to claim a marking-free map until a method passes both RGB and raw-semantic checks. The stage-1 probe runs are local-only until copied and hash-verified on the Mac.
+On 17 September 2026, these probes confirmed Town01/Town01_Opt availability but did **not** find a valid runtime-only road-marking removal: RoadLines hiding changes semantic class 24 without removing yellow RGB lines; Decals has unrelated side effects; neither the tested Diffuse nor all-channel texture updates has a visible effect. See `docs/STATUS.md` and the five stage-1 registry rows. Do not use the scripts to claim a marking-free map until a method passes both RGB and raw-semantic checks. The stage-1 probe runs are local-only until copied and hash-verified on the Mac.
 
 ## Current Starting Point
 

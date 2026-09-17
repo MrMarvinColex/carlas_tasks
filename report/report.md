@@ -55,8 +55,9 @@ The goal is to hide visual road markings while preserving the road and navigatio
 | `unload_map_layer(Decals)` | Town01_Opt / 0.9.16 | Yellow markings remained | Not a sufficient semantic removal check | Broad unrelated scene changes | Not targeted; fails |
 | `enable_environment_objects` for RoadLines | Town01_Opt / 0.9.16 | Yellow markings remained | Class 24: 604→0 pixels | Topology stayed 160 edges | Semantic-only; fails |
 | Diffuse `TextureColor` on all resolved RoadLines materials plus hiding | Town01 / 0.9.16 | Target and three coverage views retained yellow markings | Target: 402→402 with texture; combined capture class 24 = 0 | 259 calls returned without API error | No usable visual effect; fails |
+| 64×64 all-channel `apply_textures_to_object` | Town01 / 0.9.16 | Target marking remained yellow | Class 24: 402→402 | Diffuse, emissive, normal, and AO/roughness/metallic/emissive texture calls accepted | No usable visual effect; fails |
 
-Evidence: `20260917T110520Z-map-api-676d`, `20260917T111200Z-town01-opt-decals-5a62`, `20260917T145900Z-town01-texture-ead1`, and `20260917T150510Z-town01-opt-direct-638d`. Each has matched PNGs, raw semantic counts, a visual review, and local manifest verification; none has an external copy yet. These observations cover samples only, but a visible remaining marking is already enough to reject a claim of complete removal. No performance effect was measured.
+Evidence: `20260917T110520Z-map-api-676d`, `20260917T111200Z-town01-opt-decals-5a62`, `20260917T145900Z-town01-texture-ead1`, `20260917T150510Z-town01-opt-direct-638d`, and `20260917T151600Z-town01-full-texture-1c2f`. Each has matched PNGs, raw semantic counts, a visual review, and local manifest verification; none has an external copy yet. These observations cover samples only, but a visible remaining marking is already enough to reject a claim of complete removal. No performance effect was measured.
 
 ### 1.5. Waypoints and Five Routes
 
