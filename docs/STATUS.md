@@ -62,7 +62,7 @@ Do not ask the user for all of these at once. Check available facts independentl
 - Dataset: not created; the stage-0 smoke artifact and stage-1 probes are not a dataset.
 - `artifacts/index.csv`: contains the smoke artifact with `backup_status=verified`.
 - Verified off-VM copy: `/Users/madness/Научка/CARLA/runs/20260916T210617Z-carla-smoke-beb230/`, confirmed by user-provided `rsync` and SHA-256 output at 21:19 UTC.
-- Stage-0 scripts and documentation are preserved in private `origin/Dev` history from `ce26b8e`; stage-1 work at commits `470dbb0`, `31c4e94`, and the next pending Stage-1 completion commit is on the same branch.
+- Stage-0 scripts and documentation are preserved in private `origin/Dev` history from `ce26b8e`; the completed Stage-1 correction and validation are preserved at `0ade213` on the same branch.
 - Six stage-1 probe sets are locally manifest-verified but **not copied externally**: `20260917T110520Z-map-api-676d` (6,307,929 bytes), `20260917T111200Z-town01-opt-decals-5a62` (1,813,284 bytes), `20260917T145900Z-town01-texture-ead1` (4,331,674 bytes), `20260917T150510Z-town01-opt-direct-638d` (1,783,290 bytes, corrected review), `20260917T151600Z-town01-full-texture-1c2f` (1,675,533 bytes), and `20260917T153000Z-town01-opt-coverage-b6e3` (5,374,757 bytes, successful three-location confirmation). Their total is 21,286,467 bytes.
 - Ready to delete VM: **not confirmed**. Documentation on the Mac does not prove that existing server work is preserved.
 
