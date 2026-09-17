@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+# Report the VM prerequisites needed before starting a CARLA stage.
+# It diagnoses rather than installs or changes system state.
 set -u
 set -o pipefail
 

@@ -1,0 +1,3 @@
+# Runtime client dependencies for the CARLA 0.9.16 server image.
+# Install only with scripts/setup.sh inside .venv.
+carla==0.9.16
