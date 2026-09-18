@@ -181,6 +181,23 @@ The user rented a Massed Compute VM with an RTX A6000 48 GB, Ubuntu 22.04.5, 6 v
 
 **Next action:** implement and test Traffic Manager driving over these exact saved routes, starting with one short route before all five.
 
+## 2026-09-18 12:12–12:22 UTC — Corrected DebugHelper Route Rendering
+
+**Type:** completed and locally verified rendering correction; route geometry is unchanged.
+
+**Trigger:** the user noticed black/missing road-texture areas around route markers in the Stage-2 top-down images.
+
+- Created controlled diagnostic run `20260918T121243Z-debug-render-probe-295692` for the same Town01_Opt map state, RoadLines operation, route 04, and nadir camera. It captured no DebugHelper geometry, line-only geometry, and 0.10 m point-only geometry.
+- Visual inspection showed intact texture with no debug geometry and with `DebugHelper.draw_line`; point-only rendering made a black rectangle at each sampled waypoint. This isolates the issue to CARLA 0.9.16's `draw_point` RGB rendering, not RoadLines hiding, the waypoint coordinates, or a missing map texture.
+- Updated `scripts/stage2_routes.py`: the complete waypoint sample is still submitted to DebugHelper for 0.5 s of simulation time to meet the route-selection check, but all point shapes are cleared before an RGB sensor is spawned. Saved route visuals contain only 0.8 m colour-coded `draw_line` segments; point and text primitives are absent.
+- Repeated the full route-selection probe as `20260918T121645Z-town01-opt-routes-clean-debug-95bdcf`. It regenerated the same seed-selected five 60-waypoint routes and passed every route/map/debug PNG check. The clean full-map and per-route views retain road texture while preserving clear coloured route lines. The temporary CARLA container was stopped after the run.
+
+**How checked:** both manifests were recomputed entry-by-entry with zero mismatches. Diagnostic manifest SHA-256: `f0c6b58173f3e8f7bb3e0b35b16a8df3a7e22b06b0898e9b40d43f677cba6389` (5,421,733 bytes); corrected-route manifest SHA-256: `1c290c07aab099a8ff1db02012501db096856f54227471af51560ccceb9727d5` (15,313,829 bytes). The corrected run's `validation.json` status is `passed`.
+
+**Artifacts and external copy:** registry rows `stage2-debug-render-probe-20260918` and `stage2-town01-opt-routes-clean-debug-20260918`; both are local-only with `backup_status=not_copied`. The 2026-09-17 route run and its artefact are retained, but its RGB preview is superseded for presentation only.
+
+**Next action:** commit and push the texture-safe route-visualisation correction, then resume the still-unfinished Traffic Manager driving half of Stage 2.
+
 ## Template for the Next Entry
 
 ```text

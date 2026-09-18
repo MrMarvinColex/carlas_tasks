@@ -90,6 +90,14 @@ For route selection, generate the complete finite `Map.generate_waypoints(2.0)` 
 
 This replaces proposal P04's use of GlobalRoutePlanner for *route selection*. It does not prove that Traffic Manager accepts or follows these locations; Stage 2 drive validation must submit the stored routes and measure actual behaviour before this decision is used for data collection. Evidence: `20260917T194300Z-town01-opt-routes-final-c5b492`.
 
+### D14. Texture-Safe DebugHelper Route Visualisation
+
+**Status:** accepted and artifact-confirmed on 2026-09-18.
+
+In the installed CARLA 0.9.16 renderer, `DebugHelper.draw_point` occludes the road material in a nadir RGB camera, including at a 0.10 m point size. A controlled probe held map, RoadLines operation, route, and camera fixed: no DebugHelper geometry and `draw_line`-only output kept the road texture intact; point-only output created repeated black rectangles. Therefore the complete waypoint sample is still temporarily submitted through `draw_point` for 0.5 simulation seconds, then explicitly cleared before any RGB sensor capture. Saved route previews use only `draw_line` primitives; the per-route filename and colour identify the path.
+
+This replaces the previous route-preview rendering in `20260917T194300Z-town01-opt-routes-final-c5b492`; it does not change route geometry, map editing, or the later dataset camera protocol. Evidence: diagnostic `20260918T121243Z-debug-render-probe-295692` and corrected route run `20260918T121645Z-town01-opt-routes-clean-debug-95bdcf`.
+
 ## Proposed Project Decisions
 
 Implement these unless evidence calls for a revision. Do not attribute them to the assignment author.

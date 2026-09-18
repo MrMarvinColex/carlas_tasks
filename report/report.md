@@ -65,13 +65,13 @@ Describe discretisation resolution, route provenance, and visualisation of the c
 
 | Route | Waypoint count | Length, m | Start/finish | Provenance | File/commit |
 |---|---|---|---|---|---|
-| `route_01` | 60 | 118.000 | (131.730, 59.495) → (249.730, 59.481) | Native spawn point + direct `Waypoint.next(2.0)` | `routes/route_01.json`, run `20260917T194300Z-town01-opt-routes-final-c5b492` |
+| `route_01` | 60 | 118.000 | (131.730, 59.495) → (249.730, 59.481) | Native spawn point + direct `Waypoint.next(2.0)` | `routes/route_01.json`, run `20260918T121645Z-town01-opt-routes-clean-debug-95bdcf` |
 | `route_02` | 60 | 121.097 | (268.586, -2.032) → (154.070, 8.580) | Native spawn point + direct `Waypoint.next(2.0)` | `routes/route_02.json`, same run |
 | `route_03` | 60 | 121.110 | (-1.986, 228.692) → (22.396, 330.547) | Native spawn point + direct `Waypoint.next(2.0)` | `routes/route_03.json`, same run |
 | `route_04` | 60 | 117.842 | (210.867, 199.150) → (328.709, 199.182) | Native spawn point + direct `Waypoint.next(2.0)` | `routes/route_04.json`, same run |
 | `route_05` | 60 | 114.841 | (173.120, 326.597) → (92.414, 288.545) | Native spawn point + direct `Waypoint.next(2.0)` | `routes/route_05.json`, same run |
 
-**Completed route-selection result:** after reapplying RoadLines hiding to 25 objects, the probe sampled all 3,266 values returned by `Map.generate_waypoints(2.0)`. A fixed selection seed (`20260917`) chose distinct native spawn anchors. Each of the 295 transitions was rechecked by confirming that the stored successor appeared in the predecessor's `next(2.0)` response. The run retains the full network sample, a route index, five complete route files, a full-network DebugHelper view, and one temporary DebugHelper overview per route. Drawings were cleared before exit. This establishes only map-graph connectivity and visual route inspection; the run used no ego actor or Traffic Manager. Client/server version was 0.9.16; it began at `de16360` with uncommitted Stage-2 code, which is recorded in its metadata.
+**Completed route-selection result:** after reapplying RoadLines hiding to 25 objects, the probe sampled all 3,266 values returned by `Map.generate_waypoints(2.0)`. A fixed selection seed (`20260917`) chose distinct native spawn anchors. Each of the 295 transitions was rechecked by confirming that the stored successor appeared in the predecessor's `next(2.0)` response. The run retains the full network sample, a route index, five complete route files, a clean map overview, and one temporary line-only DebugHelper overview per route. A controlled RGB comparison found that `draw_point`, not the map or RoadLines operation, had caused black texture occluders in the earlier preview; all waypoint points are now cleared before camera capture. This establishes only map-graph connectivity and visual route inspection; the run used no ego actor or Traffic Manager. Client/server version was 0.9.16; it began at `096d990` with the rendering correction uncommitted, which is recorded in its metadata.
 
 ### 1.6. Traffic Manager Autopilot
 

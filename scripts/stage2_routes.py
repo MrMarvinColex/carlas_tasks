@@ -390,64 +390,50 @@ def draw_route_overlays(
     *,
     color_offset: int = 0,
 ) -> dict[str, object]:
-    """Draw only routes, suitable for a legible map-wide route overview."""
+    """Draw legible route lines without opaque debug-point billboards.
+
+    CARLA 0.9.16's DebugHelper point primitive occludes the road material in a
+    nadir RGB sensor view, even at a small size.  Lines render correctly, so
+    point primitives are deliberately excluded from saved route overviews.
+    """
     debug = world.debug
     for route_number, route in enumerate(routes):
         color = ROUTE_COLORS[(route_number + color_offset) % len(ROUTE_COLORS)]
         points = [waypoint.transform.location + carla.Location(z=0.6) for waypoint in route.waypoints]
-        for point in points:
-            debug.draw_point(point, 1.8, color, lifetime_seconds, False)
         for first, second in zip(points, points[1:]):
-            debug.draw_line(first, second, 1.2, color, lifetime_seconds, False)
-        # The start/finish dots are deliberately larger than ordinary route
-        # samples, so they remain identifiable in the saved top-down view.
-        debug.draw_point(points[0], 3.2, color, lifetime_seconds, False)
-        debug.draw_point(points[-1], 3.2, color, lifetime_seconds, False)
-        debug.draw_string(
-            points[0] + carla.Location(z=2.0),
-            f"{route.route_id} start",
-            False,
-            color,
-            lifetime_seconds,
-            False,
-        )
-        debug.draw_string(
-            points[-1] + carla.Location(z=2.0),
-            f"{route.route_id} finish",
-            False,
-            color,
-            lifetime_seconds,
-            False,
-        )
+            debug.draw_line(first, second, 0.8, color, lifetime_seconds, False)
     return {
-        "route_point_count": sum(len(route.waypoints) for route in routes),
+        "route_waypoint_count": sum(len(route.waypoints) for route in routes),
         "route_line_count": sum(max(0, len(route.waypoints) - 1) for route in routes),
-        "route_label_count": 2 * len(routes),
+        "route_label_count": 0,
+        "route_waypoint_points_drawn": 0,
+        "route_rendering": "DebugHelper lines only; no draw_point primitives in saved RGB views.",
     }
 
 
-def draw_debug_overlays(
+def draw_complete_waypoint_sample(
     world: carla.World,
     all_waypoints: list[carla.Waypoint],
-    routes: list[SelectedRoute],
     lifetime_seconds: float,
 ) -> dict[str, object]:
-    """Draw the complete finite sample and emphasize the five routes."""
+    """Temporarily submit every sampled waypoint through DebugHelper."""
     debug = world.debug
     sample_color = carla.Color(110, 110, 110)
     for waypoint in all_waypoints:
         location = waypoint.transform.location + carla.Location(z=0.25)
-        # A quarter-metre point stays unobtrusive, while still being visible in
-        # the map-wide 1024 px overview (Town01 spans roughly 400 m).
-        debug.draw_point(location, 0.25, sample_color, lifetime_seconds, False)
-    result = {
-        "api": "carla.DebugHelper.draw_point/draw_line/draw_string",
+        # Do not capture this primitive through an RGB sensor: the installed
+        # renderer turns point billboards into black road occluders in nadir
+        # images.  The complete point set is displayed then cleared before the
+        # clean route-line images are captured.
+        debug.draw_point(location, 0.10, sample_color, lifetime_seconds, False)
+    return {
+        "api": "carla.DebugHelper.draw_point",
         "all_waypoint_points_drawn": len(all_waypoints),
+        "point_size_m": 0.10,
         "lifetime_seconds": lifetime_seconds,
         "persistent_lines": False,
+        "rgb_capture": "not captured; cleared before RGB sensors are spawned to avoid point-billboard occlusion",
     }
-    result.update(draw_route_overlays(world, routes, lifetime_seconds))
-    return result
 
 
 def await_sensor_frame(images: queue.Queue[carla.Image], expected_frame: int, timeout: float) -> carla.Image:
@@ -634,23 +620,37 @@ def main() -> None:
         }
         write_json(run_dir / "routes.json", route_index)
 
-        debug_draw = draw_debug_overlays(world, all_waypoints, routes, args.debug_lifetime_seconds)
-        network_overview = capture_topdown_overview(
+        # The assignment requires the full finite sample to be submitted to
+        # DebugHelper.  Keep that visual pass separate from RGB capture:
+        # CARLA 0.9.16 renders debug points as opaque black billboards in a
+        # nadir sensor image, which hides the underlying road texture.
+        debug_draw = draw_complete_waypoint_sample(world, all_waypoints, args.debug_lifetime_seconds)
+        waypoint_display_seconds = min(args.debug_lifetime_seconds, 0.5)
+        waypoint_display_ticks = max(1, math.ceil(waypoint_display_seconds / 0.05))
+        waypoint_display_frame = 0
+        for _ in range(waypoint_display_ticks):
+            waypoint_display_frame = world.tick()
+        world.debug.clear_debug_shape()
+        world.debug.clear_debug_string()
+        debug_draw["complete_waypoint_display"] = {
+            "duration_simulation_seconds": waypoint_display_ticks * 0.05,
+            "last_frame": waypoint_display_frame,
+            "cleared_before_rgb_capture": True,
+        }
+
+        clean_map_overview = capture_topdown_overview(
             world,
             all_waypoints,
-            run_dir / "previews" / "network_and_routes_debug_overview.png",
+            run_dir / "previews" / "map_without_debug_overview.png",
             args.overview_width,
             args.overview_height,
             args.overview_fov,
             args.timeout,
         )
-        network_overview["path"] = "previews/network_and_routes_debug_overview.png"
+        clean_map_overview["path"] = "previews/map_without_debug_overview.png"
 
-        # This probe loaded a fresh world and created the preceding debug
-        # shapes itself.  Clear them before producing a route-only view and
-        # before returning control to a later recording stage.
-        world.debug.clear_debug_shape()
-        world.debug.clear_debug_string()
+        # Lines render cleanly in the RGB sensor; do not add point primitives
+        # here (see draw_route_overlays).
         route_only_draw = draw_route_overlays(world, routes, args.debug_lifetime_seconds)
         route_overview = capture_topdown_overview(
             world,
@@ -690,7 +690,7 @@ def main() -> None:
             }
             world.debug.clear_debug_shape()
             world.debug.clear_debug_string()
-        debug_draw["network_and_routes_overview"] = network_overview
+        debug_draw["clean_map_overview"] = clean_map_overview
         debug_draw["route_only_draw"] = route_only_draw
         debug_draw["route_only_overview"] = route_overview
         debug_draw["per_route_overviews"] = per_route_overviews

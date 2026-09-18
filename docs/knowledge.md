@@ -54,6 +54,8 @@ DebugHelper is for route-selection verification. Remove or expire debug markings
 
 **EXPERIMENT (2026-09-17, CARLA 0.9.16):** On `Carla/Maps/Town01_Opt`, after hiding 25 RoadLines objects, `Map.generate_waypoints(2.0)` returned a complete finite sample of 3,266 waypoints. Five seeded native-spawn routes were created with direct `Waypoint.next(2.0)` calls; every route has 60 driving waypoints, 59 rechecked direct edges, and length 114.841–121.110 m. Complete-network and per-route DebugHelper views were captured, then cleared. This verifies graph construction only; no actor spawn, Traffic Manager path submission, or actual drive is implied. Run `20260917T194300Z-town01-opt-routes-final-c5b492`.
 
+**EXPERIMENT (2026-09-18, CARLA 0.9.16):** A controlled route-04 nadir-RGB comparison on the same Town01_Opt/RoadLines state found normal road texture without DebugHelper, the same intact texture with `draw_line` only, and black rectangular occluders at every route sample with `draw_point(0.10)`. Thus the prior black roads were a DebugHelper point-rendering artefact, not missing map texture or a RoadLines side effect. Corrected route previews submit all 3,266 points temporarily, clear them before sensor capture, and draw routes with lines only. Evidence: `20260918T121243Z-debug-render-probe-295692`, `20260918T121645Z-town01-opt-routes-clean-debug-95bdcf`.
+
 ## 5. Argoverse 2 Camera Rig
 
 **DOC:** AV2 Sensor Dataset provides seven ring cameras, two front stereo cameras, sensor-to-ego calibration, and camera intrinsics. The full dataset is very large; this project needs a selected calibration, not every sensor log. S09, S10.
