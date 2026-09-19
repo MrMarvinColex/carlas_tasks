@@ -242,6 +242,20 @@ The user rented a Massed Compute VM with an RTX A6000 48 GB, Ubuntu 22.04.5, 6 v
 
 **Next action:** implement and validate one Traffic Manager/autopilot pilot on the approved route set, then run all five if the pilot passes.
 
+## 2026-09-19 06:50–07:01 UTC — Stage 2 Traffic Manager Autopilot Validation
+
+**Type:** completed and locally verified CARLA driving experiment.
+
+- Added `scripts/stage2_autopilot_routes.py`. It reconstructs the approved waypoint IDs from `20260919T062007Z-route-revision-ca00ee`, rechecks every direct 2 m successor edge, reloads `Town01_Opt`, reapplies direct RoadLines hiding, spawns one Tesla Model 3 per route, and records every synchronous-world pose plus collision events.
+- The first two route-1 diagnostic attempts used `TrafficManager.set_path`: first the adaptive locations and then the full connected 2 m chain. Both were accepted but selected a different later branch after 94 m and timed out. They were finalized as incomplete (`20260919T065121Z-tm-autopilot-pilot-ea602d`, `20260919T065327Z-tm-autopilot-pilot-282f01`), preserving the observed limitation.
+- The final command derives one `Left`/`Right`/`Straight` instruction for each contiguous map-junction traversal and submits it through `TrafficManager.set_route`. A route-1 and route-2 pilot passed, then all five approved routes passed in `20260919T065802Z-tm-autopilot-approved-routes-106f97`.
+
+**How checked:** all full-run checks passed: actual `Town01_Opt`, RoadLines operation applied to 25 objects, valid vehicle spawn and TM command, finish radius ≤8 m with ≥95% projected progress, maximum reference deviation ≤15 m, zero collisions, no timeout/stuck result, and explicit stopped vehicle after autopilot was disabled. Observed maximum deviations were 0.997–1.247 m; finish distances were 7.199–7.935 m. Local `verify_export.py` revalidated all five manifests; the full run contains 19 signed files and has manifest SHA-256 `607b8b527c62aef0565978b512ab80182c07c380d8ab26f9638bfe29122fbe86` (2,258,589 bytes including manifest).
+
+**Artifacts and external copy:** all five drive-related runs are registered in `artifacts/index.csv`; they are local-only (`backup_status=not_copied`). No cameras or dataset imagery were created. CARLA was stopped after validation.
+
+**Next action:** start Stage 3 by selecting an actual AV2 calibration and validating the nine RGB/semantic sensor pairs and 2 Hz pose/frame alignment on a short drive.
+
 ## Template for the Next Entry
 
 ```text

@@ -112,7 +112,15 @@ The first candidate iteration densified every `is_junction` interval and was rej
 
 Preserve the first three candidate waypoint identities exactly. Extend route 4's deterministic path through a fourth full turn. Use the revised fifth geometry that fully crosses the outer automobile bridge, leaves its far bank, and then turns. Keep approximately 10 m spacing on straight sections and 2 m spacing within 12 m of detected turns while retaining the complete connected 2 m reference chain for audit.
 
-The tested search found no connected Driving-waypoint candidate through the visually narrow bridge inside the town, so it is not selected for a vehicle/autopilot test. The final route-5 preview uses full-map framing and line-only DebugHelper rendering to avoid both point-billboard texture occlusion and out-of-map close-up artifacts. This decision does not claim that Traffic Manager can complete either revised route. Evidence: complete run `20260919T062007Z-route-revision-ca00ee`; rejected and failed intermediate revisions remain registered.
+The tested search found no connected Driving-waypoint candidate through the visually narrow bridge inside the town, so it is not selected for a vehicle/autopilot test. The final route-5 preview uses full-map framing and line-only DebugHelper rendering to avoid both point-billboard texture occlusion and out-of-map close-up artifacts. This decision originally did not claim that Traffic Manager could complete either revised route; that separate claim is now supported by D17. Evidence: complete run `20260919T062007Z-route-revision-ca00ee`; rejected and failed intermediate revisions remain registered.
+
+### D17. Traffic Manager Instructions at Map Junctions
+
+**Status:** accepted after Stage-2 drive validation on 2026-09-19.
+
+Use `TrafficManager.set_route(vehicle, instructions)` for the approved routes. Reconstruct their stored 2 m waypoint identities and use the chain to verify connectivity and measure observed trajectory deviation, but derive one `Left`, `Right`, or `Straight` instruction for each contiguous `Waypoint.is_junction` group. The actor is registered with Traffic Manager in synchronous mode, and RoadLines hiding is reapplied after the map load. Completion requires proximity to the stored finish (≤8 m), at least 95% projected progress, zero collisions, no timeout/stuck result, and a stopped vehicle after autopilot is disabled.
+
+This replaces use of `set_path` as the operational command for these routes. Two route-1 diagnostics showed that both adaptive and complete connected 2 m coordinate lists were accepted by `set_path` but later diverged at a branch. CARLA 0.9.16 documents both APIs and warns that topology must permit the supplied path/instructions. The final `set_route` run completed all five routes with 0.997–1.247 m maximum deviation and no collision. Evidence: incomplete `20260919T065121Z-tm-autopilot-pilot-ea602d` and `20260919T065327Z-tm-autopilot-pilot-282f01`; complete `20260919T065802Z-tm-autopilot-approved-routes-106f97`.
 
 ## Proposed Project Decisions
 
