@@ -100,17 +100,17 @@ This replaces the previous route-preview rendering in `20260917T194300Z-town01-o
 
 ### D15. Adaptive Route-Waypoint Spacing for Replacement Candidates
 
-**Status:** user-approved spacing direction and route geometries 1–3 on 2026-09-19; revised geometries 4–5 await user approval.
+**Status:** user-approved spacing direction and all five route geometries on 2026-09-19.
 
 Retain a connected 2 m reference chain for construction and audit, but propose a reduced sequential waypoint list at approximately 10 m spacing on straight sections and 2 m spacing within 12 m of detected heading-change events. Straight-through junctions do not by themselves trigger 2 m density. Saved RGB previews use `draw_line` crosses for the adaptive points and never `draw_point`.
 
-The first candidate iteration densified every `is_junction` interval and was rejected during visual review because CARLA labels some long straight-through sections as junctions. The corrected candidate run reduces the straight control from 111 dense reference points to 23 proposed points while retaining 2 m coverage around actual turns. This spacing policy does not yet supersede D13's adopted route set; replacement occurs only after the complete geometry set is approved and later Traffic Manager validation. Evidence: incomplete run `20260919T054900Z-route-candidates-adaptive-a1`, corrected run `20260919T055800Z-route-candidates-adaptive-a2`, and revision run `20260919T062007Z-route-revision-ca00ee`.
+The first candidate iteration densified every `is_junction` interval and was rejected during visual review because CARLA labels some long straight-through sections as junctions. The corrected candidate run reduces the straight control from 111 dense reference points to 23 proposed points while retaining 2 m coverage around actual turns. This spacing policy and the approved geometry set supersede D13's original 60-point route set for subsequent Stage-2 implementation. Traffic Manager compatibility and actual completion remain separate validations. Evidence: incomplete run `20260919T054900Z-route-candidates-adaptive-a1`, corrected run `20260919T055800Z-route-candidates-adaptive-a2`, and final approved revision run `20260919T062007Z-route-revision-ca00ee`.
 
-### D16. Partial Approval and Revision of the Adaptive Route Set
+### D16. Approval and Revision of the Adaptive Route Set
 
-**Status:** routes 1–3 accepted by the user; routes 4–5 pending visual approval on 2026-09-19.
+**Status:** all five geometries accepted by the user on 2026-09-19.
 
-Preserve the first three candidate waypoint identities exactly. Extend route 4's deterministic path through a fourth full turn. Replace the unapproved fifth geometry with a connected route that fully crosses the outer automobile bridge, leaves its far bank, and then turns. Keep approximately 10 m spacing on straight sections and 2 m spacing within 12 m of detected turns while retaining the complete connected 2 m reference chain for audit.
+Preserve the first three candidate waypoint identities exactly. Extend route 4's deterministic path through a fourth full turn. Use the revised fifth geometry that fully crosses the outer automobile bridge, leaves its far bank, and then turns. Keep approximately 10 m spacing on straight sections and 2 m spacing within 12 m of detected turns while retaining the complete connected 2 m reference chain for audit.
 
 The tested search found no connected Driving-waypoint candidate through the visually narrow bridge inside the town, so it is not selected for a vehicle/autopilot test. The final route-5 preview uses full-map framing and line-only DebugHelper rendering to avoid both point-billboard texture occlusion and out-of-map close-up artifacts. This decision does not claim that Traffic Manager can complete either revised route. Evidence: complete run `20260919T062007Z-route-revision-ca00ee`; rejected and failed intermediate revisions remain registered.
 

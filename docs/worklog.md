@@ -232,6 +232,16 @@ The user rented a Massed Compute VM with an RTX A6000 48 GB, Ubuntu 22.04.5, 6 v
 
 **Next action:** obtain user approval for the revised route-4 and route-5 previews, promote the complete replacement set, then implement one-route Traffic Manager validation before attempting all five.
 
+## 2026-09-19 06:40 UTC — Final User Approval of the Five Route Geometries
+
+**Type:** user decision recorded; no CARLA execution.
+
+- The user explicitly approved revised routes 4 and 5. Together with the earlier approval of routes 1–3, all five adaptive geometries in `20260919T062007Z-route-revision-ca00ee` are now the authoritative Stage-2 route set.
+- Updated current status, decisions, and the report route table. The older five 60-point routes remain historical evidence but are superseded for subsequent implementation.
+- This approval completes route selection and DebugHelper review only. It does not provide evidence of a valid actor spawn, Traffic Manager path acceptance, vehicle motion, completion, timeout, stuck detection, collision handling, or post-finish stopping.
+
+**Next action:** implement and validate one Traffic Manager/autopilot pilot on the approved route set, then run all five if the pilot passes.
+
 ## Template for the Next Entry
 
 ```text
