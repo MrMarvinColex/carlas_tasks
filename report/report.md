@@ -1,6 +1,6 @@
 # Using LLMs to Edit CARLA Scenes
 
-**Working report. Status: Stage 1 is completed; route, camera, recording, LLM, animal, and comparison experiments remain.**
+**Working report. Status: Stages 1–2 are completed; cameras, recording, LLM, animal, and comparison experiments remain.**
 
 Document start date: 16 September 2026. Target deadline: 21 September 2026 in the current context; the source PDF specifies only day and month, without a year. Author/executor: complete before submission.
 
@@ -10,7 +10,7 @@ Recording rule: distinguish planned methods from completed experiments. For ever
 
 The assignment requires controlling CARLA through Python, recording five routes using cameras placed as in Argoverse 2, and studying natural-language scene editing with several LLMs. Per the user’s clarification, changes are limited to CARLA runtime capabilities and models are called through APIs. The selected rig has nine positions and two sensor types per position, recorded at 2 Hz of simulation time. Ego-vehicle poses are stored separately.
 
-The user reported a successful CARLA 0.9.16 offscreen test on the GPU VM. Stage 1 subsequently verified Town01 loading, basic World/Actor/Blueprint operations, rendered weather changes, and the exposed map/object catalogues. Base Town01 direct RoadLines hiding was semantic-only, but the installed `Town01_Opt` passed paired RGB/raw-semantic checks at a straight road, intersection, and traffic-control location using direct RoadLines hiding; sampled navigation remained available. Full camera recording and all later research outcomes remain unconfirmed.
+The user reported a successful CARLA 0.9.16 offscreen test on the GPU VM. Stage 1 subsequently verified Town01 loading, basic World/Actor/Blueprint operations, rendered weather changes, and the exposed map/object catalogues. Base Town01 direct RoadLines hiding was semantic-only, but the installed `Town01_Opt` passed paired RGB/raw-semantic checks at a straight road, intersection, and traffic-control location using direct RoadLines hiding; sampled navigation remained available. Stage 2 constructed five connected approved routes, saved their geometry and DebugHelper views, then drove all five with a spawned Traffic Manager vehicle under explicit completion and safety checks. Camera recording and all later research outcomes remain unconfirmed.
 
 After experiments, replace this section with a short abstract of the actual results, data volume, and limitations.
 
@@ -63,15 +63,33 @@ Evidence: `20260917T110520Z-map-api-676d`, `20260917T111200Z-town01-opt-decals-5
 
 Describe discretisation resolution, route provenance, and visualisation of the complete waypoint sample. Each route must contain at least ten consecutive points. Disable debug drawings before dataset recording.
 
-| Route | Waypoint count | Length, m | Start/finish | Provenance | File/commit |
+| Route | Adaptive waypoint count | Length, m | Start/finish | Provenance | File/run |
 |---|---|---|---|---|---|
-| Not selected yet | Not measured | Not measured | — | — | — |
+| `route_01_straight` | 23 | 220.061 | (92.405, 227.220) → (92.367, 7.159) | Approved adaptive subset; 111-point connected 2 m reference | `routes/route_01_straight.json`, run `20260919T062007Z-route-revision-ca00ee` |
+| `route_02_left` | 44 | 253.109 | (130.365, -2.047) → (-2.041, 123.409) | Approved adaptive subset; 126-point connected 2 m reference | `routes/route_02_left.json`, same run |
+| `route_03_right` | 45 | 246.838 | (334.773, 210.670) → (200.928, 326.600) | Approved adaptive subset; 126-point connected 2 m reference | `routes/route_03_right.json`, same run |
+| `route_04_four_turns` | 119 | 508.150 | (396.368, 19.923) → (88.399, 192.263) | Approved adaptive subset; 252-point connected 2 m reference | `routes/route_04_four_turns.json`, same run |
+| `route_05_bridge_then_turn` | 101 | 495.316 | (301.340, 330.610) → (334.889, 18.076) | Approved adaptive subset; 244-point connected 2 m reference | `routes/route_05_bridge_then_turn.json`, same run |
+
+**Superseded initial route-selection result:** after reapplying RoadLines hiding to 25 objects, the probe sampled all 3,266 values returned by `Map.generate_waypoints(2.0)`. A fixed selection seed (`20260917`) chose distinct native spawn anchors. Each of the 295 transitions was rechecked by confirming that the stored successor appeared in the predecessor's `next(2.0)` response. The run retains the full network sample, a route index, five complete route files, a clean map overview, and one temporary line-only DebugHelper overview per route. A controlled RGB comparison found that `draw_point`, not the map or RoadLines operation, had caused black texture occluders in the earlier preview; all waypoint points are now cleared before camera capture. This establishes only map-graph connectivity and visual route inspection; the run used no ego actor or Traffic Manager. Client/server version was 0.9.16; it began at `096d990` with the rendering correction uncommitted, which is recorded in its metadata.
+
+**Approved replacement set:** the user approved all five geometries on 2026-09-19. Run `20260919T062007Z-route-revision-ca00ee` preserves the approved first three dense waypoint identities, extends route 4 to four turns, and supplies route 5 with a complete outer automobile-bridge crossing followed by a turn. Adaptive counts are 23, 44, 45, 119, and 101; every corresponding dense 2 m edge passed direct-successor validation. This table supersedes the original five 60-point routes for subsequent implementation.
 
 ### 1.6. Traffic Manager Autopilot
 
 Describe vehicle spawning, path assignment, TM settings, completion criterion, timeout, and stuck-vehicle handling. Attach actual trajectories for five drives and deviations from routes.
 
-**Result:** not completed. Interpretation clarification: TM uses simulator state; this experiment alone does not evaluate the learned visual perception of an autonomous-driving system.
+**Result:** completed on `Carla/Maps/Town01_Opt` in run `20260919T065802Z-tm-autopilot-approved-routes-106f97`. One Tesla Model 3 was spawned at each stored route start after RoadLines hiding was reapplied; world and Traffic Manager used a 0.05 s synchronous step. The initial adaptive and dense `set_path` trials were accepted but departed route 1 after 94 m at a later branch, so both are retained as incomplete diagnostics. The final method submitted derived `set_route` junction instructions (`Left`/`Right`/`Straight`) and projected every sampled vehicle pose onto the preserved 2 m reference chain.
+
+| Route | Outcome | Finish distance, m | Maximum deviation, m | Collisions |
+|---|---:|---:|---:|---:|
+| `route_01_straight` | Completed | 7.885 | 0.997 | 0 |
+| `route_02_left` | Completed | 7.199 | 1.204 | 0 |
+| `route_03_right` | Completed | 7.935 | 0.999 | 0 |
+| `route_04_four_turns` | Completed | 7.923 | 1.247 | 0 |
+| `route_05_bridge_then_turn` | Completed | 7.706 | 1.232 | 0 |
+
+The criterion was finish distance ≤8 m plus ≥95% reference progress; each route also passed timeout, stuck, deviation (≤15 m), and post-finish-stop checks. This is a CARLA Traffic Manager navigation test, not an evaluation of learned visual perception. No cameras or dataset frames were recorded in this stage.
 
 ### 1.7. Camera and Transform Recording at 2 Hz
 

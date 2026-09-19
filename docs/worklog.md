@@ -160,6 +160,102 @@ The user rented a Massed Compute VM with an RTX A6000 48 GB, Ubuntu 22.04.5, 6 v
 
 **Next action:** on a later API-responsive CARLA startup, rerun this supplemental Town10HD_Opt probe and inspect whether the yellow grid and crossing disappear. Keep its conclusion separate from the Town01_Opt Stage-1 acceptance evidence.
 
+## 2026-09-17 19:38–19:45 UTC — Stage 2 Route Construction and DebugHelper Verification
+
+**Type:** completed and locally verified CARLA route-selection experiment; autopilot driving is not included.
+
+**Goal:** apply the selected Town01_Opt RoadLines operation, choose and persist five connected routes, and verify their geometry with temporary DebugHelper drawings before implementing Traffic Manager control.
+
+- Rechecked the actual VM: RTX A6000, Docker through passwordless `sudo`, no competing CARLA container/listener, and 246 GiB free disk. Started one offscreen `carla-server`, used CARLA client/server 0.9.16, and stopped it after the run.
+- Added `scripts/stage2_routes.py`. It loads the explicit `Carla/Maps/Town01_Opt`, hides the 25 returned RoadLines object IDs, switches temporarily to a 0.05 s synchronous world, and writes a complete sorted `Map.generate_waypoints(2.0)` sample. The selected map returned 3,266 waypoints.
+- With seed `20260917`, sorted native spawn points, and direct `Waypoint.next(2.0)` calls, selected five routes. Every route has 60 driving waypoints (59 edges) and is 114.841–121.110 m long. For every stored edge the script independently reissued `predecessor.next(2.0)` and confirmed membership of the successor; all 295 checks passed.
+- Wrote `routes.json`, five coordinate/order/start/finish/road/lane JSON files, `network_waypoints.json`, and `validation.json`. The final run has both a full-network DebugHelper view and a clean map-wide route view plus five close per-route views. Debug shapes were created with finite lifetimes and were explicitly cleared after capture.
+- Visually inspected all five close top-down route images. They show the intended continuous paths: one straight route and four paths containing bends/turns. This is a visual geometry check only, not evidence that a vehicle can follow them.
+- Two earlier same-session route-view iterations are retained locally (`20260917T193903Z-town01-opt-routes-b168cc`, `20260917T194057Z-town01-opt-routes-readable-d601e3`). The final run is adopted because it separates dense full-network drawing from route-only and close per-route views.
+
+**How checked:** `scripts/stage2_routes.py` compiled with `py_compile`; `git diff --check` passed before final documentation edits. Run `20260917T194300Z-town01-opt-routes-final-c5b492` passed every machine validation: exact map, RoadLines operation, non-empty complete/driving samples, exactly five routes, ≥10 waypoints each, direct `next()` connectivity, distinct starts, valid overview PNGs, temporary debug state, and five valid per-route PNGs. It was finalized with manifest SHA-256 `99a2e111469b0efabbf93b12ca508598e2bdb940268766f9344a8ce2f2712654` and totals 12,884,530 bytes.
+
+**Artifacts and external copy:** local ignored run `runs/20260917T194300Z-town01-opt-routes-final-c5b492`, registry row `stage2-town01-opt-routes-20260917`, `validation_status=passed`, `backup_status=not_copied`. No claim of an external backup is made.
+
+**Decisions / limitations:** D13 supersedes GlobalRoutePlanner as the route-*selection* mechanism; direct waypoint adjacency is the recorded connectivity proof. It does not validate native actor spawning, Traffic Manager `set_path`, intersection decisions, completion, timeout, stuck detection, collision handling, or post-finish stopping. No camera rig or dataset recording was run.
+
+**Next action:** implement and test Traffic Manager driving over these exact saved routes, starting with one short route before all five.
+
+## 2026-09-18 12:12–12:22 UTC — Corrected DebugHelper Route Rendering
+
+**Type:** completed and locally verified rendering correction; route geometry is unchanged.
+
+**Trigger:** the user noticed black/missing road-texture areas around route markers in the Stage-2 top-down images.
+
+- Created controlled diagnostic run `20260918T121243Z-debug-render-probe-295692` for the same Town01_Opt map state, RoadLines operation, route 04, and nadir camera. It captured no DebugHelper geometry, line-only geometry, and 0.10 m point-only geometry.
+- Visual inspection showed intact texture with no debug geometry and with `DebugHelper.draw_line`; point-only rendering made a black rectangle at each sampled waypoint. This isolates the issue to CARLA 0.9.16's `draw_point` RGB rendering, not RoadLines hiding, the waypoint coordinates, or a missing map texture.
+- Updated `scripts/stage2_routes.py`: the complete waypoint sample is still submitted to DebugHelper for 0.5 s of simulation time to meet the route-selection check, but all point shapes are cleared before an RGB sensor is spawned. Saved route visuals contain only 0.8 m colour-coded `draw_line` segments; point and text primitives are absent.
+- Repeated the full route-selection probe as `20260918T121645Z-town01-opt-routes-clean-debug-95bdcf`. It regenerated the same seed-selected five 60-waypoint routes and passed every route/map/debug PNG check. The clean full-map and per-route views retain road texture while preserving clear coloured route lines. The temporary CARLA container was stopped after the run.
+
+**How checked:** both manifests were recomputed entry-by-entry with zero mismatches. Diagnostic manifest SHA-256: `f0c6b58173f3e8f7bb3e0b35b16a8df3a7e22b06b0898e9b40d43f677cba6389` (5,421,733 bytes); corrected-route manifest SHA-256: `1c290c07aab099a8ff1db02012501db096856f54227471af51560ccceb9727d5` (15,313,829 bytes). The corrected run's `validation.json` status is `passed`.
+
+**Artifacts and external copy:** registry rows `stage2-debug-render-probe-20260918` and `stage2-town01-opt-routes-clean-debug-20260918`; both are local-only with `backup_status=not_copied`. The 2026-09-17 route run and its artefact are retained, but its RGB preview is superseded for presentation only.
+
+**Next action:** commit and push the texture-safe route-visualisation correction, then resume the still-unfinished Traffic Manager driving half of Stage 2.
+
+## 2026-09-19 05:48–05:52 UTC — Diverse Adaptive Route Candidates
+
+**Type:** completed and locally verified visual proposal; candidates are not adopted and no driving was run.
+
+**Trigger:** the user rejected the original mostly straight routes and approved denser waypoint spacing near turns with wider spacing on straights.
+
+- Added `scripts/stage2_route_candidates.py`. It enumerated 1,020 complete seeded paths from all 255 native spawn anchors using direct `Waypoint.next(2.0)` chains, classified sustained heading changes, and selected five deliberately different geometries with low overlap and separated starts.
+- The corrected proposal contains a 220.061 m straight control, 253.109 m single-left route, 246.838 m single-right route, 313.048 m three-turn zigzag, and 350.302 m three-turn mixed route. Their dense 2 m references contain 111–181 waypoints and every one of 695 edges passed a repeated direct-successor check.
+- Proposed adaptive subsets retain about 10 m spacing on straights and 2 m spacing within 12 m of detected turns. Counts are 23, 44, 45, 83, and 90, all above the assignment minimum. Saved paths use line segments and adaptive cross markers made only from `DebugHelper.draw_line`; visual inspection found intact road texture.
+- The first run, `20260919T054900Z-route-candidates-adaptive-a1`, also densified every `is_junction` interval. Visual inspection showed excessive 2 m markers on straight-through junction sections, so it was finalized as incomplete and retained. The corrected `20260919T055800Z-route-candidates-adaptive-a2` densifies only real heading-change events and passed all machine and visual checks.
+- Corrected-run manifest verification passed for all 16 entries. Its manifest SHA-256 is `24309b1c0d35bd763d3b4b1d47641c27226ac636c539fdcefa107c6479ac3429`; signed content totals 12,180,606 bytes. The temporary CARLA container was stopped.
+
+**Artifacts and external copy:** both runs are registered in `artifacts/index.csv` and remain local-only with `backup_status=not_copied`.
+
+**Decision / limitation:** the user approved the adaptive-spacing direction, not the five exact geometries. D13 and the original route table remain authoritative until visual approval. Neither candidate run spawned a vehicle or exercised Traffic Manager.
+
+**Next action:** collect user feedback on the overview and five individual previews; revise or formally adopt the selected set before implementing autopilot drives.
+
+## 2026-09-19 05:59–06:20 UTC — User-Directed Revision of Routes 4 and 5
+
+**Type:** completed and locally verified geometry revision; routes 4–5 await user visual approval; no autopilot drive.
+
+- Recorded the user's approval of adaptive candidate geometries 1–3 and reconstructed every dense waypoint identity from the approved run without reselection.
+- Added `scripts/stage2_route_revision.py`. Route 4 continues its original deterministic branch sequence through a fourth turn: 508.150 m, 252 dense connected points, and 119 adaptive points.
+- Route-5 exploration rejected an upper-road interpretation, failed attempts to force the old unapproved route through an incompatible directed continuation, and the narrow internal visual bridge because no connected Driving-waypoint candidate crossed that corridor. These failures remain as incomplete runs rather than being hidden.
+- The final seeded search tested 1,275 complete paths against the outer automobile bridge, both-bank crossing, and a turn at least 16 m after the far bank. It found 237 candidates satisfying the complete criteria and selected a 495.316 m route with 244 dense points and 101 adaptive points, close to the 500 m design target.
+- The final route-5 individual preview uses full-map framing. All saved previews use DebugHelper lines only; visual inspection found intact in-map textures and clearly showed the complete bridge crossing followed by a turn.
+
+**How checked:** run `20260919T062007Z-route-revision-ca00ee` passed exact-map, RoadLines-hide, five-route, first-three-identity, four-turn, both-bank bridge, post-bridge-turn, direct-edge connectivity, adaptive-minimum, PNG, and no-point-primitive checks. Its 16 manifest entries passed entry-by-entry SHA-256 verification; manifest SHA-256 is `db2018bf734ce412e53d8b396d7053ae5f879d76ad95571b7ede42e8f6b63936` and signed content totals 12,442,715 bytes. The CARLA container was stopped and absence of containers was checked.
+
+**Artifacts and limitation:** the final run and ten incomplete intermediate revisions are registered in `artifacts/index.csv`; all are local-only. Routes 4–5 still require user approval, and no ego vehicle, Traffic Manager path, completion threshold, or stuck check has run.
+
+**Next action:** obtain user approval for the revised route-4 and route-5 previews, promote the complete replacement set, then implement one-route Traffic Manager validation before attempting all five.
+
+## 2026-09-19 06:40 UTC — Final User Approval of the Five Route Geometries
+
+**Type:** user decision recorded; no CARLA execution.
+
+- The user explicitly approved revised routes 4 and 5. Together with the earlier approval of routes 1–3, all five adaptive geometries in `20260919T062007Z-route-revision-ca00ee` are now the authoritative Stage-2 route set.
+- Updated current status, decisions, and the report route table. The older five 60-point routes remain historical evidence but are superseded for subsequent implementation.
+- This approval completes route selection and DebugHelper review only. It does not provide evidence of a valid actor spawn, Traffic Manager path acceptance, vehicle motion, completion, timeout, stuck detection, collision handling, or post-finish stopping.
+
+**Next action:** implement and validate one Traffic Manager/autopilot pilot on the approved route set, then run all five if the pilot passes.
+
+## 2026-09-19 06:50–07:01 UTC — Stage 2 Traffic Manager Autopilot Validation
+
+**Type:** completed and locally verified CARLA driving experiment.
+
+- Added `scripts/stage2_autopilot_routes.py`. It reconstructs the approved waypoint IDs from `20260919T062007Z-route-revision-ca00ee`, rechecks every direct 2 m successor edge, reloads `Town01_Opt`, reapplies direct RoadLines hiding, spawns one Tesla Model 3 per route, and records every synchronous-world pose plus collision events.
+- The first two route-1 diagnostic attempts used `TrafficManager.set_path`: first the adaptive locations and then the full connected 2 m chain. Both were accepted but selected a different later branch after 94 m and timed out. They were finalized as incomplete (`20260919T065121Z-tm-autopilot-pilot-ea602d`, `20260919T065327Z-tm-autopilot-pilot-282f01`), preserving the observed limitation.
+- The final command derives one `Left`/`Right`/`Straight` instruction for each contiguous map-junction traversal and submits it through `TrafficManager.set_route`. A route-1 and route-2 pilot passed, then all five approved routes passed in `20260919T065802Z-tm-autopilot-approved-routes-106f97`.
+
+**How checked:** all full-run checks passed: actual `Town01_Opt`, RoadLines operation applied to 25 objects, valid vehicle spawn and TM command, finish radius ≤8 m with ≥95% projected progress, maximum reference deviation ≤15 m, zero collisions, no timeout/stuck result, and explicit stopped vehicle after autopilot was disabled. Observed maximum deviations were 0.997–1.247 m; finish distances were 7.199–7.935 m. Local `verify_export.py` revalidated all five manifests; the full run contains 19 signed files and has manifest SHA-256 `607b8b527c62aef0565978b512ab80182c07c380d8ab26f9638bfe29122fbe86` (2,258,589 bytes including manifest).
+
+**Artifacts and external copy:** all five drive-related runs are registered in `artifacts/index.csv`; they are local-only (`backup_status=not_copied`). No cameras or dataset imagery were created. CARLA was stopped after validation.
+
+**Next action:** start Stage 3 by selecting an actual AV2 calibration and validating the nine RGB/semantic sensor pairs and 2 Hz pose/frame alignment on a short drive.
+
 ## Template for the Next Entry
 
 ```text

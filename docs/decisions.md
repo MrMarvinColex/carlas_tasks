@@ -82,6 +82,46 @@ The required base map `Carla/Maps/Town01` was loaded and tested. Its captured RG
 
 The selection is limited to the declared three-observation coverage (straight road, intersection, traffic-control location); `get_crosswalks()` returned no point, so it is not a proof that every marking across the map is removed. Preserve the exact `Carla/Maps/Town01_Opt` name and run the RGB/raw-semantic and navigation checks in downstream runs. Evidence: `20260917T153000Z-town01-opt-coverage-b6e3`, with the earlier one-location review correction in `20260917T150510Z-town01-opt-direct-638d`.
 
+### D13. Seeded Direct-Waypoint Routes for Stage-2 Selection
+
+**Status:** accepted and artifact-confirmed on 2026-09-17.
+
+For route selection, generate the complete finite `Map.generate_waypoints(2.0)` sample, then start from native map spawn points and form each route through direct `Waypoint.next(2.0)` edges. The deterministic seed is `20260917`; route files retain the spawn index, branch seed, every point's transform/road/lane identifiers, and each branch choice. The adopted set has five distinct 60-point routes and was independently revalidated by asking the predecessor for `next(2.0)` again for every edge. DebugHelper drawings use finite lifetimes and are explicitly cleared after saved views.
+
+This replaces proposal P04's use of GlobalRoutePlanner for *route selection*. It does not prove that Traffic Manager accepts or follows these locations; Stage 2 drive validation must submit the stored routes and measure actual behaviour before this decision is used for data collection. Evidence: `20260917T194300Z-town01-opt-routes-final-c5b492`.
+
+### D14. Texture-Safe DebugHelper Route Visualisation
+
+**Status:** accepted and artifact-confirmed on 2026-09-18.
+
+In the installed CARLA 0.9.16 renderer, `DebugHelper.draw_point` occludes the road material in a nadir RGB camera, including at a 0.10 m point size. A controlled probe held map, RoadLines operation, route, and camera fixed: no DebugHelper geometry and `draw_line`-only output kept the road texture intact; point-only output created repeated black rectangles. Therefore the complete waypoint sample is still temporarily submitted through `draw_point` for 0.5 simulation seconds, then explicitly cleared before any RGB sensor capture. Saved route previews use only `draw_line` primitives; the per-route filename and colour identify the path.
+
+This replaces the previous route-preview rendering in `20260917T194300Z-town01-opt-routes-final-c5b492`; it does not change route geometry, map editing, or the later dataset camera protocol. Evidence: diagnostic `20260918T121243Z-debug-render-probe-295692` and corrected route run `20260918T121645Z-town01-opt-routes-clean-debug-95bdcf`.
+
+### D15. Adaptive Route-Waypoint Spacing for Replacement Candidates
+
+**Status:** user-approved spacing direction and all five route geometries on 2026-09-19.
+
+Retain a connected 2 m reference chain for construction and audit, but propose a reduced sequential waypoint list at approximately 10 m spacing on straight sections and 2 m spacing within 12 m of detected heading-change events. Straight-through junctions do not by themselves trigger 2 m density. Saved RGB previews use `draw_line` crosses for the adaptive points and never `draw_point`.
+
+The first candidate iteration densified every `is_junction` interval and was rejected during visual review because CARLA labels some long straight-through sections as junctions. The corrected candidate run reduces the straight control from 111 dense reference points to 23 proposed points while retaining 2 m coverage around actual turns. This spacing policy and the approved geometry set supersede D13's original 60-point route set for subsequent Stage-2 implementation. Traffic Manager compatibility and actual completion remain separate validations. Evidence: incomplete run `20260919T054900Z-route-candidates-adaptive-a1`, corrected run `20260919T055800Z-route-candidates-adaptive-a2`, and final approved revision run `20260919T062007Z-route-revision-ca00ee`.
+
+### D16. Approval and Revision of the Adaptive Route Set
+
+**Status:** all five geometries accepted by the user on 2026-09-19.
+
+Preserve the first three candidate waypoint identities exactly. Extend route 4's deterministic path through a fourth full turn. Use the revised fifth geometry that fully crosses the outer automobile bridge, leaves its far bank, and then turns. Keep approximately 10 m spacing on straight sections and 2 m spacing within 12 m of detected turns while retaining the complete connected 2 m reference chain for audit.
+
+The tested search found no connected Driving-waypoint candidate through the visually narrow bridge inside the town, so it is not selected for a vehicle/autopilot test. The final route-5 preview uses full-map framing and line-only DebugHelper rendering to avoid both point-billboard texture occlusion and out-of-map close-up artifacts. This decision originally did not claim that Traffic Manager could complete either revised route; that separate claim is now supported by D17. Evidence: complete run `20260919T062007Z-route-revision-ca00ee`; rejected and failed intermediate revisions remain registered.
+
+### D17. Traffic Manager Instructions at Map Junctions
+
+**Status:** accepted after Stage-2 drive validation on 2026-09-19.
+
+Use `TrafficManager.set_route(vehicle, instructions)` for the approved routes. Reconstruct their stored 2 m waypoint identities and use the chain to verify connectivity and measure observed trajectory deviation, but derive one `Left`, `Right`, or `Straight` instruction for each contiguous `Waypoint.is_junction` group. The actor is registered with Traffic Manager in synchronous mode, and RoadLines hiding is reapplied after the map load. Completion requires proximity to the stored finish (≤8 m), at least 95% projected progress, zero collisions, no timeout/stuck result, and a stopped vehicle after autopilot is disabled.
+
+This replaces use of `set_path` as the operational command for these routes. Two route-1 diagnostics showed that both adaptive and complete connected 2 m coordinate lists were accepted by `set_path` but later diverged at a branch. CARLA 0.9.16 documents both APIs and warns that topology must permit the supplied path/instructions. The final `set_route` run completed all five routes with 0.997–1.247 m maximum deviation and no collision. Evidence: incomplete `20260919T065121Z-tm-autopilot-pilot-ea602d` and `20260919T065327Z-tm-autopilot-pilot-282f01`; complete `20260919T065802Z-tm-autopilot-approved-routes-106f97`.
+
 ## Proposed Project Decisions
 
 Implement these unless evidence calls for a revision. Do not attribute them to the assignment author.
@@ -91,7 +131,7 @@ Implement these unless evidence calls for a revision. Do not attribute them to t
 | P01 | LLM → validated SceneSpec → restricted CARLA executor | Schema must cover real operations and impossible requests |
 | P02 | Fixed world step, synchronous TM, sensor period 0.5 s | 18-camera performance, frame delivery, physics substeps |
 | P03 | One concrete AV2 calibration with preserved raw data | Source/log ID, ego origin, rotations, intrinsics compatibility |
-| P04 | Custom routes through GlobalRoutePlanner | Connectivity, TM following, enough duration for events |
+| P04 | Superseded by D13 for route selection; use direct `Waypoint.next()` routes and retain GlobalRoutePlanner only as a later fallback if Traffic Manager path submission requires it | Valid actor spawn, TM following, enough duration for events |
 | P05 | At least two weather configurations per route | Time, disk, meaningful comparison, reproducible randomization |
 | P06 | Around three LLM repeats per request/model | Cost and limits; fix count before running |
 | P07 | Append-only pose log then final JSON conversion | Interruption recovery and no loss of final frame |
