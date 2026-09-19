@@ -216,6 +216,22 @@ The user rented a Massed Compute VM with an RTX A6000 48 GB, Ubuntu 22.04.5, 6 v
 
 **Next action:** collect user feedback on the overview and five individual previews; revise or formally adopt the selected set before implementing autopilot drives.
 
+## 2026-09-19 05:59–06:20 UTC — User-Directed Revision of Routes 4 and 5
+
+**Type:** completed and locally verified geometry revision; routes 4–5 await user visual approval; no autopilot drive.
+
+- Recorded the user's approval of adaptive candidate geometries 1–3 and reconstructed every dense waypoint identity from the approved run without reselection.
+- Added `scripts/stage2_route_revision.py`. Route 4 continues its original deterministic branch sequence through a fourth turn: 508.150 m, 252 dense connected points, and 119 adaptive points.
+- Route-5 exploration rejected an upper-road interpretation, failed attempts to force the old unapproved route through an incompatible directed continuation, and the narrow internal visual bridge because no connected Driving-waypoint candidate crossed that corridor. These failures remain as incomplete runs rather than being hidden.
+- The final seeded search tested 1,275 complete paths against the outer automobile bridge, both-bank crossing, and a turn at least 16 m after the far bank. It found 237 candidates satisfying the complete criteria and selected a 495.316 m route with 244 dense points and 101 adaptive points, close to the 500 m design target.
+- The final route-5 individual preview uses full-map framing. All saved previews use DebugHelper lines only; visual inspection found intact in-map textures and clearly showed the complete bridge crossing followed by a turn.
+
+**How checked:** run `20260919T062007Z-route-revision-ca00ee` passed exact-map, RoadLines-hide, five-route, first-three-identity, four-turn, both-bank bridge, post-bridge-turn, direct-edge connectivity, adaptive-minimum, PNG, and no-point-primitive checks. Its 16 manifest entries passed entry-by-entry SHA-256 verification; manifest SHA-256 is `db2018bf734ce412e53d8b396d7053ae5f879d76ad95571b7ede42e8f6b63936` and signed content totals 12,442,715 bytes. The CARLA container was stopped and absence of containers was checked.
+
+**Artifacts and limitation:** the final run and ten incomplete intermediate revisions are registered in `artifacts/index.csv`; all are local-only. Routes 4–5 still require user approval, and no ego vehicle, Traffic Manager path, completion threshold, or stuck check has run.
+
+**Next action:** obtain user approval for the revised route-4 and route-5 previews, promote the complete replacement set, then implement one-route Traffic Manager validation before attempting all five.
+
 ## Template for the Next Entry
 
 ```text

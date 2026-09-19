@@ -1,6 +1,6 @@
 # Using LLMs to Edit CARLA Scenes
 
-**Working report. Status: Stage 1 is completed; Stage 2 route selection is completed but autopilot drives, cameras, recording, LLM, animal, and comparison experiments remain.**
+**Working report. Status: Stage 1 is completed; Stage 2 replacement-route review is in progress and autopilot drives, cameras, recording, LLM, animal, and comparison experiments remain.**
 
 Document start date: 16 September 2026. Target deadline: 21 September 2026 in the current context; the source PDF specifies only day and month, without a year. Author/executor: complete before submission.
 
@@ -73,7 +73,7 @@ Describe discretisation resolution, route provenance, and visualisation of the c
 
 **Completed route-selection result:** after reapplying RoadLines hiding to 25 objects, the probe sampled all 3,266 values returned by `Map.generate_waypoints(2.0)`. A fixed selection seed (`20260917`) chose distinct native spawn anchors. Each of the 295 transitions was rechecked by confirming that the stored successor appeared in the predecessor's `next(2.0)` response. The run retains the full network sample, a route index, five complete route files, a clean map overview, and one temporary line-only DebugHelper overview per route. A controlled RGB comparison found that `draw_point`, not the map or RoadLines operation, had caused black texture occluders in the earlier preview; all waypoint points are now cleared before camera capture. This establishes only map-graph connectivity and visual route inspection; the run used no ego actor or Traffic Manager. Client/server version was 0.9.16; it began at `096d990` with the rendering correction uncommitted, which is recorded in its metadata.
 
-**Replacement candidates under review:** after the user rejected the mostly straight initial geometries, run `20260919T055800Z-route-candidates-adaptive-a2` generated a straight control, single-left, single-right, three-turn zigzag, and three-turn mixed route of 220.061–350.302 m. A dense 2 m chain preserves direct-edge connectivity evidence, while the proposed route/control subsets use about 10 m spacing on straights and 2 m near detected turns, for 23–90 points. All five candidate previews use texture-safe line crosses. They are not yet the adopted routes and have not been driven; the table above remains authoritative until user approval.
+**Replacement set under review:** the user approved the first three geometries from `20260919T055800Z-route-candidates-adaptive-a2`: a 220.061 m straight control, a 253.109 m single-left route, and a 246.838 m single-right route. Run `20260919T062007Z-route-revision-ca00ee` preserves their dense waypoint identities, extends route 4 to four turns and 508.150 m, and proposes a 495.316 m route 5 that fully crosses the outer automobile bridge and turns after the far bank. Adaptive counts are 23, 44, 45, 119, and 101; every corresponding dense 2 m edge passed direct-successor validation. Routes 4–5 await visual approval and none of the five has been driven, so the older table remains the operational fallback rather than silently treating the replacement as final.
 
 ### 1.6. Traffic Manager Autopilot
 
