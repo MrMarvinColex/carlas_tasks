@@ -433,7 +433,7 @@ def main() -> None:
     parser.add_argument(
         "--routes-run",
         type=Path,
-        default=Path("runs/20260919T062007Z-route-revision-ca00ee"),
+        default=Path("runs/20260919T154916Z-route-numbering-swap-b5e941"),
     )
     parser.add_argument("--route-id", action="append", default=[])
     parser.add_argument("--host", default="127.0.0.1")

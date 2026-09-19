@@ -120,7 +120,15 @@ The tested search found no connected Driving-waypoint candidate through the visu
 
 Use `TrafficManager.set_route(vehicle, instructions)` for the approved routes. Reconstruct their stored 2 m waypoint identities and use the chain to verify connectivity and measure observed trajectory deviation, but derive one `Left`, `Right`, or `Straight` instruction for each contiguous `Waypoint.is_junction` group. The actor is registered with Traffic Manager in synchronous mode, and RoadLines hiding is reapplied after the map load. Completion requires proximity to the stored finish (≤8 m), at least 95% projected progress, zero collisions, no timeout/stuck result, and a stopped vehicle after autopilot is disabled.
 
-This replaces use of `set_path` as the operational command for these routes. Two route-1 diagnostics showed that both adaptive and complete connected 2 m coordinate lists were accepted by `set_path` but later diverged at a branch. CARLA 0.9.16 documents both APIs and warns that topology must permit the supplied path/instructions. The final `set_route` run completed all five routes with 0.997–1.247 m maximum deviation and no collision. Evidence: incomplete `20260919T065121Z-tm-autopilot-pilot-ea602d` and `20260919T065327Z-tm-autopilot-pilot-282f01`; complete `20260919T065802Z-tm-autopilot-approved-routes-106f97`.
+This replaces use of `set_path` as the operational command for these routes. Two route-1 diagnostics showed that both adaptive and complete connected 2 m coordinate lists were accepted by `set_path` but later diverged at a branch. CARLA 0.9.16 documents both APIs and warns that topology must permit the supplied path/instructions. The final `set_route` run completed all five routes with 0.997–1.247 m maximum deviation and no collision. Evidence: incomplete `20260919T065121Z-tm-autopilot-pilot-ea602d` and `20260919T065327Z-tm-autopilot-pilot-282f01`; current complete run `20260919T154938Z-tm-autopilot-renumbered-routes-aac495`.
+
+### D18. Route Numbers Follow Increasing Complexity
+
+**Status:** user-requested relabelling accepted on 2026-09-19.
+
+Keep all five approved geometries unchanged, but relabel the complete bridge crossing followed by a turn as `route_04_bridge_then_turn` and the 508.150 m route with four turns as `route_05_four_turns`. Do not modify the earlier signed route run; preserve it as source and create a new signed revision that records the one-to-one identifier mapping. Re-run the five-drive Traffic Manager validation under the new identifiers.
+
+Evidence: relabelling revision `20260919T154916Z-route-numbering-swap-b5e941`, which passed all geometry-preservation checks; complete renumbered drive validation `20260919T154938Z-tm-autopilot-renumbered-routes-aac495`.
 
 ## Proposed Project Decisions
 

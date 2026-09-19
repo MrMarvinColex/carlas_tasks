@@ -256,6 +256,20 @@ The user rented a Massed Compute VM with an RTX A6000 48 GB, Ubuntu 22.04.5, 6 v
 
 **Next action:** start Stage 3 by selecting an actual AV2 calibration and validating the nine RGB/semantic sensor pairs and 2 Hz pose/frame alignment on a short drive.
 
+## 2026-09-19 15:49–15:50 UTC — User-Requested Route-Numbering Swap
+
+**Type:** completed and locally verified identifier-only revision plus CARLA revalidation.
+
+- The user requested that the bridge route become route 4 and the more complex four-turn route become route 5. Added `scripts/stage2_route_relabel.py`, which preserves the old signed run, copies only route documents into a fresh revision, changes the identifiers/order, and checks that every geometry-bearing field is unchanged.
+- Revision `20260919T154916Z-route-numbering-swap-b5e941` passed all five geometry-preservation checks. It maps `route_05_bridge_then_turn` → `route_04_bridge_then_turn` and `route_04_four_turns` → `route_05_four_turns`.
+- Re-ran all five Traffic Manager drives against that revision. The current final validation is `20260919T154938Z-tm-autopilot-renumbered-routes-aac495`; every route passed all existing completion/safety checks under its current identifier.
+
+**How checked:** local manifest validation passed for 9 relabelling files and 19 drive files. The relabelling manifest is `6af7ad8fe6cc3ce740aed00c66867b412d602195b44e90aed15cb9d26438272e` (746,813 bytes); the new all-route drive manifest is `a2581991bb20f5ef79e0dabb78f292f53041369ee197ada93fe7edf83f7e9a6b` (2,250,192 bytes).
+
+**Artifacts and external copy:** both new runs are in `artifacts/index.csv` and remain local-only. CARLA was stopped after the revalidation.
+
+**Next action:** Stage 3 — select an actual AV2 calibration and validate nine RGB/semantic sensor pairs with 2 Hz frame/pose alignment.
+
 ## Template for the Next Entry
 
 ```text

@@ -65,29 +65,29 @@ Describe discretisation resolution, route provenance, and visualisation of the c
 
 | Route | Adaptive waypoint count | Length, m | Start/finish | Provenance | File/run |
 |---|---|---|---|---|---|
-| `route_01_straight` | 23 | 220.061 | (92.405, 227.220) → (92.367, 7.159) | Approved adaptive subset; 111-point connected 2 m reference | `routes/route_01_straight.json`, run `20260919T062007Z-route-revision-ca00ee` |
+| `route_01_straight` | 23 | 220.061 | (92.405, 227.220) → (92.367, 7.159) | Approved adaptive subset; 111-point connected 2 m reference | `routes/route_01_straight.json`, run `20260919T154916Z-route-numbering-swap-b5e941` |
 | `route_02_left` | 44 | 253.109 | (130.365, -2.047) → (-2.041, 123.409) | Approved adaptive subset; 126-point connected 2 m reference | `routes/route_02_left.json`, same run |
 | `route_03_right` | 45 | 246.838 | (334.773, 210.670) → (200.928, 326.600) | Approved adaptive subset; 126-point connected 2 m reference | `routes/route_03_right.json`, same run |
-| `route_04_four_turns` | 119 | 508.150 | (396.368, 19.923) → (88.399, 192.263) | Approved adaptive subset; 252-point connected 2 m reference | `routes/route_04_four_turns.json`, same run |
-| `route_05_bridge_then_turn` | 101 | 495.316 | (301.340, 330.610) → (334.889, 18.076) | Approved adaptive subset; 244-point connected 2 m reference | `routes/route_05_bridge_then_turn.json`, same run |
+| `route_04_bridge_then_turn` | 101 | 495.316 | (301.340, 330.610) → (334.889, 18.076) | Approved adaptive subset; 244-point connected 2 m reference | `routes/route_04_bridge_then_turn.json`, same run |
+| `route_05_four_turns` | 119 | 508.150 | (396.368, 19.923) → (88.399, 192.263) | Approved adaptive subset; 252-point connected 2 m reference | `routes/route_05_four_turns.json`, same run |
 
 **Superseded initial route-selection result:** after reapplying RoadLines hiding to 25 objects, the probe sampled all 3,266 values returned by `Map.generate_waypoints(2.0)`. A fixed selection seed (`20260917`) chose distinct native spawn anchors. Each of the 295 transitions was rechecked by confirming that the stored successor appeared in the predecessor's `next(2.0)` response. The run retains the full network sample, a route index, five complete route files, a clean map overview, and one temporary line-only DebugHelper overview per route. A controlled RGB comparison found that `draw_point`, not the map or RoadLines operation, had caused black texture occluders in the earlier preview; all waypoint points are now cleared before camera capture. This establishes only map-graph connectivity and visual route inspection; the run used no ego actor or Traffic Manager. Client/server version was 0.9.16; it began at `096d990` with the rendering correction uncommitted, which is recorded in its metadata.
 
-**Approved replacement set:** the user approved all five geometries on 2026-09-19. Run `20260919T062007Z-route-revision-ca00ee` preserves the approved first three dense waypoint identities, extends route 4 to four turns, and supplies route 5 with a complete outer automobile-bridge crossing followed by a turn. Adaptive counts are 23, 44, 45, 119, and 101; every corresponding dense 2 m edge passed direct-successor validation. This table supersedes the original five 60-point routes for subsequent implementation.
+**Approved replacement set:** the user approved all five geometries on 2026-09-19, then requested that route numbers reflect complexity. Immutable run `20260919T154916Z-route-numbering-swap-b5e941` keeps every geometry unchanged but makes the bridge crossing route 4 and the four-turn route 5. Adaptive counts are 23, 44, 45, 101, and 119; every corresponding dense 2 m edge passed direct-successor validation. This table supersedes the original five 60-point routes for subsequent implementation.
 
 ### 1.6. Traffic Manager Autopilot
 
 Describe vehicle spawning, path assignment, TM settings, completion criterion, timeout, and stuck-vehicle handling. Attach actual trajectories for five drives and deviations from routes.
 
-**Result:** completed on `Carla/Maps/Town01_Opt` in run `20260919T065802Z-tm-autopilot-approved-routes-106f97`. One Tesla Model 3 was spawned at each stored route start after RoadLines hiding was reapplied; world and Traffic Manager used a 0.05 s synchronous step. The initial adaptive and dense `set_path` trials were accepted but departed route 1 after 94 m at a later branch, so both are retained as incomplete diagnostics. The final method submitted derived `set_route` junction instructions (`Left`/`Right`/`Straight`) and projected every sampled vehicle pose onto the preserved 2 m reference chain.
+**Result:** completed on `Carla/Maps/Town01_Opt` in run `20260919T154938Z-tm-autopilot-renumbered-routes-aac495`. One Tesla Model 3 was spawned at each stored route start after RoadLines hiding was reapplied; world and Traffic Manager used a 0.05 s synchronous step. The initial adaptive and dense `set_path` trials were accepted but departed route 1 after 94 m at a later branch, so both are retained as incomplete diagnostics. The final method submitted derived `set_route` junction instructions (`Left`/`Right`/`Straight`) and projected every sampled vehicle pose onto the preserved 2 m reference chain.
 
 | Route | Outcome | Finish distance, m | Maximum deviation, m | Collisions |
 |---|---:|---:|---:|---:|
 | `route_01_straight` | Completed | 7.885 | 0.997 | 0 |
 | `route_02_left` | Completed | 7.199 | 1.204 | 0 |
 | `route_03_right` | Completed | 7.935 | 0.999 | 0 |
-| `route_04_four_turns` | Completed | 7.923 | 1.247 | 0 |
-| `route_05_bridge_then_turn` | Completed | 7.706 | 1.232 | 0 |
+| `route_04_bridge_then_turn` | Completed | 7.706 | 1.232 | 0 |
+| `route_05_four_turns` | Completed | 7.923 | 1.247 | 0 |
 
 The criterion was finish distance ≤8 m plus ≥95% reference progress; each route also passed timeout, stuck, deviation (≤15 m), and post-finish-stop checks. This is a CARLA Traffic Manager navigation test, not an evaluation of learned visual perception. No cameras or dataset frames were recorded in this stage.
 
