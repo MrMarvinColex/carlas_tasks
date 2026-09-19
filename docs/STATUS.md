@@ -1,6 +1,6 @@
 # Current Project Status
 
-Last inspected: **2026-09-18 12:22 UTC**; user timezone: Europe/Moscow.
+Last inspected: **2026-09-19 05:52 UTC**; user timezone: Europe/Moscow.
 
 ## Current Position
 
@@ -22,7 +22,9 @@ The direct Town01_Opt one-location review was initially recorded incorrectly as 
 
 **Stage-2 route-selection result:** run `20260918T121645Z-town01-opt-routes-clean-debug-95bdcf` loaded `Carla/Maps/Town01_Opt`, re-applied direct hiding to its 25 returned RoadLines objects, and sampled the complete finite `Map.generate_waypoints(2.0)` result (3,266 waypoints). A seeded native-spawn-point procedure selected five distinct routes of 60 driving waypoints each, 114.841–121.110 m long. Every one of the 295 route edges was independently rechecked as a member of its predecessor's `Waypoint.next(2.0)` result. The run contains the complete network sample, five route JSON files, a route index, and clean temporary DebugHelper line views of each route; its debug shapes were cleared before exit. A controlled diagnostic proved that CARLA 0.9.16's `draw_point` primitive, not RoadLines hiding, created black road-texture occluders in the previous nadir RGB views. Full waypoint points are still submitted to DebugHelper for 0.5 simulation seconds, but are cleared before any RGB capture; route screenshots use `draw_line` only. This proves construction and map connectivity only: no ego actor, Traffic Manager, path submission, or drive completion has been run. No CARLA container is running. New data runs must be copied to the same Mac hierarchy and checksum-verified before the VM is treated as disposable.
 
-**Next action:** implement the second half of Stage 2 against the saved routes: spawn and validate an ego at each recorded native spawn transform, enable synchronous Traffic Manager, submit the exact stored path, and record trajectory, completion, timeout, stuck, collision, intersection, and post-finish behaviour. The supplementary Town10HD_Opt reference-view probe remains independent and non-blocking.
+**Stage-2 replacement candidates pending user review:** the original five routes remain adopted until the user approves a replacement. Run `20260919T055800Z-route-candidates-adaptive-a2` proposes five longer, deliberately distinct geometries: a 220.061 m straight control, 253.109 m single-left route, 246.838 m single-right route, 313.048 m three-turn zigzag, and 350.302 m three-turn mixed route. Every dense 2 m reference edge passed direct `Waypoint.next(2.0)` validation. The proposed stored/control subsets use about 10 m spacing on straights and 2 m within 12 m of detected heading-change events, yielding 23, 44, 45, 83, and 90 waypoints. Cross markers and paths use `draw_line` only; visual inspection found intact road texture. The prior `...adaptive-a1` iteration is retained as incomplete because it unnecessarily densified straight-through junctions. Neither candidate run includes a vehicle or Traffic Manager drive. No CARLA container is running.
+
+**Next action:** obtain the user's visual approval or requested edits for the five adaptive candidates. Only after approval, replace the adopted route files and then implement the Traffic Manager driving half of Stage 2 against the approved set. The supplementary Town10HD_Opt reference-view probe remains independent and non-blocking.
 
 ## Stage Status
 
@@ -30,7 +32,7 @@ The direct Town01_Opt one-location review was initially recorded incorrectly as 
 |---|---|---|
 | 0. Environment and data safety | DONE | Bootstrap and repeat-safe setup, CARLA server/client RGB smoke test, run tracking/manifest, actual image digest, private Git remote, and verified Mac `rsync` copy are recorded; new-VM recovery remains untested |
 | 1. Map and API | DONE | Town01 load/API/weather/basic actor checks passed. On explicitly selected Town01_Opt, direct RoadLines hiding passed RGB and raw-semantic checks at straight/intersection/traffic-control observations with sampled navigation intact. Blueprint catalogue has no animal candidate; compatible external asset status remains open for Stage 7. |
-| 2. Routes | IN_PROGRESS | Five connected 60-waypoint routes, complete 2 m network sample, route files, and texture-safe temporary DebugHelper line views passed local validation in `20260918T121645Z-town01-opt-routes-clean-debug-95bdcf`; valid actor spawns, Traffic Manager paths, and actual completion/stuck/collision checks remain |
+| 2. Routes | IN_PROGRESS | The original five routes remain adopted; a locally validated five-route adaptive replacement is awaiting user visual approval in `20260919T055800Z-route-candidates-adaptive-a2`. Valid actor spawns, Traffic Manager paths, and actual completion/stuck/collision checks remain. |
 | 3. Cameras and recording | TODO | No AV2 log/calibration is selected; 18 cameras are untested |
 | 4. Baseline dataset | TODO | No recordings exist |
 | 5. Literature review | TODO | Initial technical sources exist; the LLM-method review is not complete |
@@ -68,6 +70,7 @@ Do not ask the user for all of these at once. Check available facts independentl
 - Six stage-1 probe sets are locally manifest-verified but **not copied externally**: `20260917T110520Z-map-api-676d` (6,307,929 bytes), `20260917T111200Z-town01-opt-decals-5a62` (1,813,284 bytes), `20260917T145900Z-town01-texture-ead1` (4,331,674 bytes), `20260917T150510Z-town01-opt-direct-638d` (1,783,290 bytes, corrected review), `20260917T151600Z-town01-full-texture-1c2f` (1,675,533 bytes), and `20260917T153000Z-town01-opt-coverage-b6e3` (5,374,757 bytes, successful three-location confirmation). Their total is 21,286,467 bytes.
 - The locally verified 9,331-byte run `20260917T154728Z-town10hd-reference-marking-8cb727` is incomplete: it has configuration/metadata only because its Town10HD_Opt server never became API-responsive. It is separate from the six Stage-1 evidence probes and is not copied externally.
 - The locally manifest-verified 15,313,829-byte Stage-2 route-selection run `20260918T121645Z-town01-opt-routes-clean-debug-95bdcf` is the adopted visual evidence and has `backup_status=not_copied`. It contains `network_waypoints.json`, `routes.json`, five route files, a clean map overview, and six line-only DebugHelper route PNGs. The earlier 12,884,530-byte run `20260917T194300Z-town01-opt-routes-final-c5b492` remains valid for route geometry but its RGB previews are superseded: `draw_point` obscured road textures. The isolated 5,421,733-byte diagnostic `20260918T121243Z-debug-render-probe-295692` preserves the controlled no-debug/line-only/point-only comparison. Neither run is copied externally.
+- The 12,180,606-byte candidate run `20260919T055800Z-route-candidates-adaptive-a2` is locally manifest-verified and awaiting user approval; it does not supersede the adopted routes yet. The 12,053,073-byte `...adaptive-a1` run is retained as an incomplete design iteration. Both have `backup_status=not_copied`.
 - Ready to delete VM: **not confirmed**. Documentation on the Mac does not prove that existing server work is preserved.
 
 ## How to Update This File

@@ -198,6 +198,24 @@ The user rented a Massed Compute VM with an RTX A6000 48 GB, Ubuntu 22.04.5, 6 v
 
 **Next action:** commit and push the texture-safe route-visualisation correction, then resume the still-unfinished Traffic Manager driving half of Stage 2.
 
+## 2026-09-19 05:48–05:52 UTC — Diverse Adaptive Route Candidates
+
+**Type:** completed and locally verified visual proposal; candidates are not adopted and no driving was run.
+
+**Trigger:** the user rejected the original mostly straight routes and approved denser waypoint spacing near turns with wider spacing on straights.
+
+- Added `scripts/stage2_route_candidates.py`. It enumerated 1,020 complete seeded paths from all 255 native spawn anchors using direct `Waypoint.next(2.0)` chains, classified sustained heading changes, and selected five deliberately different geometries with low overlap and separated starts.
+- The corrected proposal contains a 220.061 m straight control, 253.109 m single-left route, 246.838 m single-right route, 313.048 m three-turn zigzag, and 350.302 m three-turn mixed route. Their dense 2 m references contain 111–181 waypoints and every one of 695 edges passed a repeated direct-successor check.
+- Proposed adaptive subsets retain about 10 m spacing on straights and 2 m spacing within 12 m of detected turns. Counts are 23, 44, 45, 83, and 90, all above the assignment minimum. Saved paths use line segments and adaptive cross markers made only from `DebugHelper.draw_line`; visual inspection found intact road texture.
+- The first run, `20260919T054900Z-route-candidates-adaptive-a1`, also densified every `is_junction` interval. Visual inspection showed excessive 2 m markers on straight-through junction sections, so it was finalized as incomplete and retained. The corrected `20260919T055800Z-route-candidates-adaptive-a2` densifies only real heading-change events and passed all machine and visual checks.
+- Corrected-run manifest verification passed for all 16 entries. Its manifest SHA-256 is `24309b1c0d35bd763d3b4b1d47641c27226ac636c539fdcefa107c6479ac3429`; signed content totals 12,180,606 bytes. The temporary CARLA container was stopped.
+
+**Artifacts and external copy:** both runs are registered in `artifacts/index.csv` and remain local-only with `backup_status=not_copied`.
+
+**Decision / limitation:** the user approved the adaptive-spacing direction, not the five exact geometries. D13 and the original route table remain authoritative until visual approval. Neither candidate run spawned a vehicle or exercised Traffic Manager.
+
+**Next action:** collect user feedback on the overview and five individual previews; revise or formally adopt the selected set before implementing autopilot drives.
+
 ## Template for the Next Entry
 
 ```text

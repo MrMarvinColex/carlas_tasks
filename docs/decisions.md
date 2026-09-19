@@ -98,6 +98,14 @@ In the installed CARLA 0.9.16 renderer, `DebugHelper.draw_point` occludes the ro
 
 This replaces the previous route-preview rendering in `20260917T194300Z-town01-opt-routes-final-c5b492`; it does not change route geometry, map editing, or the later dataset camera protocol. Evidence: diagnostic `20260918T121243Z-debug-render-probe-295692` and corrected route run `20260918T121645Z-town01-opt-routes-clean-debug-95bdcf`.
 
+### D15. Adaptive Route-Waypoint Spacing for Replacement Candidates
+
+**Status:** user-approved spacing direction on 2026-09-19; candidate geometries await user approval.
+
+Retain a connected 2 m reference chain for construction and audit, but propose a reduced sequential waypoint list at approximately 10 m spacing on straight sections and 2 m spacing within 12 m of detected heading-change events. Straight-through junctions do not by themselves trigger 2 m density. Saved RGB previews use `draw_line` crosses for the adaptive points and never `draw_point`.
+
+The first candidate iteration densified every `is_junction` interval and was rejected during visual review because CARLA labels some long straight-through sections as junctions. The corrected candidate run reduces the straight control from 111 dense reference points to 23 proposed points while retaining 2 m coverage around actual turns. This spacing policy does not yet supersede D13's adopted route set; replacement occurs only after user approval and later Traffic Manager validation. Evidence: incomplete run `20260919T054900Z-route-candidates-adaptive-a1` and corrected run `20260919T055800Z-route-candidates-adaptive-a2`.
+
 ## Proposed Project Decisions
 
 Implement these unless evidence calls for a revision. Do not attribute them to the assignment author.
