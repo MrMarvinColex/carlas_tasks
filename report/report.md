@@ -1,6 +1,6 @@
 # Using LLMs to Edit CARLA Scenes
 
-**Working report. Status: Stages 1–2 are completed; cameras, recording, LLM, animal, and comparison experiments remain.**
+**Working report. Status: Stages 1–2 are completed; the Stage-3 camera/recording implementation passed locally and awaits its required verified off-VM copy. Baseline recording, LLM, animal, and comparison experiments remain.**
 
 Document start date: 16 September 2026. Target deadline: 21 September 2026 in the current context; the source PDF specifies only day and month, without a year. Author/executor: complete before submission.
 
@@ -10,7 +10,7 @@ Recording rule: distinguish planned methods from completed experiments. For ever
 
 The assignment requires controlling CARLA through Python, recording five routes using cameras placed as in Argoverse 2, and studying natural-language scene editing with several LLMs. Per the user’s clarification, changes are limited to CARLA runtime capabilities and models are called through APIs. The selected rig has nine positions and two sensor types per position, recorded at 2 Hz of simulation time. Ego-vehicle poses are stored separately.
 
-The user reported a successful CARLA 0.9.16 offscreen test on the GPU VM. Stage 1 subsequently verified Town01 loading, basic World/Actor/Blueprint operations, rendered weather changes, and the exposed map/object catalogues. Base Town01 direct RoadLines hiding was semantic-only, but the installed `Town01_Opt` passed paired RGB/raw-semantic checks at a straight road, intersection, and traffic-control location using direct RoadLines hiding; sampled navigation remained available. Stage 2 constructed five connected approved routes, saved their geometry and DebugHelper views, then drove all five with a spawned Traffic Manager vehicle under explicit completion and safety checks. Camera recording and all later research outcomes remain unconfirmed.
+The user reported a successful CARLA 0.9.16 offscreen test on the GPU VM. Stage 1 subsequently verified Town01 loading, basic World/Actor/Blueprint operations, rendered weather changes, and the exposed map/object catalogues. Base Town01 direct RoadLines hiding was semantic-only, but the installed `Town01_Opt` passed paired RGB/raw-semantic checks at a straight road, intersection, and traffic-control location using direct RoadLines hiding; sampled navigation remained available. Stage 2 constructed five connected approved routes, saved their geometry and DebugHelper views, then drove all five with a spawned Traffic Manager vehicle under explicit completion and safety checks. Stage 3 selected a real AV2 calibration and locally validated all 18 camera streams with same-frame ego poses at 2 Hz; its required independent copy is still unverified. All later research outcomes remain unconfirmed.
 
 After experiments, replace this section with a short abstract of the actual results, data volume, and limitations.
 
@@ -93,17 +93,17 @@ The criterion was finish distance ≤8 m plus ≥95% reference progress; each ro
 
 ### 1.7. Camera and Transform Recording at 2 Hz
 
-Plan: synchronous simulation, cameras with a 0.5 s period, and frame-ID matching to the ego pose from the same snapshot. Both simulation and wall-clock time are recorded separately. A complete `transforms.json` is written at the end of a drive.
+The implemented recorder uses a synchronous 0.05 s world step and Traffic Manager, with all cameras set to a 0.5 s sensor period. Callbacks are grouped by CARLA frame ID and accepted only when every expected sensor is present and the timestamp matches the ego `ActorSnapshot` from that frame's `WorldSnapshot`. Complete warm-up frames are discarded explicitly. GPU callback delay therefore cannot pair an image with a later `vehicle.get_transform()` call. A partial transform document is updated after each accepted sample; final `transforms.json` is written only after the requested capture completes.
 
-Describe the actual world step, phase/warm-up, semantic-ID encoding, handling of camera delay, capture window, omissions, and recovery after interruption.
+RGB is saved losslessly as PNG. The semantic camera's raw R-channel class ID is written unchanged to an 8-bit grayscale PNG, while a separate CityScapes-palette PNG is a human-readable preview. The validator checks JSON, unique frames, timing, camera sets, file paths, PNG signatures/chunk CRCs/decompression, dimensions, raw encoding, and ego-body pixels. It also creates contact sheets for visual review.
 
 | Check | Measurement | Artifact |
 |---|---|---|
-| Simulation-timestamp interval | Not measured | — |
-| Completeness of 18 frames per timestamp | Not measured | — |
-| Ego-pose/frame alignment | Not checked | — |
-| Drops/duplicates | Not measured | — |
-| JSON/images are readable | Not checked | — |
+| Simulation-timestamp interval | 0.5000000 s within 0.0001 s tolerance; four samples | `20260919T162408Z-av2-all-cameras-short-247e3f/validation.json` |
+| Completeness of 18 frames per timestamp | 4/4 complete; 72 required RGB/raw-ID images | Same validation |
+| Ego-pose/frame alignment | All sensor timestamps equal the same-frame snapshot timestamp | Same validation |
+| Drops/duplicates | 0 missing, 0 duplicate keys, 0 late events after stop | `capture_summary.json` |
+| JSON/images are readable | `transforms.json` parsed; all 108 PNGs including previews decoded and CRC-checked | Same validation |
 
 ### 1.8. Argoverse 2 Cameras
 
@@ -111,14 +111,14 @@ Nine viewpoints: `ring_front_center`, `ring_front_left`, `ring_front_right`, `ri
 
 | Item | Actual selection |
 |---|---|
-| AV2 log ID / calibration source | Not selected |
-| CARLA vehicle | Not selected |
-| Ego-origin transform | Not calculated |
-| Extrinsics for nine cameras | Not applied |
-| Intrinsics / FOV / resolutions | Not configured |
-| Verification of all views | Not completed |
+| AV2 log ID / calibration source | Sensor log `54bc6dbc-ebfb-3fba-b5b3-57f88b4b79ca`; official public S3 Feather files with preserved SHA-256 |
+| CARLA vehicle | `vehicle.tesla.model3` |
+| Ego-origin transform | AV2 rear-axle centre aligned to the CARLA rear-wheel midpoint after the first synchronous tick; AV2 y-left converted to CARLA y-right |
+| Extrinsics for nine cameras | Quaternion rotations converted through explicit ego/optical bases; uniform `+0.5 m` local-z clearance adaptation declared |
+| Intrinsics / FOV / resolutions | AV2 width/height and horizontal FOV from `fx`; front-centre 1550×2048, other eight 2048×1550 |
+| Verification of all views | Numerical rotation/body checks plus RGB and semantic contact-sheet review passed |
 
-After implementation, attach the source and applied calibration, axis/unit definition, rotation conversion, numerical checks, and a contact sheet of all nine views. List optical-model differences if exact equivalence cannot be achieved.
+CARLA 0.9.16 cannot set the small AV2 principal-point offsets or reproduce the full `k1/k2/k3` model, so distortion was disabled and exact optical equivalence is not claimed. Exact rear-axle placement exposed the Tesla hood; a retained failed pilot demonstrates this, and the declared 0.5 m height adaptation removes the body from every validated view. Raw source, applied transforms, numerical checks, and projection limits are in the run's `calibration.json`.
 
 ### 1.9. Baseline Drives and Weather
 
@@ -192,12 +192,12 @@ After implementation, describe the actual format, JSON schema, frame/timestamp c
 
 | Metric | Actual value |
 |---|---|
-| Number of scenes / routes / weather conditions | Not measured |
-| Number of complete and failed drives | Not measured |
-| Total simulation time | Not measured |
-| Image / pose-record count | Not measured |
-| Data volume | Not measured |
-| Validator / version | Not implemented |
+| Number of scenes / routes / weather conditions | One short Stage-3 rig check on the beginning of route 1; baseline matrix not yet run |
+| Number of complete and failed drives | One complete 18-sensor short check; three retained calibration/body diagnostics and one successful one-view pilot |
+| Total simulation time | Full-rig accepted span 1.500000022 s after warm-up |
+| Image / pose-record count | 72 required images + 36 previews + 4 ego poses in the full-rig check |
+| Data volume | 165,463,137 bytes including validation, contact sheets, metadata, and manifest |
+| Validator / version | `scripts/stage3_validate_dataset.py`; all checks passed |
 | Verified external copy | Not confirmed |
 
 State the Git commit/tag, image digest, pinned dependencies, configurations, and seeds. Data and code must be usable without the current VM. Include checksum manifests in the submission.

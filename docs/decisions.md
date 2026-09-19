@@ -24,9 +24,11 @@ Remove road lines and associated markings while preserving the road and navigati
 
 ### D04. Full AV2 Camera Rig
 
-**Status:** user clarification.
+**Status:** user clarification; calibration and conversion artifact-confirmed on 2026-09-19.
 
-Use nine AV2 positions: seven ring and two stereo. Each has RGB and semantic sensors, for 18 streams at 2 Hz of simulation time. Position and orientation must follow one selected real calibration after coordinate conversion; a symmetric arbitrary layout is insufficient. The exact calibration source is still open. Do not claim optical equivalence without verifying intrinsics and projection model.
+Use nine AV2 positions: seven ring and two stereo. Each has RGB and semantic sensors, for 18 streams at 2 Hz of simulation time. Position and orientation follow AV2 Sensor Dataset log `54bc6dbc-ebfb-3fba-b5b3-57f88b4b79ca`; its two official calibration Feather files and their SHA-256 values are preserved under `configs/av2/`. AV2's rear-axle ego origin is aligned to the Tesla Model 3 rear axle computed from CARLA wheel positions after the first synchronous tick. Axis conversion is explicit, and the quaternion-to-CARLA Euler round trip is numerically checked for every camera.
+
+The AV2 translation is retained, then a documented uniform `+0.5 m` CARLA-local z mount adaptation is applied because the exact AV2 height exposed the Tesla hood in the front-centre view. The unadjusted pilot is retained as failed evidence; the adjusted one-view and 18-sensor runs contain no ego semantic tag in the bottom 10% of any image and passed visual review. CARLA receives the original resolution and horizontal FOV derived from `fx`; it cannot reproduce arbitrary `cx`, `cy`, or the complete AV2 `k1/k2/k3` model, so distortion is disabled and optical equivalence is not claimed. Evidence: `20260919T162113Z-av2-front-center-pilot-local-98cb54`, `20260919T162313Z-av2-front-center-clearance-bb5bae`, and `20260919T162408Z-av2-all-cameras-short-247e3f`.
 
 ### D05. Separate Ego Transform
 
@@ -130,6 +132,14 @@ Keep all five approved geometries unchanged, but relabel the complete bridge cro
 
 Evidence: relabelling revision `20260919T154916Z-route-numbering-swap-b5e941`, which passed all geometry-preservation checks; complete renumbered drive validation `20260919T154938Z-tm-autopilot-renumbered-routes-aac495`.
 
+### D19. Frame-Keyed 2 Hz Recording Protocol
+
+**Status:** accepted and artifact-confirmed on 2026-09-19.
+
+Run the world and Traffic Manager synchronously at a 0.05 s fixed step and set all cameras to `sensor_tick=0.5`. Camera callbacks enter a queue keyed by CARLA frame ID. A sample is accepted only after every expected RGB/semantic callback for that frame has arrived and its timestamp matches the ego `ActorSnapshot` from the same `WorldSnapshot`; callback-time calls to `vehicle.get_transform()` are not used. Complete warm-up frames are explicitly discarded, in-flight callbacks are drained after sensor stop, and any missing, duplicate, dimension-mismatched, corrupt, or off-interval data fails validation.
+
+RGB is lossless PNG. The semantic R-channel class ID is written unchanged to an 8-bit grayscale PNG, with a separate CityScapes palette preview. `transforms.partial.json` is rewritten after every accepted sample and is replaced by final `transforms.json` only after completion. The full short run accepted four timestamps 0.5 s apart with 18 aligned images and one ego pose each, zero duplicates or late events, and 108 readable PNG files including previews. Evidence: `20260919T162408Z-av2-all-cameras-short-247e3f`.
+
 ## Proposed Project Decisions
 
 Implement these unless evidence calls for a revision. Do not attribute them to the assignment author.
@@ -137,8 +147,8 @@ Implement these unless evidence calls for a revision. Do not attribute them to t
 | ID | Proposal | Validate before finalizing |
 |---|---|---|
 | P01 | LLM → validated SceneSpec → restricted CARLA executor | Schema must cover real operations and impossible requests |
-| P02 | Fixed world step, synchronous TM, sensor period 0.5 s | 18-camera performance, frame delivery, physics substeps |
-| P03 | One concrete AV2 calibration with preserved raw data | Source/log ID, ego origin, rotations, intrinsics compatibility |
+| P02 | Superseded by D19: fixed 0.05 s world step, synchronous TM, frame-keyed 0.5 s sensor period | Revalidate at Stage-4 route duration and matrix scale |
+| P03 | Superseded by D04: AV2 log `54bc6dbc-ebfb-3fba-b5b3-57f88b4b79ca` with preserved raw calibration | Reuse the signed calibration record in later dataset runs |
 | P04 | Superseded by D13 for route selection; use direct `Waypoint.next()` routes and retain GlobalRoutePlanner only as a later fallback if Traffic Manager path submission requires it | Valid actor spawn, TM following, enough duration for events |
 | P05 | At least two weather configurations per route | Time, disk, meaningful comparison, reproducible randomization |
 | P06 | Around three LLM repeats per request/model | Cost and limits; fix count before running |
@@ -151,7 +161,6 @@ Implement these unless evidence calls for a revision. Do not attribute them to t
 | Q01 | Git remote, external storage, access/quota | Stage 0 | Data survives Delete |
 | Q02 | Actual map and road-marking coverage | Stage 1 | One Decals call removes every line |
 | Q03 | Animal in package or compatible prebuilt extension | Early stage 1; decide before stage 7 | Python can import any FBX/GLB into packaged CARLA |
-| Q04 | Specific calibration and vehicle origin | Stage 3 | Copying xyz without conversion reproduces AV2 |
 | Q05 | API endpoints, IDs, and access for three models | Before paid stage 6 work | A model in Codex is available through the project API |
 | Q06 | Scene/weather/repeat matrix and data volume | Stages 3–4; revise before 6–8 | Earlier suggestion of 20 drives is mandatory |
 | Q07 | Available physical/behavioural animal effect | Stage 7 | TM treats an arbitrary prop as a pedestrian |

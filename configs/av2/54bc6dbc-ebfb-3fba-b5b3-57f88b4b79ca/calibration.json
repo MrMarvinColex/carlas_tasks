@@ -1,0 +1,70 @@
+{
+  "schema_version": 1,
+  "dataset": "Argoverse 2 Sensor Dataset",
+  "log_id": "54bc6dbc-ebfb-3fba-b5b3-57f88b4b79ca",
+  "retrieved_at_utc": "2026-09-19T11:16:00Z",
+  "source": {
+    "documentation_url": "https://argoverse.github.io/user-guide/datasets/sensor.html",
+    "s3_prefix": "s3://argoverse/datasets/av2/sensor/train/54bc6dbc-ebfb-3fba-b5b3-57f88b4b79ca/calibration/",
+    "http_prefix": "https://argoverse.s3.us-east-1.amazonaws.com/datasets/av2/sensor/train/54bc6dbc-ebfb-3fba-b5b3-57f88b4b79ca/calibration/",
+    "retrieval": "Anonymous HTTPS GET of only the two calibration Feather files; no sensor images or full dataset were downloaded.",
+    "files": {
+      "raw/egovehicle_SE3_sensor.feather": "a8dd784a0ddb647c3672c1e16166c97e67abdcf7432e99831539d1de577ce03b",
+      "raw/intrinsics.feather": "5ac9ef50452f19e9ce3b17829fec0407bd1783709055b91ee4f3aa02968942fd"
+    }
+  },
+  "coordinate_conventions": {
+    "av2_ego": "right-handed: +x forward, +y left, +z up; origin at rear-axle centre",
+    "av2_camera": "right-handed optical frame: +x image-right, +y image-down, +z optical-forward",
+    "extrinsic_direction": "p_av2_ego = egovehicle_SE3_sensor * p_av2_sensor",
+    "quaternion_order": "qw,qx,qy,qz",
+    "translation_unit": "metre"
+  },
+  "cameras": [
+    {
+      "sensor_name": "ring_front_center",
+      "egovehicle_SE3_sensor": {"qw": 0.5028089058282348, "qx": -0.4996885698078901, "qy": 0.5001474161095115, "qz": -0.4973400241104046, "tx_m": 1.631215904382494, "ty_m": -0.000779021509291995, "tz_m": 1.432780225560831},
+      "intrinsics": {"fx_px": 1773.504271792515, "fy_px": 1773.504271792515, "cx_px": 775.8266926605842, "cy_px": 1021.6145129834636, "k1": -0.2405930469325311, "k2": -0.212166550076518, "k3": 0.3286939715661664, "height_px": 2048, "width_px": 1550}
+    },
+    {
+      "sensor_name": "ring_front_left",
+      "egovehicle_SE3_sensor": {"qw": 0.6355260398957764, "qx": -0.6719571796005924, "qy": 0.2754630886537791, "qz": -0.2621073981919042, "tx_m": 1.550015101835897, "ty_m": 0.1975388314404374, "tz_m": 1.431328988778822},
+      "intrinsics": {"fx_px": 1682.0107131578695, "fy_px": 1682.0107131578695, "cx_px": 1025.068254119582, "cy_px": 773.1894944412405, "k1": -0.2534609098642302, "k2": -0.136983727740271, "k3": 0.2093303387072801, "height_px": 1550, "width_px": 2048}
+    },
+    {
+      "sensor_name": "ring_front_right",
+      "egovehicle_SE3_sensor": {"qw": 0.2643537357490307, "qx": -0.2783439715295316, "qy": 0.671740066779142, "qz": -0.6335669014336631, "tx_m": 1.554057123345281, "ty_m": -0.1941710641864548, "tz_m": 1.430574955978671},
+      "intrinsics": {"fx_px": 1684.8344788722216, "fy_px": 1684.8344788722216, "cx_px": 1024.373455194793, "cy_px": 772.5351686466455, "k1": -0.2567491212548423, "k2": -0.1333412414594099, "k3": 0.2087088607820211, "height_px": 1550, "width_px": 2048}
+    },
+    {
+      "sensor_name": "ring_rear_left",
+      "egovehicle_SE3_sensor": {"qw": 0.6005984012055482, "qx": -0.6032271056837144, "qy": -0.371095692552425, "qz": 0.3710614590695509, "tx_m": 1.104117131807932, "ty_m": 0.1243690178999508, "tz_m": 1.446069715888636},
+      "intrinsics": {"fx_px": 1686.4945579995795, "fy_px": 1686.4945579995795, "cx_px": 1025.655904536248, "cy_px": 772.475847789825, "k1": -0.2559099495958785, "k2": -0.1297606027677761, "k3": 0.2023259019945489, "height_px": 1550, "width_px": 2048}
+    },
+    {
+      "sensor_name": "ring_rear_right",
+      "egovehicle_SE3_sensor": {"qw": -0.368148843600679, "qx": 0.3698849741449484, "qy": 0.6036259834030373, "qz": -0.6027331142537217, "tx_m": 1.103432484543626, "ty_m": -0.1283167859887454, "tz_m": 1.428135216426054},
+      "intrinsics": {"fx_px": 1683.375119780361, "fy_px": 1683.375119780361, "cx_px": 1024.381124102667, "cy_px": 775.074881715008, "k1": -0.2557120100986312, "k2": -0.1293306339882223, "k3": 0.2015985854936566, "height_px": 1550, "width_px": 2048}
+    },
+    {
+      "sensor_name": "ring_side_left",
+      "egovehicle_SE3_sensor": {"qw": 0.6841523152439768, "qx": -0.724938371861275, "qy": -0.05834459541730058, "qz": 0.05473458445098094, "tx_m": 1.310427268930095, "ty_m": 0.2679035764926963, "tz_m": 1.433233255609137},
+      "intrinsics": {"fx_px": 1684.902402665963, "fy_px": 1684.902402665963, "cx_px": 1027.8222637071485, "cy_px": 772.6729426435035, "k1": -0.257246993614607, "k2": -0.1245614623222811, "k3": 0.1965191795324036, "height_px": 1550, "width_px": 2048}
+    },
+    {
+      "sensor_name": "ring_side_right",
+      "egovehicle_SE3_sensor": {"qw": -0.05381000526242012, "qx": 0.05610480423251272, "qy": 0.7271126195457901, "qz": -0.682102611615693, "tx_m": 1.310235620178474, "ty_m": -0.2733452609062825, "tz_m": 1.435528940176323},
+      "intrinsics": {"fx_px": 1682.936558732854, "fy_px": 1682.936558732854, "cx_px": 1024.948975721272, "cy_px": 774.854903598131, "k1": -0.2607980377408918, "k2": -0.1095151454026712, "k3": 0.1793826320101755, "height_px": 1550, "width_px": 2048}
+    },
+    {
+      "sensor_name": "stereo_front_left",
+      "egovehicle_SE3_sensor": {"qw": 0.5004214217172338, "qx": -0.4999344433355486, "qy": 0.5012413132469696, "qz": -0.4983985342551993, "tx_m": 1.625085402177525, "ty_m": 0.2481481273726003, "tz_m": 1.222830659589258},
+      "intrinsics": {"fx_px": 1685.8258848387395, "fy_px": 1685.8258848387395, "cx_px": 1025.830335380036, "cy_px": 772.8060149255765, "k1": -0.2595034618662125, "k2": -0.1130646785916537, "k3": 0.1824405639655262, "height_px": 1550, "width_px": 2048}
+    },
+    {
+      "sensor_name": "stereo_front_right",
+      "egovehicle_SE3_sensor": {"qw": 0.5008850255159756, "qx": -0.5035835949876053, "qy": 0.4987926570958074, "qz": -0.4967128338391553, "tx_m": 1.633076345297441, "ty_m": -0.2508716804608329, "tz_m": 1.222172556542977},
+      "intrinsics": {"fx_px": 1683.137590683952, "fy_px": 1683.137590683952, "cx_px": 1024.6120744750506, "cy_px": 776.044199916904, "k1": -0.2559879473123025, "k2": -0.1273014369517191, "k3": 0.1985383531020118, "height_px": 1550, "width_px": 2048}
+    }
+  ]
+}

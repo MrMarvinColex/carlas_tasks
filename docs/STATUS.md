@@ -1,6 +1,6 @@
 # Current Project Status
 
-Last inspected: **2026-09-19 15:50 UTC**; user timezone: Europe/Moscow.
+Last inspected: **2026-09-19 16:30 UTC**; user timezone: Europe/Moscow.
 
 ## Current Position
 
@@ -24,7 +24,9 @@ The direct Town01_Opt one-location review was initially recorded incorrectly as 
 
 **Stage-2 completed drive validation:** the user then requested that the less complex bridge route become number 4 and the four-turn route number 5. Immutable revision `20260919T154916Z-route-numbering-swap-b5e941` proves that only the identifiers/order changed; all geometry fields are byte-for-byte inherited in meaning from the approved source. One Tesla Model 3 was spawned at the start of each renumbered route in synchronous `Town01_Opt`, after reapplying direct hiding to 25 RoadLines objects. The final run `20260919T154938Z-tm-autopilot-renumbered-routes-aac495` completed all five routes, with finish distance 7.20–7.93 m (criterion ≤8 m), maximum route deviation 0.997–1.247 m (limit ≤15 m), zero collision events, no timeout/stuck result, and a stopped vehicle after each finish. Its 19 signed files passed local entry-by-entry verification. The earlier `set_path` diagnostics remain retained. This meets Stage-2 items 5–6; no cameras or dataset imagery were created. The CARLA container is stopped.
 
-**Next action:** begin Stage 3 by selecting and preserving one real Argoverse 2 calibration, then implementing and validating all 18 RGB/semantic sensors and 2 Hz frame/pose alignment on a short route drive. The supplementary Town10HD_Opt reference-view probe remains independent and non-blocking.
+**Stage-3 local validation result:** official raw extrinsics and intrinsics for AV2 Sensor log `54bc6dbc-ebfb-3fba-b5b3-57f88b4b79ca` are preserved with source URLs and SHA-256. The recorder aligns the AV2 rear-axle origin to the Tesla rear axle, converts AV2 ego/optical axes into CARLA, and applies a declared +0.5 m height adaptation after an exact-height pilot exposed the Tesla hood. Run `20260919T162408Z-av2-all-cameras-short-247e3f` recorded four complete 2 Hz time points from all nine RGB/semantic pairs (18 sensors): 72 required images, 36 palette previews, and four same-frame ego poses. All 108 PNGs passed CRC/decode/dimension checks, intervals were 0.5 s, no sensor drops/duplicates/late events occurred, and contact sheets passed visual review with no ego body. Its 119 signed files occupy 165,463,137 bytes and its manifest SHA-256 is `8a203ea291a126682997bafbfb7816cabad7d1eb33cf6188ce0a10f1d2915e61`. This is a short rig check, not a complete Stage-4 route. The CARLA container is stopped.
+
+**Next action:** copy `20260919T162408Z-av2-all-cameras-short-247e3f` to the selected Mac hierarchy and verify it against `manifest.sha256`; after that evidence is recorded, mark Stage 3 DONE and begin Stage 4 as a separate task.
 
 ## Stage Status
 
@@ -33,7 +35,7 @@ The direct Town01_Opt one-location review was initially recorded incorrectly as 
 | 0. Environment and data safety | DONE | Bootstrap and repeat-safe setup, CARLA server/client RGB smoke test, run tracking/manifest, actual image digest, private Git remote, and verified Mac `rsync` copy are recorded; new-VM recovery remains untested |
 | 1. Map and API | DONE | Town01 load/API/weather/basic actor checks passed. On explicitly selected Town01_Opt, direct RoadLines hiding passed RGB and raw-semantic checks at straight/intersection/traffic-control observations with sampled navigation intact. Blueprint catalogue has no animal candidate; compatible external asset status remains open for Stage 7. |
 | 2. Routes | DONE | The bridge route is now №4 and the four-turn route №5. All five routes under these identifiers passed spawned TM/autopilot completion, deviation, collision, timeout/stuck, and post-finish-stop checks in `20260919T154938Z-tm-autopilot-renumbered-routes-aac495`; two set_path diagnostics are retained. |
-| 3. Cameras and recording | TODO | No AV2 log/calibration is selected; 18 cameras are untested |
+| 3. Cameras and recording | IN_PROGRESS | Calibration, conversion, 18 sensors, 2 Hz alignment, raw semantic IDs, throughput, validator, and visual review passed locally; required verified off-VM copy remains |
 | 4. Baseline dataset | TODO | No recordings exist |
 | 5. Literature review | TODO | Initial technical sources exist; the LLM-method review is not complete |
 | 6. LLM scene editing | TODO | Providers, access, exact IDs, and budget are unconfirmed |
@@ -56,14 +58,13 @@ Full version information and limits: [environment.md](environment.md).
 
 1. Secure API-key restoration after VM deletion; actual providers/IDs and spending limits.
 2. Whether a compatible prebuilt animal asset can appear without Unreal editing. The installed blueprint catalogue has no candidate.
-3. Specific AV2 calibration and alignment of its ego origin with the chosen CARLA vehicle.
-4. Route length, weather-condition count, and repeats after the first timing/size measurement.
+3. Route length, weather-condition count, and repeats for the Stage-4 baseline matrix after the Stage-3 timing/size measurement.
 
 Do not ask the user for all of these at once. Check available facts independently and ask only for a decision required by the current stage that is absent from the project.
 
 ## Latest Data Check
 
-- Dataset: not created; the stage-0 smoke artifact and stage-1 probes are not a dataset.
+- Dataset: the short Stage-3 rig sample exists and passed local validation; the complete Stage-4 baseline dataset is not created.
 - `artifacts/index.csv`: contains the smoke artifact with `backup_status=verified`.
 - Verified off-VM copy: `/Users/madness/Научка/CARLA/runs/20260916T210617Z-carla-smoke-beb230/`, confirmed by user-provided `rsync` and SHA-256 output at 21:19 UTC.
 - Stage-0 scripts and documentation are preserved in private `origin/Dev` history from `ce26b8e`; the completed Stage-1 correction and validation are preserved at `0ade213` on the same branch.
@@ -72,6 +73,7 @@ Do not ask the user for all of these at once. Check available facts independentl
 - The locally manifest-verified 15,313,829-byte Stage-2 route-selection run `20260918T121645Z-town01-opt-routes-clean-debug-95bdcf` is the adopted visual evidence and has `backup_status=not_copied`. It contains `network_waypoints.json`, `routes.json`, five route files, a clean map overview, and six line-only DebugHelper route PNGs. The earlier 12,884,530-byte run `20260917T194300Z-town01-opt-routes-final-c5b492` remains valid for route geometry but its RGB previews are superseded: `draw_point` obscured road textures. The isolated 5,421,733-byte diagnostic `20260918T121243Z-debug-render-probe-295692` preserves the controlled no-debug/line-only/point-only comparison. Neither run is copied externally.
 - The 12,180,606-byte candidate run `20260919T055800Z-route-candidates-adaptive-a2` is locally manifest-verified; its first three geometries are preserved in the final approved set. The source geometry revision `20260919T062007Z-route-revision-ca00ee` was followed by immutable renumbering revision `20260919T154916Z-route-numbering-swap-b5e941`: bridge route is now №4 and four-turn route №5, with geometry unchanged. Its manifest SHA-256 is `6af7ad8fe6cc3ce740aed00c66867b412d602195b44e90aed15cb9d26438272e`. None is copied externally.
 - Stage-2 driving evidence is local-only: the current successful five-drive run `20260919T154938Z-tm-autopilot-renumbered-routes-aac495` is 2,250,192 bytes, has manifest SHA-256 `a2581991bb20f5ef79e0dabb78f292f53041369ee197ada93fe7edf83f7e9a6b`, and passed local verification of 19 signed files. Two failed `set_path` diagnostics and two successful one-route `set_route` pilots are also finalized and registered. None is copied externally.
+- Stage-3 evidence is local-only: full-rig run `20260919T162408Z-av2-all-cameras-short-247e3f` passed all machine and visual checks, contains 119 signed files, is 165,463,137 bytes, and has manifest SHA-256 `8a203ea291a126682997bafbfb7816cabad7d1eb33cf6188ce0a10f1d2915e61`. The successful one-view clearance pilot and three retained failed geometry/body pilots are separately registered. None is copied externally; this is the only remaining Stage-3 acceptance item.
 - Ready to delete VM: **not confirmed**. Documentation on the Mac does not prove that existing server work is preserved.
 
 ## How to Update This File

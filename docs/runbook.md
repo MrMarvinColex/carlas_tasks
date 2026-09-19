@@ -51,7 +51,7 @@ The primary operational destination is the user's Mac: `/Users/madness/Науч�
 
 ## 4. Structure of One Recorded Run
 
-Proposed structure for stages 0–3:
+Implemented Stage-3 structure (later stages may add scene-specific files):
 
 ```text
 runs/<run_id>/
@@ -62,8 +62,10 @@ runs/<run_id>/
   route.json                  route used
   transforms.json             final ego-pose JSON
   rgb/<camera_name>/...       images
-  semantic/<camera_name>/...  lossless class IDs
-  previews/...                palettes, contact sheets, video
+  semantic/<camera_name>/...  lossless 8-bit grayscale class IDs
+  previews/semantic/...       CityScapes palette previews
+  previews/contact_sheet_*    all-nine visual review sheets
+  capture_summary.json        throughput, resources, drops/duplicates
   logs/...                    diagnostics without secrets
   validation.json             completeness and alignment checks
   manifest.sha256             file list and checksums

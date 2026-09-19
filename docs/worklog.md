@@ -270,6 +270,23 @@ The user rented a Massed Compute VM with an RTX A6000 48 GB, Ubuntu 22.04.5, 6 v
 
 **Next action:** Stage 3 — select an actual AV2 calibration and validate nine RGB/semantic sensor pairs with 2 Hz frame/pose alignment.
 
+## 2026-09-19 16:13–16:30 UTC — Stage 3 AV2 Rig and 2 Hz Recording
+
+**Type:** locally completed technical implementation and validation; stage acceptance still awaits verified external copy.
+
+- Retrieved only the two official calibration Feather files for AV2 Sensor log `54bc6dbc-ebfb-3fba-b5b3-57f88b4b79ca` from the documented public S3 bucket. Preserved the raw files, exact extracted values, URLs, retrieval condition, and SHA-256 under `configs/av2/`; no camera dataset was downloaded.
+- Added pure coordinate-conversion helpers and tests, the frame-keyed synchronous recorder, and the PNG/dataset validator. The recorder derives the Tesla rear axle from wheel positions after one world tick, attaches RGB and semantic sensors at all nine converted poses, saves raw semantic IDs separately from palettes, writes partial transforms during capture, and measures wall/GPU/RAM/data throughput.
+- Retained three failed one-view pilots. The first treated CARLA world wheel coordinates as actor-local. The second attempted inversion before the actor's first synchronous tick, when its transform was still identity. The third corrected the origin and passed frame/file checks, but visual review found the Tesla hood. The successful one-view pilot uses a declared +0.5 m local-z clearance adaptation and has zero ego pixels in the validated bottom strip.
+- Full run `20260919T162408Z-av2-all-cameras-short-247e3f` used 18 sensors and accepted four time points. It produced 72 required RGB/raw-semantic images, 36 palette previews, four ego poses, two contact sheets, calibration/configuration records, validation, and resource measurements.
+
+**How checked:** eight offline unit tests and Python compilation passed. The dataset validator parsed JSON, verified unique increasing frames, 0.5 s timing within 0.0001 s, same-frame sensor/pose timestamps, all expected paths and dimensions, PNG signatures/chunk CRCs/zlib streams, 8-bit raw semantic encoding, and zero ego-body pixels in the bottom 10%. All 108 PNGs passed; no callbacks were missing, duplicated, or late after stop. RGB and semantic contact sheets passed manual review. The finalized 119-entry manifest passed local entry-by-entry verification; manifest SHA-256 is `8a203ea291a126682997bafbfb7816cabad7d1eb33cf6188ce0a10f1d2915e61`, and the directory occupies 165,463,137 bytes.
+
+**Performance:** accepted simulation span 1.500000022 s; wall duration 126.905 s; measured output before validation about 109.34 MB per accepted simulation second; sampled GPU memory peak 4,657 MiB; sampled host used-memory peak about 8.08 GB. These are short-run observations, not long-run guarantees.
+
+**Artifacts and external copy:** the full run, successful one-view pilot, and three failed pilots are registered in `artifacts/index.csv`, all with `backup_status=not_copied`. The CARLA container was stopped. Stage 3 remains `IN_PROGRESS` only because its acceptance criterion requires a verified off-VM copy.
+
+**Next action:** from the Mac, pull the full run to `/Users/madness/Научка/CARLA/runs/20260919T162408Z-av2-all-cameras-short-247e3f/`, run `scripts/verify_export.py` or an equivalent manifest check against that destination, then record the proof and mark Stage 3 DONE.
+
 ## Template for the Next Entry
 
 ```text
