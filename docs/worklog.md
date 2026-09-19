@@ -285,6 +285,8 @@ The user rented a Massed Compute VM with an RTX A6000 48 GB, Ubuntu 22.04.5, 6 v
 
 **Artifacts and external copy:** the full run, successful one-view pilot, and three failed pilots are registered in `artifacts/index.csv`, all with `backup_status=not_copied`. The CARLA container was stopped. Stage 3 remains `IN_PROGRESS` only because its acceptance criterion requires a verified off-VM copy.
 
+**Git preservation:** Stage-3 code, raw calibration sources, tests, registry entries, and documentation were committed as `3fbe0de` and pushed to private `origin/Dev`. Run metadata retains the truthful pre-commit `22c49c0` plus dirty-state indicator.
+
 **Next action:** from the Mac, pull the full run to `/Users/madness/Научка/CARLA/runs/20260919T162408Z-av2-all-cameras-short-247e3f/`, run `scripts/verify_export.py` or an equivalent manifest check against that destination, then record the proof and mark Stage 3 DONE.
 
 ## Template for the Next Entry
