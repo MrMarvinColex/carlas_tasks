@@ -1,6 +1,6 @@
 # Using LLMs to Edit CARLA Scenes
 
-**Working report. Status: Stages 1–3 are completed. The Stage-3 rig passed local validation, and the user confirmed an off-VM copy exists; external checksum output was not supplied in this session. Baseline recording, LLM, animal, and comparison experiments remain.**
+**Working report. Status: Stages 1–4 are completed. The Stage-3 rig passed local validation and has a user-confirmed off-VM copy; the Stage-4 baseline matrix has user-reported checksum-verified Mac copies. LLM, animal, and comparison experiments remain.**
 
 Document start date: 16 September 2026. Target deadline: 21 September 2026 in the current context; the source PDF specifies only day and month, without a year. Author/executor: complete before submission.
 
@@ -67,21 +67,34 @@ Describe discretisation resolution, route provenance, and visualisation of the c
 
 | Route | Adaptive waypoint count | Length, m | Start/finish | Provenance | File/run |
 |---|---|---|---|---|---|
-| `route_01_straight` | 23 | 220.061 | (92.405, 227.220) → (92.367, 7.159) | Approved adaptive subset; 111-point connected 2 m reference | `routes/route_01_straight.json`, run `20260919T154916Z-route-numbering-swap-b5e941` |
-| `route_02_left` | 44 | 253.109 | (130.365, -2.047) → (-2.041, 123.409) | Approved adaptive subset; 126-point connected 2 m reference | `routes/route_02_left.json`, same run |
-| `route_03_right` | 45 | 246.838 | (334.773, 210.670) → (200.928, 326.600) | Approved adaptive subset; 126-point connected 2 m reference | `routes/route_03_right.json`, same run |
-| `route_04_bridge_then_turn` | 101 | 495.316 | (301.340, 330.610) → (334.889, 18.076) | Approved adaptive subset; 244-point connected 2 m reference | `routes/route_04_bridge_then_turn.json`, same run |
-| `route_05_four_turns` | 119 | 508.150 | (396.368, 19.923) → (88.399, 192.263) | Approved adaptive subset; 252-point connected 2 m reference | `routes/route_05_four_turns.json`, same run |
+| `route_01_straight` | 12 | 110.000 | (92.396, 171.220) → (92.379, 61.220) | Middle-half crop; 56-point connected 2 m reference | `routes/route_01_straight.json`, run `20260923T160431Z-shorter-routes-b72a9d` |
+| `route_02_left` | 32 | 125.106 | (66.364, -2.038) → (-2.049, 59.407) | Middle-half crop retaining one left turn; 62-point reference | `routes/route_02_left.json`, same run |
+| `route_03_right` | 32 | 122.838 | (334.735, 272.670) → (262.928, 326.607) | Middle-half crop retaining one right turn; 64-point reference | `routes/route_03_right.json`, same run |
+| `route_04_turn_then_bridge` | 44 | 251.108 | (369.340, 330.610) → (396.291, 101.661) | One left turn then complete original bridge crossing; 125-point reference | `routes/route_04_turn_then_bridge.json`, same run |
+| `route_05_two_turns` | 60 | 225.939 | (372.484, -1.986) → (270.760, 129.491) | Original middle left/right pair; 114-point reference | `routes/route_05_two_turns.json`, same run |
 
 **Superseded initial route-selection result:** after reapplying RoadLines hiding to 25 objects, the probe sampled all 3,266 values returned by `Map.generate_waypoints(2.0)`. A fixed selection seed (`20260917`) chose distinct native spawn anchors. Each of the 295 transitions was rechecked by confirming that the stored successor appeared in the predecessor's `next(2.0)` response. The run retains the full network sample, a route index, five complete route files, a clean map overview, and one temporary line-only DebugHelper overview per route. A controlled RGB comparison found that `draw_point`, not the map or RoadLines operation, had caused black texture occluders in the earlier preview; all waypoint points are now cleared before camera capture. This establishes only map-graph connectivity and visual route inspection; the run used no ego actor or Traffic Manager. Client/server version was 0.9.16; it began at `096d990` with the rendering correction uncommitted, which is recorded in its metadata.
 
-**Approved replacement set:** the user approved all five geometries on 2026-09-19, then requested that route numbers reflect complexity. Immutable run `20260919T154916Z-route-numbering-swap-b5e941` keeps every geometry unchanged but makes the bridge crossing route 4 and the four-turn route 5. Adaptive counts are 23, 44, 45, 101, and 119; every corresponding dense 2 m edge passed direct-successor validation. This table supersedes the original five 60-point routes for subsequent implementation.
+**Current shortened set:** on 2026-09-23 the user requested reduced driving time and recording volume. The table shows contiguous crops of the previously approved, signed `20260919T154916Z-route-numbering-swap-b5e941` set. Original dense coordinates/identities are unchanged and 10/2 m adaptive spacing is preserved. All 416 retained dense edges passed CARLA direct-successor checks; all five new starts and drives passed. Earlier versions remain immutable historical evidence. The new bridge route turns before crossing; the fifth route retains two turns, so their descriptive IDs changed accordingly.
 
 ### 1.6. Traffic Manager Autopilot
 
 Describe vehicle spawning, path assignment, TM settings, completion criterion, timeout, and stuck-vehicle handling. Attach actual trajectories for five drives and deviations from routes.
 
-**Result:** completed on `Carla/Maps/Town01_Opt` in run `20260919T154938Z-tm-autopilot-renumbered-routes-aac495`. One Tesla Model 3 was spawned at each stored route start after RoadLines hiding was reapplied; world and Traffic Manager used a 0.05 s synchronous step. The initial adaptive and dense `set_path` trials were accepted but departed route 1 after 94 m at a later branch, so both are retained as incomplete diagnostics. The final method submitted derived `set_route` junction instructions (`Left`/`Right`/`Straight`) and projected every sampled vehicle pose onto the preserved 2 m reference chain.
+**Current result:** all five shorter routes passed in `20260923T160409Z-shorter-routes-autopilot-b8548d`. The same Tesla/controller, fixed 0.05 s step and TM seed as the historical comparison were used, without cameras. Maximum deviations were 0.996–1.246 m; collisions were zero; all post-finish stops passed. Every retained turn was traversed and the complete bridge exit was reached before braking.
+
+| Route | Old driving simulation time, s | Shortened driving simulation time, s |
+|---|---:|---:|
+| 1, straight | 30.35 | 16.05 |
+| 2, left | 23.65 | 12.70 |
+| 3, right | 28.10 | 15.35 |
+| 4, bridge | 41.45 | 14.90 |
+| 5, two turns | 63.15 | 29.85 |
+| Total | 186.70 | 88.85 |
+
+These times run from the initial vehicle snapshot to route completion, excluding the subsequent 3 s braking and 1 s stopped observation. The 52.41% time reduction supports an expected reduction in 2 Hz image volume; new recorded image sizes and recorder wall times remain unmeasured. Evidence: `duration_comparison.json` in the current drive run.
+
+**Historical longer-route result:** completed on `Carla/Maps/Town01_Opt` in run `20260919T154938Z-tm-autopilot-renumbered-routes-aac495`. One Tesla Model 3 was spawned at each stored route start after RoadLines hiding was reapplied; world and Traffic Manager used a 0.05 s synchronous step. The initial adaptive and dense `set_path` trials were accepted but departed route 1 after 94 m at a later branch, so both are retained as incomplete diagnostics. The final method submitted derived `set_route` junction instructions (`Left`/`Right`/`Straight`) and projected every sampled vehicle pose onto the preserved 2 m reference chain.
 
 | Route | Outcome | Finish distance, m | Maximum deviation, m | Collisions |
 |---|---:|---:|---:|---:|
@@ -128,7 +141,21 @@ Record the route × weather × repeat matrix, seeds, and actual weather settings
 
 Explain the limits of seasonality: changing rain, clouds, and sun is not a full seasonal change. State the measured number of drives, duration, size, recording speed, resource usage, and validator result.
 
-**Result:** dataset not created.
+**Completed Stage-4 matrix:** the fixed matrix is five shortened routes × `clear_day`/`wet_cloudy_day` × one repeat. All ten cells completed with zero collision, stopped ego vehicle, maximum route deviation 1.246 m (limit 15 m), and passed the drive, dataset, timing, raw-semantic, PNG-integrity and ego-body checks. Contact sheets were generated for every cell; representative clear and wet RGB/semantic sheets were visually reviewed.
+
+| Route | Clear-day samples | Wet-cloudy-day samples | Accepted simulation span, s |
+|---|---:|---:|---:|
+| `route_01_straight` | 31 | 30 | 15.0 / 14.5 |
+| `route_02_left` | 24 | 24 | 11.5 / 11.5 |
+| `route_03_right` | 29 | 29 | 14.0 / 14.0 |
+| `route_04_turn_then_bridge` | 28 | 28 | 13.5 / 13.5 |
+| `route_05_two_turns` | 58 | 58 | 28.5 / 28.5 |
+
+The accepted dataset has 339 aligned 2 Hz poses, 3,051 RGB, 3,051 raw 8-bit semantic-ID and 3,051 CityScapes-palette PNGs (9,153 PNGs total). It spans 164.500 s of accepted simulation time. Recording consumed 1,076.278 wall seconds, including 24.292 s explicit bounded-writer backpressure. The final ten run directories occupy 12,904,099,739 bytes; their 9,303 manifest entries were rechecked locally. An earlier user-stopped long-route pilot and one batch-interrupted partial retry remain retained as incomplete artifacts, rather than being counted as matrix cells.
+
+The user ran checksum-mode `rsync -nrc --itemize-changes` for both `runs/` and `logs/` from the VM to `/Users/madness/Science/CARLA/runs_1/` and `logs_1/` on the Mac. Both commands had no difference output. This is user-reported terminal evidence that the external copies match the VM source byte-for-byte; it satisfies the preservation requirement while remaining distinct from an agent-operated Mac-side check.
+
+**Route-source update (2026-09-23):** the matrix now selects the shorter, drive-validated revision above, with `route_05_two_turns` as its pilot. The 120 s benchmark used the historical long-route source and remains a throughput measurement. A full camera recording on the shorter routes is the next experiment.
 
 ## 2. Review of Publications and Repositories
 

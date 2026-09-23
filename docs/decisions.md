@@ -140,6 +140,42 @@ Run the world and Traffic Manager synchronously at a 0.05 s fixed step and set a
 
 RGB is lossless PNG. The semantic R-channel class ID is written unchanged to an 8-bit grayscale PNG, with a separate CityScapes palette preview. `transforms.partial.json` is rewritten after every accepted sample and is replaced by final `transforms.json` only after completion. The full short run accepted four timestamps 0.5 s apart with 18 aligned images and one ego pose each, zero duplicates or late events, and 108 readable PNG files including previews. Evidence: `20260919T162408Z-av2-all-cameras-short-247e3f`.
 
+### D20. Stage-4 Baseline Matrix and Batching
+
+**Status:** completed and externally checksum-verified on 2026-09-23.
+
+Use the approved five `Town01_Opt` routes with the same Tesla, direct RoadLines hiding, synchronous Traffic Manager `set_route`, and nine AV2 RGB/semantic pairs as the baseline. The fixed initial matrix is `5 routes × 2 weather profiles × 1 repeat = 10 runs`: `clear_day` and `wet_cloudy_day`. The profiles save every actual CARLA weather parameter and are explicitly weather variations rather than seasons. The run order is reproducible from seed `2026092304`; the Traffic Manager seed is `2026092305`.
+
+Before bulk recording, run the selected pilot under `clear_day`, validate it, and measure output. The provisional policy requires at least 100 GiB free before each drive, permits at most 100 GiB of locally unexported baseline results, and exports after two completed runs. This replaces proposal P05 only for the Stage-4 baseline; revise the budget only from a complete-route pilot result. Configuration: `configs/stage4_baseline_matrix.json`.
+
+**2026-09-23 pilot interruption:** the user stopped the first full-route attempt after 77 complete samples (38.5 s) and 3,622,361,120 bytes. It was finalized as incomplete and local manifest verification passed. This is an observed partial-throughput point, not the required complete-route measurement and does not authorize a change to the matrix or a claim of Stage-4 acceptance.
+
+**2026-09-23 complete shortened-route pilot:** after D22 superseded the source geometry, `route_05_two_turns`/`clear_day` completed in `20260923T161516Z-baseline-pilot-route05-two-turns-clear-day-895150`. It accepted 58 aligned samples over 28.500 s, completed the drive with zero collision, 1.246 m maximum deviation and a stopped vehicle, and passed dataset/baseline validation plus visual contact-sheet review. Recording took 170.993 wall seconds (2.160 s bounded-writer backpressure); summary output was 77.314 MB per accepted simulation second and the finalized 1,581-entry set is 2,205,036,691 bytes. This supports retaining the existing 100 GiB local-unexported guardrail and export-after-two policy; it does not yet satisfy off-VM preservation because the copy remains unverified.
+
+**2026-09-23 temporary batch exception:** the user authorized recording the remaining nine cells before the next external export. `scripts/stage4_batch.py` made that bounded operational change: it retained the per-run 100 GiB free-disk check enforced by `stage4_baseline.py`, but deliberately did not stop after two completed runs. Every run received its own finalization and local manifest verification; a recorder, finalizer, manifest, or local-verification failure stopped the batch rather than silently skipping a cell. This was a temporary sequencing exception, not a replacement for the Stage-4 off-VM-copy acceptance requirement.
+
+**2026-09-23 completion:** the first batch completed seven remaining cells, then was manually interrupted during one retry; that incomplete 385-file run was finalized and retained. A second batch successfully retried that cell and completed the final cell. Together with the initial pilot, this gives one successful run for every matrix cell. Rechecking all ten local manifests passed (9,303 signed entries across the accepted sets), and the user ran checksum-mode `rsync -nrc --itemize-changes` from the Mac against the whole VM `runs/` and `logs/` trees with no output. The complete stage-4 data therefore has an externally verified Mac copy, while the user-operated terminal result remains user-reported evidence. The temporary export-after-two exception is closed.
+
+### D21. Bounded Asynchronous PNG Writer for Stage-4 Recording
+
+**Status:** accepted for the next Stage-4 route-completion pilot after local benchmark on 2026-09-23.
+
+Preserve the D19 data contract: each accepted 2 Hz point still has nine RGB PNGs, nine lossless grayscale raw semantic-ID PNGs, nine CARLA CityScapes-palette preview PNGs, and a same-frame ego pose. Detach the sensor buffers before asynchronous work, then encode PNGs in a four-worker bounded queue. The tick thread applies explicit backpressure when the queue reaches its configured limit; it never discards or silently skips a capture. The CARLA palette conversion remains local to the tick thread, because concurrent `carla.Image.save_to_disk()` caused a retained RPC-timeout failure.
+
+The clean 120 s throughput benchmark `20260923T134157Z-async-writer-120s-throughput-28fd4a` accepted 238 samples over 118.5 s, generated 6,426 readable PNGs, passed timing/pose/ego-body validation, and its 6,441-entry manifest verified locally. Its recording-phase wall duration was 710.624 s with 71.187 s explicit writer backpressure. It intentionally drives past the route endpoint, so it is not a baseline acceptance test and its route-deviation metric is not applicable. Evidence: two retained failed implementation probes, successful 5 s smoke `20260923T134010Z-async-writer-local-palette-smoke-cbcacd`, and the 120 s benchmark.
+
+### D22. Shorten Routes by Contiguous Cropping
+
+**Status:** user-requested and artifact-confirmed on 2026-09-23.
+
+Reduce actual driving time and 2 Hz recording volume by moving route starts later and finishes earlier. Preserve original waypoint coordinates, road/lane identities and the 2 m reference adjacency; retain 10 m straight and 2 m turn sampling with 12 m turn context. For routes 1–3 choose the closest dense points to 25% and 75% of original arc length. For route 4 choose the shortest slice with 40–50 working points, one or two complete turns, the entire recorded bridge crossing and at least 12 m after its exit. This yields one left turn before the bridge. For route 5 choose the shortest slice with 60–70 working points and two complete turns, retaining approach/exit context. This yields the original middle left/right pair. New start locations are lane waypoints rather than the original native spawn points and must pass actual spawning/driving validation.
+
+Revision `20260923T160431Z-shorter-routes-b72a9d` contains lengths 110.000, 125.106, 122.838, 251.108 and 225.939 m with 12, 32, 32, 44 and 60 working points. Rename only the descriptive suffixes of routes 4–5 to `route_04_turn_then_bridge` and `route_05_two_turns`. Their dense source windows (inclusive) are 28–83, 32–93, 31–94, 34–158 and 19–132 respectively. The original signed source remains unchanged. `scripts/stage2_route_trim.py` reproduces selection and records source hashes.
+
+All five shortened routes passed CARLA reconstruction, direct-`next(2.0)` adjacency, spawn, route completion, deviation, collision, timeout/stuck and post-finish-stop checks in `20260923T160409Z-shorter-routes-autopilot-b8548d`. Driving time excluding the 4 s stop observation fell from 186.70 to 88.85 simulation seconds over all five routes (52.41%). The same controller/seed was used as the historical comparison; no cameras were created. Actual new dataset size and full recorder wall time have not yet been measured.
+
+This supersedes D16's adopted lengths/endpoints, D18's descriptive suffixes and D20's route source/pilot, while preserving route numbers, five-route coverage, weather matrix and all camera requirements. Stage-4 configuration now selects this validated revision; the four-turn/long-bridge geometries remain historical evidence.
+
 ## Proposed Project Decisions
 
 Implement these unless evidence calls for a revision. Do not attribute them to the assignment author.

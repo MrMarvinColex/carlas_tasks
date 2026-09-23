@@ -312,6 +312,93 @@ The user rented a Massed Compute VM with an RTX A6000 48 GB, Ubuntu 22.04.5, 6 v
 
 **Next action:** wait for a separately assigned Stage-4 task; do not start baseline recording automatically.
 
+## 2026-09-23 12:30 UTC — Stage 4 Matrix and Full-Route Recording Pilot
+
+**Type:** Stage-4 implementation and active experiment; no accepted baseline result yet.
+
+- Fixed `configs/stage4_baseline_matrix.json`: five approved routes, `clear_day` and `wet_cloudy_day`, one repeat each (10 planned baseline runs). It records exact CARLA parameters, fixed simulation/sensor periods, Traffic Manager seed, disk guardrails, and a `route_05_four_turns` clear-day pilot. Weather labels are not seasonal claims.
+- Added `scripts/stage4_baseline.py`, which applies the selected baseline scene after every map load, drives one route with Traffic Manager, records all 18 sensor streams at 2 Hz from same-frame snapshots, retains raw semantic IDs and palettes separately, writes partial transforms, tracks collision/timeout/stuck/completion metrics, then invokes the existing dataset validator after a completed drive.
+- Local checks passed: the matrix has exactly 10 planned route-weather runs; the runner and dependent Stage-3 recorder/validator compile; 245 GiB were free before recording; the image digest matched the pinned image; and only one CARLA container was started.
+- Retained failed diagnostic `20260923T123049Z-baseline-pilot-route05-clear-day-19873f`: its first runner revision incorrectly required calibration JSON insertion order to match camera order and stopped before sensors or frames were created. It was finalized `failed`; the check now compares camera sets.
+- Active run `20260923T123315Z-baseline-pilot-route05-clear-day-retry-ba0f8c` is recording the 508.150 m `route_05_four_turns` in `clear_day`. It had accepted 56 complete 18-stream time points when this entry was written; do not infer final drive or validation success until it exits.
+
+**Next action:** wait for this run to finish, inspect `drive_result.json` and both validators, finalize its manifest, stop CARLA, measure the output, then decide whether the remaining nine runs fit the fixed batch policy.
+
+## 2026-09-23 13:13 UTC — Stage 4 Pilot Stopped at User Request
+
+**Type:** incomplete experiment retained at the user's instruction.
+
+- The user asked to stop the active full-route pilot. The recorder process and then the sole `carla-server` container were stopped; no further Stage-4 drive was started.
+- Retry run `20260923T123315Z-baseline-pilot-route05-clear-day-retry-ba0f8c` had 77 complete, same-frame 18-stream samples in `transforms.partial.json`, covering 38.5 s of simulation time. Its output before finalization was 3,621,970,754 bytes; finalized directory size is 3,622,361,120 bytes. It has no final `transforms.json`, route result, or dataset validation and is therefore `incomplete`, not an accepted baseline drive.
+- Finalized it with the explicit user-stop reason. Local manifest verification passed for all 2,110 signed files; manifest SHA-256 is `914e2bca06e417d0200571f128cd4f88d067f2116f3620e0ac2d2844c2f3d016`. The earlier no-frame runner diagnostic also passed its two-entry local manifest check (`5957c7944db104058be7d876a0c5b26a832b8b511561f4b46c05c4df883acb26`). Neither artifact has an external copy.
+
+**Result:** Stage 4 remains `IN_PROGRESS`. The 10-run matrix and recorder exist, but no complete route dataset has been accepted. CARLA is stopped.
+
+**Next action:** wait for user direction before restarting the pilot, reducing/optimising its output strategy, or changing the approved matrix.
+
+## 2026-09-23 13:32–14:01 UTC — Stage 4 Bounded Asynchronous Writer Benchmark
+
+**Type:** throughput optimisation and validation; not a baseline route-completion drive.
+
+- Reworked `scripts/stage4_baseline.py` so CARLA buffers are detached at capture time and RGB, lossless raw semantic IDs, and CARLA CityScapes-palette previews are encoded in a bounded four-worker queue. The tick loop applies measured backpressure at the queue limit rather than dropping frames. Resource sampling was reduced to every ten accepted samples plus endpoints.
+- Retained two failed implementation probes: `20260923T133242Z-async-writer-smoke-ab869f` called `carla.Image.save_to_disk()` concurrently and timed out after capture; `20260923T133736Z-async-writer-buffer-smoke-664bbb` used an incomplete manually reconstructed palette. They are finalized with manifests. The corrected 5 s smoke `20260923T134010Z-async-writer-local-palette-smoke-cbcacd` accepted eight samples, passed all 216 PNG checks and visual RGB/semantic contact-sheet review, and showed 2.656 s writer backpressure.
+- The user-requested 120 s simulation-time benchmark `20260923T134157Z-async-writer-120s-throughput-28fd4a` recorded 238 samples over 118.500 s. It wrote 4,284 RGB, 2,142 raw semantic, and 2,142 palette-preview PNGs. All 6,426 PNGs passed CRC/decode/dimension/frame/timestamp/ego-body checks; no duplicate callbacks or collision occurred. Recording-phase wall time was 710.624 s, including 71.187 s bounded-writer backpressure; output at summary time was 8,785,235,973 bytes. The final local directory is 8,787,483,638 bytes; its 6,441-entry manifest passed local verification and has SHA-256 `5855146939f2fe225c472d304be524d3176fe5a124d1c14f5ebfcc3b23303873`.
+- This run is explicitly a throughput benchmark, not baseline evidence. It continued after the 508.150 m route endpoint, so the route-deviation acceptance criterion is not evaluated; no baseline matrix cell is complete. The server was no longer running after recorder completion; `scripts/stop_carla.sh` confirmed no remaining `carla-server` container.
+
+**Next action:** on user instruction, run a fresh route-completion pilot using the verified writer, validate it as a baseline record, and export it before continuing the matrix.
+
+## 2026-09-23 16:04–16:07 UTC — Shorter Routes and Camera-Free Drive Validation
+
+**Evidence type:** user-requested geometry revision; artifact-confirmed local CARLA tests.
+
+- The user asked to retain the middle half of routes 1–3, crop route 4 to one/two turns and 40–50 working points, and crop route 5 to about two turns and 60–70 working points. The objective was shorter driving time and less recorded data. Added `scripts/stage2_route_trim.py` to choose contiguous slices of the signed September-19 reference chains and reuse the existing adaptive-spacing/turn-detection helpers; no new map search or camera rendering was required.
+- First offline run `20260923T160409Z-shorter-routes-5e6883` generated geometry but failed its metadata update because `carla.__version__` does not exist. Retained and finalized it as failed. Replaced that lookup with installed-package metadata and created a fresh revision `20260923T160431Z-shorter-routes-b72a9d`.
+- Source windows (inclusive) are 28–83, 32–93, 31–94, 34–158 and 19–132. New lengths are 110.000 / 125.106 / 122.838 / 251.108 / 225.939 m; working counts are 12 / 32 / 32 / 44 / 60. Route 4 retains one left turn before the complete original bridge plus 12 m exit margin, and is named `route_04_turn_then_bridge`. Route 5 retains the middle left/right pair, and is named `route_05_two_turns`. All dense waypoint fields other than local ordinal remain identical to the source slice.
+- Ran existing `stage2_autopilot_routes.py` once for all five routes in `20260923T160409Z-shorter-routes-autopilot-b8548d`. CARLA reconstructed every waypoint and verified all 416 `next(2.0)` edges. Every new start spawned, every route completed, collision counts were zero, max deviations were 0.996–1.246 m, and every post-finish stop passed. The trajectory approached every retained turn centre within 0.292 m; route 4 passed the recorded bridge exit before braking. The driving phase took only 1.2–2.2 wall seconds per route without cameras, plus server/map setup.
+- Same-controller/seed comparison against the historical five-route drive measured simulation driving times 30.35→16.05, 23.65→12.70, 28.10→15.35, 41.45→14.90 and 63.15→29.85 s. Total 186.70→88.85 s, a 52.41% reduction; the 4 s braking/stopped observation is excluded consistently. No new image-volume or recorder-wall-time claim is made. `duration_comparison.json` preserves the basis, image digest, controller seed and executed script hash.
+- Updated Stage-4 source, route IDs and pilot plus the autopilot default to the validated revision. The original route manifest still passed all nine entries. New geometry (11 entries), drive (21 entries) and failed-generator (10 entries) manifests all verified locally. New runs remain local-only. Stopped CARLA after tests; no camera recording was started.
+
+**Result:** all requested route reductions and efficient validation are complete. Stage 2 remains DONE; Stage 4 remains IN_PROGRESS. The next camera run should use `route_05_two_turns` and the revised matrix, followed by measurement/validation and export.
+
+## 2026-09-23 16:15–16:21 UTC — Stage 4 Shortened-Route Baseline Pilot
+
+**Type:** completed local baseline-matrix cell; external preservation still pending.
+
+- Recorded the first current-matrix cell with `scripts/stage4_baseline.py`: `route_05_two_turns` under `clear_day`, using the shortened, drive-validated route revision and the bounded four-worker PNG writer.
+- The drive completed at 217.939 m projected progress of its 225.939 m route (required 214.642 m), with 0 collisions, 1.246 m maximum deviation, and a passed post-finish stopped-vehicle check. It accepted 58 same-frame 18-sensor samples over 28.500 s of simulation time.
+- The run contains 522 RGB, 522 raw 8-bit semantic-ID, and 522 CityScapes palette-preview PNGs. `validation.json` passed all timing, frame/pose alignment, count, PNG-integrity and ego-body checks; `baseline_validation.json` passed all route, collision and stop checks. RGB and semantic contact sheets were visually reviewed.
+- The recording phase lasted 170.993 wall seconds, including 2.160 s explicit writer backpressure. Output at summary was 2,203,449,831 bytes (77.314 MB per accepted simulation second); final run size is 2,205,036,691 bytes. Finalization generated a 1,581-entry manifest with SHA-256 `1bb4bbace43e741cc94316f10748fb2b4d7f5ac6337554623b7fb1f34098249c`; local entry-by-entry verification passed.
+- Stopped `carla-server` after completion. The artifact is registered as `stage4-baseline-pilot-short-route05-clear-day-20260923` with `backup_status=not_copied`.
+
+**Result:** Steps 1–2 of the Stage-4 pilot workflow are complete locally. Step 3 requires a Mac-side copy and manifest verification; do not start a second baseline cell until this first copy is preserved.
+
+**Next action:** from the Mac, use the documented `rsync` pull for `20260923T161516Z-baseline-pilot-route05-two-turns-clear-day-895150`, then run `scripts/verify_export.py` against the copied directory and record the result.
+
+## 2026-09-23 16:31 UTC — Stage 4 Sequential Batch Prepared (Not Run)
+
+**Type:** user-authorized operational preparation; no new CARLA experiment.
+
+- The user authorized temporarily deferring the matrix policy of exporting after two completed runs and asked for a `tmux`-friendly script that records the nine remaining cells without chat supervision. The per-run free-disk safety threshold remains active.
+- Added `scripts/stage4_batch.py`. It reads the fixed matrix, detects completed cells only from finalized passing `baseline_validation.json` records, deterministically orders the remaining cells from the stored seed, and never launches concurrent recorders. Each successful recorder invocation is finalized and locally manifest-verified before the next starts. A failure or Ctrl-C stops the batch and preserves/finalizes the current run; CARLA is stopped in the cleanup path. It writes a human-readable log and JSON result summary under `logs/`.
+- Checked with `python -m py_compile` and `--dry-run`. The dry run made no writes or CARLA calls and found exactly one completed cell (`route_05_two_turns`/`clear_day`) and nine remaining cells. `git diff --check` passed.
+
+**Result:** batch infrastructure is ready but no batch recording has been started. The external-copy requirement remains pending and is not waived.
+
+**Next action:** user starts the documented command in a `tmux` window, then reports the batch summary path and exit status for review.
+
+## 2026-09-23 16:33–17:03 UTC; closure recorded 21:01 UTC — Stage 4 Complete Baseline Matrix
+
+**Type:** completed and validated Stage-4 dataset; external verification is user-reported with supplied checksum command output.
+
+- The first `tmux` batch completed seven cells, then the user interrupted the eighth retry. The supervisor finalized that partial run as `incomplete`, generated its 385-entry manifest and locally verified it. The second batch completed the successful retry and final outstanding cell. Both batches stopped `carla-server` successfully.
+- The ten accepted cells cover every route/weather pair once. All have `outcome=completed`, zero collisions, a stopped ego vehicle, route deviation no greater than 1.246 m, and passing `validation.json` plus `baseline_validation.json`. Their local manifests were rechecked after the batches: all 9,303 signed entries passed.
+- Accepted totals are 339 2 Hz samples, 3,051 RGB + 3,051 raw semantic-ID + 3,051 palette-preview PNGs, 164.500 s accepted simulation span, 1,076.278 s recording wall time, 24.292 s writer backpressure and 12,904,099,739 finalized bytes. Clear and wet representative RGB/semantic contact sheets were visually reviewed. The long-route stopped pilot and the current interrupted retry remain registered as incomplete, not silently removed.
+- The user copied the full `runs/` and `logs/` trees to `/Users/madness/Science/CARLA/runs_1/` and `logs_1/`. They supplied the Mac-terminal result of two checksum-mode `rsync -nrc --itemize-changes` comparisons, each with no difference output. The artifact registry records this as externally verified while explicitly identifying the proof as user-supplied.
+
+**Result:** Stage 4 is `DONE`: the chosen matrix is complete, every accepted record validates, failures are retained, weather settings are recorded in the fixed matrix, and the data/log copies are checksum-verified off VM. No CARLA or validator process is active.
+
+**Next action:** begin Stage 5 only on a separate request; it is a literature/repository review and needs no CARLA recording.
+
 ## Template for the Next Entry
 
 ```text

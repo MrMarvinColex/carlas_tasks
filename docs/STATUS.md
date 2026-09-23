@@ -1,6 +1,6 @@
 # Current Project Status
 
-Last inspected: **2026-09-23 12:01 UTC**; user timezone: Europe/Moscow.
+Last inspected: **2026-09-23 21:01 UTC**; user timezone: Europe/Moscow.
 
 ## Current Position
 
@@ -30,7 +30,15 @@ The direct Town01_Opt one-location review was initially recorded incorrectly as 
 
 **Stage-3 closure (2026-09-23):** the user confirmed that an off-VM copy of `20260919T162408Z-av2-all-cameras-short-247e3f` exists and instructed that Stage 3 be marked complete. This is **user-reported** copy evidence: no off-VM `verify_export.py`/SHA-256 output was supplied in this session, so the project does not claim an independently observed manifest check. The local 119-entry manifest validation remains artifact-confirmed.
 
-**Next action:** do not begin Stage 4 without a separate task. When preparing a disposable-VM handoff or final delivery, retain or obtain the external manifest-verification output for every deliverable run.
+**Stage-4 throughput result (2026-09-23):** the recorder now detaches CARLA image buffers on the tick thread and encodes the same RGB, raw-ID semantic, and CARLA CityScapes-palette PNGs in a bounded four-worker queue. This was first smoke-tested, then benchmarked for 120 s requested simulation time on `route_05_four_turns`/`clear_day`: `20260923T134157Z-async-writer-120s-throughput-28fd4a` accepted 238 aligned 2 Hz samples across 118.5 s, wrote 6,426 validated PNGs (8,781,505,230 PNG bytes; 8,787,483,638 bytes including run files), had no drops, duplicates, ego-body pixels, or collision, and passed the benchmark/data validators plus a 6,441-entry local manifest check. Its 120 s trajectory travelled 1,239.329 m, completing the prescribed 508.150 m route before continuing. Recording wall time was 710.624 s, including 71.187 s bounded-writer backpressure; final PNG validation happened after that measurement. It is a throughput artifact, not a baseline drive: the observed route-deviation criterion is false after the deliberate continuation and is not used for benchmark acceptance. The prior synchronous full-route pilot remains incomplete and is retained. CARLA is stopped.
+
+**Current routes (2026-09-23 shortening):** at the user's request, revision `20260923T160431Z-shorter-routes-b72a9d` supersedes the September-19 geometry for subsequent Stage-4 recordings. Routes 1–3 retain the middle half (110.000 / 125.106 / 122.838 m; 12 / 32 / 32 working waypoints). Route 4 is `route_04_turn_then_bridge`: one left turn then the complete original bridge crossing, 251.108 m and 44 working waypoints. Route 5 is `route_05_two_turns`: left then right, 225.939 m and 60 working waypoints. The 2 m dense chains are unchanged contiguous slices; straight/turn spacing remains 10/2 m. New starts were tested in CARLA. All five drives in `20260923T160409Z-shorter-routes-autopilot-b8548d` completed with zero collisions and maximum deviations 0.996–1.246 m; every retained turn and the bridge exit were traversed. Actual total driving time fell from 186.70 to 88.85 simulation seconds (52.41%). These are no-camera measurements, so new image sizes and recorder wall times remain estimates. Stage-4 config and the autopilot default now select the shorter revision. All new manifests and the untouched original route manifest passed local checks; the new runs are local-only. CARLA is stopped and no validation process remains.
+
+**Stage-4 baseline pilot (2026-09-23):** the first current-matrix cell, `route_05_two_turns`/`clear_day`, is complete locally in `20260923T161516Z-baseline-pilot-route05-two-turns-clear-day-895150`. It accepted 58 aligned 2 Hz samples across 28.500 s of simulation time, with 18 sensors and 1,566 PNGs (522 each of RGB, raw semantic IDs and palette previews). It completed at 217.939/225.939 m projected progress, had zero collisions, 1.246 m maximum route deviation and a stopped vehicle. Dataset and baseline validators passed, both contact sheets passed visual review, and a 1,581-entry local manifest passed verification; the finalized directory is 2,205,036,691 bytes and manifest SHA-256 is `1bb4bbace43e741cc94316f10748fb2b4d7f5ac6337554623b7fb1f34098249c`. Recording wall duration was 170.993 s (2.160 s explicit writer backpressure); capture output at summary was 77.314 MB per accepted simulation second. It is local-only until the Mac copy is hash-verified. CARLA is stopped.
+
+**Stage-4 completion (2026-09-23):** the fixed 5-route × 2-weather matrix is complete. All ten unique route/weather cells finished with `outcome=completed`, no collision, stopped ego vehicle, maximum route deviation 1.246 m (limit 15 m), passed baseline and dataset validators, and locally verified manifests. The accepted set comprises 339 aligned samples, 9,153 PNGs (3 modalities × 9 cameras), 164.500 s accepted simulation span, 1,076.278 s recording wall time and 12,904,099,739 finalized bytes. The user supplied Mac-terminal output for `rsync -nrc --itemize-changes` over both `runs/` and `logs/` with no difference lines; this is user-reported but direct checksum-comparison evidence of the copies at `/Users/madness/Science/CARLA/runs_1/` and `/Users/madness/Science/CARLA/logs_1/`. Both batch runs stopped CARLA successfully. A manually interrupted partial retry is retained separately and does not replace its later successful retry.
+
+**Next action:** Stage 4 is complete. Proceed only when separately assigned to Stage 5 (literature/repository review); do not start additional baseline recordings.
 
 ## Stage Status
 
@@ -38,9 +46,9 @@ The direct Town01_Opt one-location review was initially recorded incorrectly as 
 |---|---|---|
 | 0. Environment and data safety | DONE | Bootstrap and repeat-safe setup, CARLA server/client RGB smoke test, run tracking/manifest, actual image digest, private Git remote, and verified Mac `rsync` copy are recorded; new-VM setup and RGB smoke passed on 2026-09-23; historical data restore awaits verification |
 | 1. Map and API | DONE | Town01 load/API/weather/basic actor checks passed. On explicitly selected Town01_Opt, direct RoadLines hiding passed RGB and raw-semantic checks at straight/intersection/traffic-control observations with sampled navigation intact. Blueprint catalogue has no animal candidate; compatible external asset status remains open for Stage 7. |
-| 2. Routes | DONE | The bridge route is now №4 and the four-turn route №5. All five routes under these identifiers passed spawned TM/autopilot completion, deviation, collision, timeout/stuck, and post-finish-stop checks in `20260919T154938Z-tm-autopilot-renumbered-routes-aac495`; two set_path diagnostics are retained. |
+| 2. Routes | DONE | Current shortened revision `20260923T160431Z-shorter-routes-b72a9d`: all five reconstructed chains and new-start drives passed in `20260923T160409Z-shorter-routes-autopilot-b8548d`; 12/32/32/44/60 working points and 88.85 s total driving. Original geometries and tests remain preserved. |
 | 3. Cameras and recording | DONE | Calibration, conversion, 18 sensors, 2 Hz alignment, raw semantic IDs, throughput, validator, and visual review passed locally. The user confirmed an off-VM copy of the complete rig run exists; its integrity check is not independently recorded in this session. |
-| 4. Baseline dataset | TODO | No recordings exist |
+| 4. Baseline dataset | DONE | All 10 fixed route × weather cells completed and passed route/dataset validation; 339 samples and 9,153 PNGs total. Every accepted run's local manifest was reverified. User-supplied `rsync -nrc` output showed no differences for the complete `runs/` and `logs/` Mac copies. |
 | 5. Literature review | TODO | Initial technical sources exist; the LLM-method review is not complete |
 | 6. LLM scene editing | TODO | Providers, access, exact IDs, and budget are unconfirmed |
 | 7. Animal | TODO | Asset availability is a material risk under the no-Unreal constraint |
@@ -62,7 +70,6 @@ Full version information and limits: [environment.md](environment.md).
 
 1. Secure API-key restoration after VM deletion; actual providers/IDs and spending limits.
 2. Whether a compatible prebuilt animal asset can appear without Unreal editing. The installed blueprint catalogue has no candidate.
-3. Route length, weather-condition count, and repeats for the Stage-4 baseline matrix after the Stage-3 timing/size measurement.
 
 Do not ask the user for all of these at once. Check available facts independently and ask only for a decision required by the current stage that is absent from the project.
 
@@ -70,7 +77,7 @@ Do not ask the user for all of these at once. Check available facts independentl
 
 - On the new VM, `runs/` and `logs/` appeared during the user's transfer on 2026-09-23. Their transfer completion and contents have not yet been verified. The historical entries below describe the old VM or Mac copies, not verified restored data on this VM.
 
-- Dataset: the short Stage-3 rig sample exists and passed local validation; the complete Stage-4 baseline dataset is not created.
+- Dataset: the short Stage-3 rig sample and the complete 10-cell Stage-4 baseline matrix exist. The accepted Stage-4 set has passed local validation and has user-reported checksum-verified copies on the Mac.
 - `artifacts/index.csv`: contains the smoke artifact with `backup_status=verified`.
 - Verified off-VM copy: `/Users/madness/Научка/CARLA/runs/20260916T210617Z-carla-smoke-beb230/`, confirmed by user-provided `rsync` and SHA-256 output at 21:19 UTC.
 - Stage-0 scripts and documentation are preserved in private `origin/Dev` history from `ce26b8e`; the completed Stage-1 correction and validation are preserved at `0ade213` on the same branch.
@@ -81,6 +88,7 @@ Do not ask the user for all of these at once. Check available facts independentl
 - The 12,180,606-byte candidate run `20260919T055800Z-route-candidates-adaptive-a2` is locally manifest-verified; its first three geometries are preserved in the final approved set. The source geometry revision `20260919T062007Z-route-revision-ca00ee` was followed by immutable renumbering revision `20260919T154916Z-route-numbering-swap-b5e941`: bridge route is now №4 and four-turn route №5, with geometry unchanged. Its manifest SHA-256 is `6af7ad8fe6cc3ce740aed00c66867b412d602195b44e90aed15cb9d26438272e`. None is copied externally.
 - Stage-2 driving evidence is local-only: the current successful five-drive run `20260919T154938Z-tm-autopilot-renumbered-routes-aac495` is 2,250,192 bytes, has manifest SHA-256 `a2581991bb20f5ef79e0dabb78f292f53041369ee197ada93fe7edf83f7e9a6b`, and passed local verification of 19 signed files. Two failed `set_path` diagnostics and two successful one-route `set_route` pilots are also finalized and registered. None is copied externally.
 - Stage-3 full-rig run `20260919T162408Z-av2-all-cameras-short-247e3f` passed all machine and visual checks, contains 119 signed files, is 165,463,137 bytes, and has manifest SHA-256 `8a203ea291a126682997bafbfb7816cabad7d1eb33cf6188ce0a10f1d2915e61`. On 2026-09-23 the user confirmed an external copy exists and requested Stage-3 closure. This is user-reported, not independently observed checksum evidence; the registry records `backup_status=user_confirmed`. The successful one-view clearance pilot and three retained failed geometry/body pilots remain separately registered as local-only.
+- Stage-4 throughput benchmark `20260923T134157Z-async-writer-120s-throughput-28fd4a` is complete and locally verified: 238 all-nine-camera samples over 118.5 simulation seconds; 6,426 validated PNGs; 8,787,483,638 run bytes; 6,441 manifest entries; manifest SHA-256 `5855146939f2fe225c472d304be524d3176fe5a124d1c14f5ebfcc3b23303873`. It is not part of the 10-run baseline matrix. It was included in the user-reported checksum-verified `runs/` tree copy; two failed asynchronous-writer implementation probes and one successful 5 s smoke benchmark remain retained in the registry.
 - Ready to delete VM: **not confirmed**. Documentation on the Mac does not prove that existing server work is preserved.
 
 ## How to Update This File

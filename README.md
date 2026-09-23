@@ -2,7 +2,7 @@
 
 This is the portable context package for the test assignment “Using LLMs with the CARLA Autonomous Driving Simulator.” It was prepared on 16 September 2026 from the original PDF and the user’s clarifications. The working deadline is 21 September; the PDF does not state a year, and 2026 is inferred from the current context.
 
-**This package now contains the reproducible environment, map probes, five approved/driven routes, and a locally validated 18-camera Stage-3 recorder plus dataset validator. It does not yet contain the Stage-4 baseline matrix or an LLM executor.** Do not treat later-stage experiments as already completed.
+**This package now contains the reproducible environment, map probes, five approved/driven routes, the validated 18-camera recorder/validator, and a completed ten-cell Stage-4 baseline matrix with externally checksum-verified Mac copies. It does not yet contain an LLM executor.** Do not treat later-stage experiments as already completed.
 
 ## What the Project Builds
 
@@ -99,7 +99,7 @@ On 17 September 2026, the probes confirmed Town01/Town01_Opt availability. On ba
 
 ## Stage-3 Camera Check
 
-`scripts/stage3_recording.py` loads the preserved AV2 calibration, aligns its rear-axle ego origin to the CARLA vehicle, spawns RGB/raw-semantic pairs at all nine positions, and groups callbacks by frame before pairing them with the same `WorldSnapshot` ego pose. `scripts/stage3_validate_dataset.py` checks timing, completeness, PNG integrity/dimensions, raw semantic encoding, and ego-body occlusion. The short all-camera run `20260919T162408Z-av2-all-cameras-short-247e3f` passed locally; it is not a complete Stage-4 route recording and is not externally backed up yet.
+`scripts/stage3_recording.py` loads the preserved AV2 calibration, aligns its rear-axle ego origin to the CARLA vehicle, spawns RGB/raw-semantic pairs at all nine positions, and groups callbacks by frame before pairing them with the same `WorldSnapshot` ego pose. `scripts/stage3_validate_dataset.py` checks timing, completeness, PNG integrity/dimensions, raw semantic encoding, and ego-body occlusion. The short all-camera run `20260919T162408Z-av2-all-cameras-short-247e3f` passed locally; it is not a complete Stage-4 route recording. The user confirmed its off-VM copy exists.
 
 Example after starting CARLA and creating a Stage-3 run directory:
 
@@ -113,6 +113,6 @@ The selected AV2 source is log `54bc6dbc-ebfb-3fba-b5b3-57f88b4b79ca`. CARLA use
 
 ## Current Starting Point
 
-CARLA 0.9.16 is validated offscreen on the RTX A6000. Stages 1–2 and the local technical checks for Stage 3 are complete; the Stage-3 run still needs a verified off-VM copy before its acceptance criterion is closed. The Stage-4 baseline matrix and a usable animal asset remain outstanding. See [STATUS](docs/STATUS.md) for details.
+CARLA 0.9.16 is validated offscreen on the RTX A6000. Stages 1–4 are complete: the Stage-3 external copy is user-confirmed, and the Stage-4 ten-cell baseline matrix passed validation and has user-reported checksum-verified Mac copies. A usable animal asset and the LLM stages remain outstanding. See [STATUS](docs/STATUS.md) for details.
 
 Before deleting a VM, push code and verify an external copy of results. According to the user, Stop does not end billing and Delete is irreversible. This package performs no VM operations.
