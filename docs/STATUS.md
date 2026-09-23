@@ -1,8 +1,10 @@
 # Current Project Status
 
-Last inspected: **2026-09-19 16:30 UTC**; user timezone: Europe/Moscow.
+Last inspected: **2026-09-23 12:01 UTC**; user timezone: Europe/Moscow.
 
 ## Current Position
+
+**New-VM recovery update (2026-09-23):** this is a replacement VM at the same project path. Git was clean at commit `0255434fbd779d9de735ee615c8aa21cabc7fc19` before setup. `scripts/preflight.sh` confirmed Ubuntu 22.04.5, RTX A6000/driver 580.126.09, NVIDIA Container Toolkit 1.18.1, passwordless Docker 29.1.5, 94 GiB RAM, and 266 GiB free before the image pull. The new VM needed `python3.10-venv`; after installing it, `scripts/setup.sh` created `.venv` with Python 3.10.12 and `carla==0.9.16`. The pulled `carlasim/carla:0.9.16` digest matches the recorded digest below. A short offscreen smoke run `20260923T113354Z-new-vm-recovery-3f3dcb` in `/tmp/carla-recovery-runs/` captured an 800×600 RGB PNG on default `Town10HD_Opt`; client/server were both 0.9.16, its three manifest entries passed local hash verification, and the test container was stopped. The image has not been visually reviewed. This verifies the new-VM setup and connection path, but **restoration and manifest verification of historical runs are still pending** while the user transfers them from the Mac. The temporary smoke run is not backed up and is not part of the project dataset.
 
 Stage 0 acceptance is complete. The actual project root is `/home/Ubuntu/carlas_tasks` (not the historical `~/carla_test_task` path), under user `Ubuntu`, branch `Dev`; the private `origin` is reachable and its former `00_-_stage` branch was renamed to `Dev` on 2026-09-17. `origin/main` remains at the historical `0e52c6a`; stage work is intentionally accumulated on private `Dev`.
 
@@ -26,16 +28,18 @@ The direct Town01_Opt one-location review was initially recorded incorrectly as 
 
 **Stage-3 local validation result:** official raw extrinsics and intrinsics for AV2 Sensor log `54bc6dbc-ebfb-3fba-b5b3-57f88b4b79ca` are preserved with source URLs and SHA-256. The recorder aligns the AV2 rear-axle origin to the Tesla rear axle, converts AV2 ego/optical axes into CARLA, and applies a declared +0.5 m height adaptation after an exact-height pilot exposed the Tesla hood. Run `20260919T162408Z-av2-all-cameras-short-247e3f` recorded four complete 2 Hz time points from all nine RGB/semantic pairs (18 sensors): 72 required images, 36 palette previews, and four same-frame ego poses. All 108 PNGs passed CRC/decode/dimension checks, intervals were 0.5 s, no sensor drops/duplicates/late events occurred, and contact sheets passed visual review with no ego body. Its 119 signed files occupy 165,463,137 bytes and its manifest SHA-256 is `8a203ea291a126682997bafbfb7816cabad7d1eb33cf6188ce0a10f1d2915e61`. This is a short rig check, not a complete Stage-4 route. The CARLA container is stopped.
 
-**Next action:** copy `20260919T162408Z-av2-all-cameras-short-247e3f` to the selected Mac hierarchy and verify it against `manifest.sha256`; after that evidence is recorded, mark Stage 3 DONE and begin Stage 4 as a separate task.
+**Stage-3 closure (2026-09-23):** the user confirmed that an off-VM copy of `20260919T162408Z-av2-all-cameras-short-247e3f` exists and instructed that Stage 3 be marked complete. This is **user-reported** copy evidence: no off-VM `verify_export.py`/SHA-256 output was supplied in this session, so the project does not claim an independently observed manifest check. The local 119-entry manifest validation remains artifact-confirmed.
+
+**Next action:** do not begin Stage 4 without a separate task. When preparing a disposable-VM handoff or final delivery, retain or obtain the external manifest-verification output for every deliverable run.
 
 ## Stage Status
 
 | Stage | Status | Known state / remaining work |
 |---|---|---|
-| 0. Environment and data safety | DONE | Bootstrap and repeat-safe setup, CARLA server/client RGB smoke test, run tracking/manifest, actual image digest, private Git remote, and verified Mac `rsync` copy are recorded; new-VM recovery remains untested |
+| 0. Environment and data safety | DONE | Bootstrap and repeat-safe setup, CARLA server/client RGB smoke test, run tracking/manifest, actual image digest, private Git remote, and verified Mac `rsync` copy are recorded; new-VM setup and RGB smoke passed on 2026-09-23; historical data restore awaits verification |
 | 1. Map and API | DONE | Town01 load/API/weather/basic actor checks passed. On explicitly selected Town01_Opt, direct RoadLines hiding passed RGB and raw-semantic checks at straight/intersection/traffic-control observations with sampled navigation intact. Blueprint catalogue has no animal candidate; compatible external asset status remains open for Stage 7. |
 | 2. Routes | DONE | The bridge route is now №4 and the four-turn route №5. All five routes under these identifiers passed spawned TM/autopilot completion, deviation, collision, timeout/stuck, and post-finish-stop checks in `20260919T154938Z-tm-autopilot-renumbered-routes-aac495`; two set_path diagnostics are retained. |
-| 3. Cameras and recording | IN_PROGRESS | Calibration, conversion, 18 sensors, 2 Hz alignment, raw semantic IDs, throughput, validator, and visual review passed locally; required verified off-VM copy remains |
+| 3. Cameras and recording | DONE | Calibration, conversion, 18 sensors, 2 Hz alignment, raw semantic IDs, throughput, validator, and visual review passed locally. The user confirmed an off-VM copy of the complete rig run exists; its integrity check is not independently recorded in this session. |
 | 4. Baseline dataset | TODO | No recordings exist |
 | 5. Literature review | TODO | Initial technical sources exist; the LLM-method review is not complete |
 | 6. LLM scene editing | TODO | Providers, access, exact IDs, and budget are unconfirmed |
@@ -46,10 +50,10 @@ The direct Town01_Opt one-location review was initially recorded incorrectly as 
 ## Known Infrastructure
 
 - Massed Compute full VM, Ubuntu 22.04.5 LTS.
-- RTX A6000 49,140 MiB, 6 vCPU, 94 GiB RAM, 295 GiB filesystem; 246 GiB free at the stage-0 check. The user-reported rate remains $0.57/hour, Premium.
+- RTX A6000 49,140 MiB, 94 GiB RAM, 295 GiB filesystem; 266 GiB free before the image pull and 246 GiB after it on 2026-09-23. The user-reported rate remains $0.57/hour, Premium.
 - SSH user: `Ubuntu`; actual working directory: `/home/Ubuntu/carlas_tasks`.
 - Docker 29.1.5 works through passwordless `sudo`; image and digest are recorded above.
-- The stage-0 `carla-server` test container was stopped at 21:06 UTC. Do not assume this state persists; check before a later stage.
+- The new-VM `carla-server` smoke container was stopped after the 2026-09-23 check; `docker ps -a` showed no containers.
 - According to the provider-panel warning relayed by the user, stopping a container or VM does not end billing; deleting the instance does and is irreversible.
 
 Full version information and limits: [environment.md](environment.md).
@@ -64,6 +68,8 @@ Do not ask the user for all of these at once. Check available facts independentl
 
 ## Latest Data Check
 
+- On the new VM, `runs/` and `logs/` appeared during the user's transfer on 2026-09-23. Their transfer completion and contents have not yet been verified. The historical entries below describe the old VM or Mac copies, not verified restored data on this VM.
+
 - Dataset: the short Stage-3 rig sample exists and passed local validation; the complete Stage-4 baseline dataset is not created.
 - `artifacts/index.csv`: contains the smoke artifact with `backup_status=verified`.
 - Verified off-VM copy: `/Users/madness/Научка/CARLA/runs/20260916T210617Z-carla-smoke-beb230/`, confirmed by user-provided `rsync` and SHA-256 output at 21:19 UTC.
@@ -74,7 +80,7 @@ Do not ask the user for all of these at once. Check available facts independentl
 - The locally manifest-verified 15,313,829-byte Stage-2 route-selection run `20260918T121645Z-town01-opt-routes-clean-debug-95bdcf` is the adopted visual evidence and has `backup_status=not_copied`. It contains `network_waypoints.json`, `routes.json`, five route files, a clean map overview, and six line-only DebugHelper route PNGs. The earlier 12,884,530-byte run `20260917T194300Z-town01-opt-routes-final-c5b492` remains valid for route geometry but its RGB previews are superseded: `draw_point` obscured road textures. The isolated 5,421,733-byte diagnostic `20260918T121243Z-debug-render-probe-295692` preserves the controlled no-debug/line-only/point-only comparison. Neither run is copied externally.
 - The 12,180,606-byte candidate run `20260919T055800Z-route-candidates-adaptive-a2` is locally manifest-verified; its first three geometries are preserved in the final approved set. The source geometry revision `20260919T062007Z-route-revision-ca00ee` was followed by immutable renumbering revision `20260919T154916Z-route-numbering-swap-b5e941`: bridge route is now №4 and four-turn route №5, with geometry unchanged. Its manifest SHA-256 is `6af7ad8fe6cc3ce740aed00c66867b412d602195b44e90aed15cb9d26438272e`. None is copied externally.
 - Stage-2 driving evidence is local-only: the current successful five-drive run `20260919T154938Z-tm-autopilot-renumbered-routes-aac495` is 2,250,192 bytes, has manifest SHA-256 `a2581991bb20f5ef79e0dabb78f292f53041369ee197ada93fe7edf83f7e9a6b`, and passed local verification of 19 signed files. Two failed `set_path` diagnostics and two successful one-route `set_route` pilots are also finalized and registered. None is copied externally.
-- Stage-3 evidence is local-only: full-rig run `20260919T162408Z-av2-all-cameras-short-247e3f` passed all machine and visual checks, contains 119 signed files, is 165,463,137 bytes, and has manifest SHA-256 `8a203ea291a126682997bafbfb7816cabad7d1eb33cf6188ce0a10f1d2915e61`. The successful one-view clearance pilot and three retained failed geometry/body pilots are separately registered. None is copied externally; this is the only remaining Stage-3 acceptance item.
+- Stage-3 full-rig run `20260919T162408Z-av2-all-cameras-short-247e3f` passed all machine and visual checks, contains 119 signed files, is 165,463,137 bytes, and has manifest SHA-256 `8a203ea291a126682997bafbfb7816cabad7d1eb33cf6188ce0a10f1d2915e61`. On 2026-09-23 the user confirmed an external copy exists and requested Stage-3 closure. This is user-reported, not independently observed checksum evidence; the registry records `backup_status=user_confirmed`. The successful one-view clearance pilot and three retained failed geometry/body pilots remain separately registered as local-only.
 - Ready to delete VM: **not confirmed**. Documentation on the Mac does not prove that existing server work is preserved.
 
 ## How to Update This File

@@ -289,6 +289,29 @@ The user rented a Massed Compute VM with an RTX A6000 48 GB, Ubuntu 22.04.5, 6 v
 
 **Next action:** from the Mac, pull the full run to `/Users/madness/Научка/CARLA/runs/20260919T162408Z-av2-all-cameras-short-247e3f/`, run `scripts/verify_export.py` or an equivalent manifest check against that destination, then record the proof and mark Stage 3 DONE.
 
+## 2026-09-23 11:28–11:36 UTC — New-VM Environment Recovery
+
+**Type:** new-VM setup and short local smoke verification; historical data transfer is still in progress.
+
+- Checked clean private `Dev` worktree at `0255434fbd779d9de735ee615c8aa21cabc7fc19`, `/home/Ubuntu/carlas_tasks`, and the preflight output. GPU, NVIDIA runtime, passwordless Docker, memory, and disk prerequisites passed. No CARLA image or containers existed initially.
+- The first `scripts/setup.sh` attempt failed because the pre-existing `.venv` had no `pip` and the OS lacked `ensurepip`. Installed `python3.10-venv` through apt; the second setup succeeded with Python 3.10.12 and `carla==0.9.16`.
+- Pulled `carlasim/carla:0.9.16`; its digest matched the recorded `aaf1df22...` digest. Started the offscreen server, captured one 800×600 RGB frame, finalized the run, verified all three manifest entries locally, and stopped the container. The frame was not visually reviewed.
+
+**Evidence:** temporary run `/tmp/carla-recovery-runs/20260923T113354Z-new-vm-recovery-3f3dcb/` (manifest SHA-256 `4412e91afe7bafc312d52915e46f306c487086dcee0d490a80c40a79c76558fc`); server log `/tmp/carla-recovery-logs/carla-20260923T113324Z.log`. Run metadata records clean Git state, client/server 0.9.16, default `Town10HD_Opt`, frame 1459, and timestamp 14.433419645647518 s. These `/tmp` files are not externally backed up or registered as deliverable artifacts.
+
+**Next action:** after the user's Mac-to-VM rsync completes, verify restored manifests and the historical Stage-3 short run. Obtain separate confirmation that its Mac copy passed the manifest check before closing Stage 3.
+
+## 2026-09-23 12:01 UTC — Stage 3 Closure by User-Confirmed External Copy
+
+**Type:** user-reported off-VM-copy evidence; local run validation remains artifact-confirmed.
+
+- The user confirmed that an external copy of `20260919T162408Z-av2-all-cameras-short-247e3f` exists and explicitly instructed that Stage 3 be marked complete.
+- No Mac-side `scripts/verify_export.py` output or SHA-256 comparison output was supplied in this session. Therefore the registry uses `backup_status=user_confirmed`, rather than `verified`; the complete run's local 119-entry manifest validation and SHA-256 `8a203ea291a126682997bafbfb7816cabad7d1eb33cf6188ce0a10f1d2915e61` remain the artifact-confirmed integrity evidence.
+
+**Result:** Stage 3 is `DONE` at the user's direction. Its technical camera/recording acceptance was already complete; the external-copy existence is user-reported. Preserve or obtain the external manifest-verification output before any irreversible VM deletion or final delivery.
+
+**Next action:** wait for a separately assigned Stage-4 task; do not start baseline recording automatically.
+
 ## Template for the Next Entry
 
 ```text

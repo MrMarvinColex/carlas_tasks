@@ -1,6 +1,6 @@
 # Using LLMs to Edit CARLA Scenes
 
-**Working report. Status: Stages 1–2 are completed; the Stage-3 camera/recording implementation passed locally and awaits its required verified off-VM copy. Baseline recording, LLM, animal, and comparison experiments remain.**
+**Working report. Status: Stages 1–3 are completed. The Stage-3 rig passed local validation, and the user confirmed an off-VM copy exists; external checksum output was not supplied in this session. Baseline recording, LLM, animal, and comparison experiments remain.**
 
 Document start date: 16 September 2026. Target deadline: 21 September 2026 in the current context; the source PDF specifies only day and month, without a year. Author/executor: complete before submission.
 
@@ -10,7 +10,7 @@ Recording rule: distinguish planned methods from completed experiments. For ever
 
 The assignment requires controlling CARLA through Python, recording five routes using cameras placed as in Argoverse 2, and studying natural-language scene editing with several LLMs. Per the user’s clarification, changes are limited to CARLA runtime capabilities and models are called through APIs. The selected rig has nine positions and two sensor types per position, recorded at 2 Hz of simulation time. Ego-vehicle poses are stored separately.
 
-The user reported a successful CARLA 0.9.16 offscreen test on the GPU VM. Stage 1 subsequently verified Town01 loading, basic World/Actor/Blueprint operations, rendered weather changes, and the exposed map/object catalogues. Base Town01 direct RoadLines hiding was semantic-only, but the installed `Town01_Opt` passed paired RGB/raw-semantic checks at a straight road, intersection, and traffic-control location using direct RoadLines hiding; sampled navigation remained available. Stage 2 constructed five connected approved routes, saved their geometry and DebugHelper views, then drove all five with a spawned Traffic Manager vehicle under explicit completion and safety checks. Stage 3 selected a real AV2 calibration and locally validated all 18 camera streams with same-frame ego poses at 2 Hz; its required independent copy is still unverified. All later research outcomes remain unconfirmed.
+The user reported a successful CARLA 0.9.16 offscreen test on the GPU VM. Stage 1 subsequently verified Town01 loading, basic World/Actor/Blueprint operations, rendered weather changes, and the exposed map/object catalogues. Base Town01 direct RoadLines hiding was semantic-only, but the installed `Town01_Opt` passed paired RGB/raw-semantic checks at a straight road, intersection, and traffic-control location using direct RoadLines hiding; sampled navigation remained available. Stage 2 constructed five connected approved routes, saved their geometry and DebugHelper views, then drove all five with a spawned Traffic Manager vehicle under explicit completion and safety checks. Stage 3 selected a real AV2 calibration and locally validated all 18 camera streams with same-frame ego poses at 2 Hz. The user confirmed an off-VM copy of the completed rig run exists; its external checksum output was not supplied in this session. All later research outcomes remain unconfirmed.
 
 After experiments, replace this section with a short abstract of the actual results, data volume, and limitations.
 
@@ -30,6 +30,8 @@ After experiments, replace this section with a short abstract of the actual resu
 | Launch command | `bash scripts/run_carla.sh` (same-VM smoke verified; see `docs/runbook.md`) |
 | Code / commit | Run began from `0e52c6a8ef7cb4bbb6116c6c40a72e772a7b6a1d`; reproducible stage-0 implementation was subsequently preserved at `ce26b8e`, now in private branch `Dev` after the branch rename |
 | Verification run | `20260916T210617Z-carla-smoke-beb230`; verified Mac copy and manifest check at 2026-09-16 21:19 UTC |
+
+**Replacement-VM check (2026-09-23):** the pinned Python client and exact image digest were reinstalled on a newly rented VM. A temporary offscreen smoke run `20260923T113354Z-new-vm-recovery-3f3dcb` returned one 800×600 RGB frame with client/server 0.9.16, and its three manifest entries passed local hash verification. The frame was not visually reviewed, and previous experiments have not yet been verified after transfer from the Mac. This is environment recovery evidence only, not a new Town01 or 18-camera result. See `docs/environment.md` and `docs/worklog.md`.
 
 ### 1.2. Basic Use
 
@@ -198,7 +200,7 @@ After implementation, describe the actual format, JSON schema, frame/timestamp c
 | Image / pose-record count | 72 required images + 36 previews + 4 ego poses in the full-rig check |
 | Data volume | 165,463,137 bytes including validation, contact sheets, metadata, and manifest |
 | Validator / version | `scripts/stage3_validate_dataset.py`; all checks passed |
-| Verified external copy | Not confirmed |
+| External copy | User-confirmed; external checksum output not supplied in this session |
 
 State the Git commit/tag, image digest, pinned dependencies, configurations, and seeds. Data and code must be usable without the current VM. Include checksum manifests in the submission.
 
