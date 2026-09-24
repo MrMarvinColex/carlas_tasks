@@ -552,6 +552,16 @@ The user rented a Massed Compute VM with an RTX A6000 48 GB, Ubuntu 22.04.5, 6 v
 
 **Result:** the requested report draft is ready for user review. It is not committed, pushed or published yet.
 
+## 2026-09-24 15:33 UTC — Final Report Private-Branch Handoff
+
+**Type:** user-authorized Git commit and push; no report publication, repository-visibility change, external upload, CARLA run, or model API call.
+
+- Staged only the standalone report, its five PNG figures, and the related README/status/decision/worklog/working-report updates.
+- Rechecked the staged diff for whitespace errors and reviewed its file/size summary before committing.
+- Created commit `347d8a6` (`docs: add final Russian report`) and pushed it from local `Dev` to the existing private `origin/Dev` branch.
+
+**Result:** Git reported `5e8af47..347d8a6  Dev -> Dev`. The report is preserved in the private remote. User review and any later public delivery remain separate actions requiring explicit direction.
+
 ## Template for the Next Entry
 
 ```text
