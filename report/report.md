@@ -180,7 +180,11 @@ ScenarioGen provides the clearest separation of specification from execution; TT
 
 The user request and description of available capabilities are sent to an LLM API. The model returns a structured scene description. A validator checks syntax, parameters, and action feasibility; an executor then applies permitted CARLA operations. A saved configuration can replay the scene without another model call.
 
-This is a project design. Concrete components, SceneSpec version, refusal handling, and scene reset are recorded after implementation. Arbitrary code from a model response is never executed.
+**Pre-API implementation result (24 September 2026):** `SceneSpec` v1.0 is implemented as strict passive JSON in `scripts/stage6_scene_spec.py`; the executor is `scripts/stage6_local_scene.py`. The initial protocol is intentionally narrow: `Town01_Opt`, the straight control route `route_01_straight`, `clear_day`/`wet_cloudy_day`, and one to three parked `vehicle.audi.a2` actors. The ego stays a Tesla Model 3. A specification contains only map/route/weather IDs, a seed, an allow-listed operation, blueprint ID and a route-progress anchor with side/offsets; it has no Python, Scenic or world-coordinate field. Duplicate keys, non-finite numbers, unsupported fields and malformed types are rejected. A separate `unsupported_capability` response records an impossible moving-animal request without pretending that an executor failure is a model success.
+
+The executor creates a clean world for every attempt, reapplies direct RoadLines hiding, checks the current map/route and blueprint library, calculates actual transforms, requires CARLA spawn feasibility, applies weather, saves before/after observer views, records three aligned 2 Hz samples from all 18 cameras, checks semantic-supported object visibility, then completes the simple 110 m Traffic Manager route. Arbitrary code from a model response is never executed. A saved `scene_spec.json` replays through this same path without an API call.
+
+`20260924T110210Z-local-straight-parked-vehicle-observer-fix-213a80` created one Audi in `wet_cloudy_day`; its three camera samples (81 PNGs) passed the existing validation and the route completed without collision (maximum deviation 0.999 m). Its fresh-world replay `20260924T110353Z-local-straight-replay-ad721d` reproduced the SceneSpec, blueprint and actual transform exactly, with the same visibility and route result. `20260924T110725Z-local-straight-composite-safe-af8031` repeated the check for two Audis in `clear_day`. These are local CARLA checks, not LLM experiments. The retained failed placements show why live feasibility validation is necessary: a right-side target remained on a driving lane and another left-side target intersected static map geometry.
 
 ### 3.2. Comparison Protocol
 
@@ -195,6 +199,8 @@ This is a project design. Concrete components, SceneSpec version, refusal handli
 | Metrics | Schema validity, execution, fulfilment, latency, errors; usage/cost where available |
 
 Use equivalent scene context and tasks for all variants. Record the raw response, parsed specification, validation result, executor result, complete response latency, and model/provider settings. Separate first-attempt success from success after retries. Do not substitute a manually corrected successful scene for the actual model outcome.
+
+The API adapter and this table remain unfilled because no provider/model access or spending limit has been verified, and no model call was made. The pre-API fixtures and local executor are not attributed to GPT-Astra or Qwen.
 
 ### 3.3. Results Table
 

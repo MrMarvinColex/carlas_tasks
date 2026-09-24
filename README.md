@@ -2,7 +2,7 @@
 
 This is the portable context package for the test assignment “Using LLMs with the CARLA Autonomous Driving Simulator.” It was prepared on 16 September 2026 from the original PDF and the user’s clarifications. The working deadline is 21 September; the PDF does not state a year, and 2026 is inferred from the current context.
 
-**This package now contains the reproducible environment, map probes, five approved/driven routes, the validated 18-camera recorder/validator, and a completed ten-cell Stage-4 baseline matrix with externally checksum-verified Mac copies. It does not yet contain an LLM executor.** Do not treat later-stage experiments as already completed.
+**This package now contains the reproducible environment, map probes, five approved/driven routes, the validated 18-camera recorder/validator, a completed ten-cell Stage-4 baseline matrix with externally checksum-verified Mac copies, and a locally validated pre-API SceneSpec executor. It does not yet contain an API adapter or any model-comparison result.** Do not treat later-stage experiments as already completed.
 
 ## What the Project Builds
 

@@ -1,6 +1,6 @@
 # Current Project Status
 
-Last inspected: **2026-09-23 21:01 UTC**; user timezone: Europe/Moscow.
+Last inspected: **2026-09-24 11:09 UTC**; user timezone: Europe/Moscow.
 
 ## Current Position
 
@@ -38,7 +38,13 @@ The direct Town01_Opt one-location review was initially recorded incorrectly as 
 
 **Stage-4 completion (2026-09-23):** the fixed 5-route × 2-weather matrix is complete. All ten unique route/weather cells finished with `outcome=completed`, no collision, stopped ego vehicle, maximum route deviation 1.246 m (limit 15 m), passed baseline and dataset validators, and locally verified manifests. The accepted set comprises 339 aligned samples, 9,153 PNGs (3 modalities × 9 cameras), 164.500 s accepted simulation span, 1,076.278 s recording wall time and 12,904,099,739 finalized bytes. The user supplied Mac-terminal output for `rsync -nrc --itemize-changes` over both `runs/` and `logs/` with no difference lines; this is user-reported but direct checksum-comparison evidence of the copies at `/Users/madness/Science/CARLA/runs_1/` and `/Users/madness/Science/CARLA/logs_1/`. Both batch runs stopped CARLA successfully. A manually interrupted partial retry is retained separately and does not replace its later successful retry.
 
-**Next action:** Stage 4 is complete. Proceed only when separately assigned to Stage 5 (literature/repository review); do not start additional baseline recordings.
+**Stage-5 completion (2026-09-24):** the primary publications and author repositories for ScenarioGen, TTSG, TrafficComposer, and ChatScene were reviewed for task, LLM role, world-editing mechanism, CARLA/version support, code/licence status, reproducibility, limitations, and applicability. The concise comparison in `report/report.md` distinguishes runtime scenario construction from Unreal geometry editing and rendered-image post-processing. It supports D23: an API LLM produces a versioned passive SceneSpec, a deterministic validator checks it, and a fixed allow-listed executor applies verified CARLA operations. No author code or claimed experiment was run, and none of the reviewed systems resolves the missing animal asset.
+
+**Stage-6 pre-API local result (2026-09-24):** requested steps 1–4 are complete without any network/API request. `configs/stage6_scene_editing.json` defines a passive `SceneSpec` v1.0 and an initially narrow executor: `clear_day`/`wet_cloudy_day`, one to three static `vehicle.audi.a2` actors, and `route_01_straight` only. The model has no world-coordinate or code field; all transforms are calculated from the signed route chain. Strict parsing rejects duplicate keys, non-finite values, direct coordinates, unsupported fields, maps, blueprints and spatial conflicts. A structured `unsupported_capability` refusal for `moving_animal` is accepted and logged without calling CARLA or an LLM.
+
+`20260924T110210Z-local-straight-parked-vehicle-observer-fix-213a80` applied one Audi at exactly `(82.389946, 131.221497, 0.350000)`, recorded a changed observer pair and three aligned 2 Hz AV2-rig samples (81 PNGs), passed the existing camera validator, showed semantic support in the front-centre, front-left and both stereo-front views, and completed the 110 m straight route with zero collision and 0.999 m maximum deviation. `20260924T110353Z-local-straight-replay-ad721d` replayed its saved `scene_spec.json` after a fresh map load: the input, blueprint, resolved transform, visibility result and completed-route result matched; only CARLA actor ID and timestamps changed. `20260924T110725Z-local-straight-composite-safe-af8031` also passed with two Audis and `clear_day`. The valid runs are locally manifest-verified but not externally copied. Retained failed diagnostics record a sandbox-only loopback timeout, a right-side placement still on a driving lane, an observer-callback bug fixed before the accepted run, and a composite placement intersecting static map geometry.
+
+**Next action:** when connectivity returns, verify actual providers/model IDs, access and trial-spend limit before any API call. Then add the common API adapter and fixed prompt protocol; do not broaden the currently verified executor envelope silently.
 
 ## Stage Status
 
@@ -49,8 +55,8 @@ The direct Town01_Opt one-location review was initially recorded incorrectly as 
 | 2. Routes | DONE | Current shortened revision `20260923T160431Z-shorter-routes-b72a9d`: all five reconstructed chains and new-start drives passed in `20260923T160409Z-shorter-routes-autopilot-b8548d`; 12/32/32/44/60 working points and 88.85 s total driving. Original geometries and tests remain preserved. |
 | 3. Cameras and recording | DONE | Calibration, conversion, 18 sensors, 2 Hz alignment, raw semantic IDs, throughput, validator, and visual review passed locally. The user confirmed an off-VM copy of the complete rig run exists; its integrity check is not independently recorded in this session. |
 | 4. Baseline dataset | DONE | All 10 fixed route × weather cells completed and passed route/dataset validation; 339 samples and 9,153 PNGs total. Every accepted run's local manifest was reverified. User-supplied `rsync -nrc` output showed no differences for the complete `runs/` and `logs/` Mac copies. |
-| 5. Literature review | TODO | Initial technical sources exist; the LLM-method review is not complete |
-| 6. LLM scene editing | TODO | Providers, access, exact IDs, and budget are unconfirmed |
+| 5. Literature review | DONE | Four primary works and author repositories were compared; the report records capabilities, evidence limits, and applicability, and D23 fixes the Stage-6 architecture. |
+| 6. LLM scene editing | IN_PROGRESS | Pre-API SceneSpec/validator/restricted executor/reset/replay and short 18-camera checks passed locally on `route_01_straight`; providers, access, exact IDs, budget and model attempts remain unconfirmed |
 | 7. Animal | TODO | Asset availability is a material risk under the no-Unreal constraint |
 | 8. Repeated drives | TODO | No baseline or edited recordings exist |
 | 9. Delivery | TODO | A report skeleton exists; nothing has been published |

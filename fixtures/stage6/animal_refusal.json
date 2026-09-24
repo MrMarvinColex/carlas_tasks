@@ -1,0 +1,10 @@
+{
+  "version": "1.0",
+  "refusal": {
+    "code": "unsupported_capability",
+    "requested_capabilities": [
+      "moving_animal"
+    ],
+    "message": "A compatible moving animal asset is not verified in the current CARLA package."
+  }
+}

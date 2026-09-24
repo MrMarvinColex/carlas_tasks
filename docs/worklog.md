@@ -399,6 +399,33 @@ The user rented a Massed Compute VM with an RTX A6000 48 GB, Ubuntu 22.04.5, 6 v
 
 **Next action:** begin Stage 5 only on a separate request; it is a literature/repository review and needs no CARLA recording.
 
+## 2026-09-24 10:22 UTC — Stage 5 Literature and Repository Review Complete
+
+**Type:** documented primary-source review; no CARLA, model API, or author code execution.
+
+- Reviewed the user's detailed analysis of ScenarioGen, TTSG, TrafficComposer, and ChatScene against assignment item 2 and the project's CARLA 0.9.16, `Town01_Opt`, fixed-route, API-only, and restricted-executor constraints.
+- Replaced the report placeholder with a compact four-work comparison covering method, LLM role, CARLA/code status, reported evidence, limitations, and concrete project use. The report explicitly separates runtime scenario construction from Unreal geometry authoring and rendered-image post-processing.
+- Added the four primary publication/repository pairs to the knowledge source index and recorded the shared conclusion: use a passive versioned SceneSpec, strict validation, a fixed allow-listed executor, post-application checks, and replay from resolved configuration.
+- Accepted that architecture as D23. This is a design decision informed by literature, not an implementation or CARLA experiment. The source code was inspected but not run, author-reported metrics were not independently reproduced, and the animal-asset blocker remains outside the capability of the reviewed methods.
+
+**Result:** Stage 5 meets its acceptance criteria and is `DONE`. Evidence is in `report/report.md` section 2, `docs/knowledge.md` section 8 and sources S18–S21, and `docs/decisions.md` D23.
+
+**Next action:** Stage 6 begins by verifying available API providers/model IDs and the trial-spend limit, then implementing and locally testing the SceneSpec/validator/executor/replay path before model comparison calls.
+
+## 2026-09-24 11:09 UTC — Stage 6 Pre-API SceneSpec and CARLA Validation
+
+**Type:** local implementation and CARLA validation; no LLM endpoint, key, provider lookup or internet dependency.
+
+- Added `configs/stage6_scene_editing.json`, strict passive `SceneSpec`/refusal parsing in `scripts/stage6_scene_spec.py`, a fixed allow-listed CARLA executor in `scripts/stage6_local_scene.py`, and deterministic valid/invalid/refusal fixtures. The model-facing format contains route-relative anchors only; it cannot carry Python, Scenic, direct world coordinates, `NaN`, duplicate keys or unrecognised fields.
+- Added seven Stage-6 unit checks. They passed together with the existing eight Stage-3 checks. The validator distinguishes syntactically bad JSON, policy violations, structural spatial conflicts, live map/blueprint failures and a correct structured animal refusal.
+- Validated the selected narrow envelope on `Town01_Opt`/`route_01_straight`: the one-Audi wet scene `20260924T110210Z-local-straight-parked-vehicle-observer-fix-213a80` and its fresh-world replay `20260924T110353Z-local-straight-replay-ad721d` passed camera validation (3 aligned 2 Hz samples, 81 PNGs), semantic-supported visibility, zero collisions, route completion and stopped ego. The same saved SceneSpec reproduced the actual transform and result. The two-Audi `clear_day` scene `20260924T110725Z-local-straight-composite-safe-af8031` also passed.
+- Retained and finalized five failed diagnostics rather than discarding them: two sandbox-loopback client failures, a right-side target that remained on a driving lane, an observer camera callback wait fixed before the accepted run, and a point that conflicted with static geometry. The live map showed that a JSON-valid position is not necessarily spawnable; `try_spawn_actor` stays a mandatory feasibility check. A local structured moving-animal refusal is preserved in `20260924T110820Z-local-animal-refusal-85c432`.
+- Every accepted local run has a manifest and local self-verification. No external copy exists yet, and the API-comparison portion of Stage 6 has not started.
+
+**Result:** Stage-6 work items 1–4 from the attached plan are complete for the initial straight-route envelope. Stage 6 remains `IN_PROGRESS` because provider/model IDs, credentials/access, spending limit, shared API prompt protocol, model attempts, latency/cost and comparison are still absent.
+
+**Next action:** after connectivity returns, verify provider access and a trial-spend limit before any API request; then implement the adapter without widening the verified SceneSpec capability list.
+
 ## Template for the Next Entry
 
 ```text

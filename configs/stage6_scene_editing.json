@@ -1,0 +1,53 @@
+{
+  "schema_version": 1,
+  "scene_spec_version": "1.0",
+  "description": "Pre-API Stage-6 local protocol. The initial CARLA validation is intentionally restricted to the straight control route.",
+  "map_name": "Town01_Opt",
+  "approved_routes_run": "runs/20260923T160431Z-shorter-routes-b72a9d",
+  "weather_source_config": "configs/stage4_baseline_matrix.json",
+  "allowed_route_ids": [
+    "route_01_straight"
+  ],
+  "allowed_weather_ids": [
+    "clear_day",
+    "wet_cloudy_day"
+  ],
+  "allowed_vehicle_blueprints": [
+    "vehicle.audi.a2"
+  ],
+  "operations": [
+    "spawn_parked_vehicle"
+  ],
+  "allowed_sides": [
+    "left"
+  ],
+  "constraints": {
+    "minimum_anchor_progress_m": 20.0,
+    "minimum_route_edge_clearance_m": 15.0,
+    "longitudinal_offset_range_m": [
+      -10.0,
+      10.0
+    ],
+    "lateral_offset_range_m": [
+      5.0,
+      10.0
+    ],
+    "maximum_edit_count": 3,
+    "maximum_seed": 2147483647,
+    "minimum_static_object_separation_m": 6.0,
+    "minimum_ego_object_separation_m": 12.0,
+    "spawn_z_offset_m": 0.35
+  },
+  "short_validation": {
+    "fixed_delta_seconds": 0.05,
+    "sensor_tick_seconds": 0.5,
+    "warmup_seconds": 1.0,
+    "rig_sample_count": 3,
+    "route_timeout_seconds": 60.0,
+    "finish_radius_m": 8.0,
+    "path_deviation_limit_m": 15.0,
+    "traffic_manager_seed": 2026092406,
+    "mount_z_offset_m": 0.5,
+    "ego_blueprint": "vehicle.tesla.model3"
+  }
+}

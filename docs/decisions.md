@@ -176,13 +176,31 @@ All five shortened routes passed CARLA reconstruction, direct-`next(2.0)` adjace
 
 This supersedes D16's adopted lengths/endpoints, D18's descriptive suffixes and D20's route source/pilot, while preserving route numbers, five-route coverage, weather matrix and all camera requirements. Stage-4 configuration now selects this validated revision; the four-turn/long-bridge geometries remain historical evidence.
 
+### D23. Versioned SceneSpec and Restricted CARLA Executor
+
+**Status:** accepted as the Stage-6 design after the Stage-5 primary-source review on 2026-09-24; the pre-API parser, validator, restricted executor, world reset and replay passed locally on 2026-09-24. API-model integration remains untested.
+
+Use a project-owned, versioned `SceneSpec` as passive data between an API-hosted LLM and CARLA. The model may select only operations, identifiers, spatial anchors, and parameters that the executor actually supports. A deterministic validator checks schema, enums, numeric bounds, blueprint availability, the fixed map/routes, spatial feasibility, and conflicts before any world mutation. A fixed executor maps accepted fields to allow-listed CARLA Python API calls; no model-produced Python or Scenic program is executed, and model output is never parsed with `eval()`.
+
+After application, record and check the actual selected blueprints, transforms, visibility, requested event, and errors. Preserve the original request, raw response, parsed SceneSpec, resolved configuration, model/provider/settings, timing, retries, seeds, and outcome. A resolved configuration must replay without another LLM call. The map, five routes, and 18-sensor recorder remain controlled project components rather than model-editable fields unless a later explicit decision changes that boundary.
+
+This accepts proposal P01 and adapts the common useful parts of ScenarioGen, TTSG, TrafficComposer, and ChatScene without importing their local-model, unsafe parsing, multimodal, or executable-DSL components. Local implementation evidence is `20260924T110210Z-local-straight-parked-vehicle-observer-fix-213a80`, its fresh-world replay `20260924T110353Z-local-straight-replay-ad721d`, and the two-vehicle `clear_day` case `20260924T110725Z-local-straight-composite-safe-af8031`. This does not validate any provider/model response, API latency, cost, or cross-model comparison.
+
+### D24. Narrow Pre-API Executor Envelope on the Straight Control Route
+
+**Status:** accepted and CARLA-validated on 2026-09-24; expand only after new placement evidence.
+
+For the user's initial Stage-6 work, the executor is deliberately limited to `Town01_Opt`, `route_01_straight`, the two measured Stage-4 weather profiles, and one to three static `vehicle.audi.a2` actors. The Tesla Model 3 is the fixed ego actor, not an LLM-selectable prop. Every prop position derives from a route-progress anchor, side and offsets; direct coordinates are forbidden in `SceneSpec`. In the tested route location, the right side stayed a driving lane through 55 m lateral probing, while the left-side 10 m placement was not driving lane and successfully spawned. A 35 m anchor nevertheless intersected static geometry and was rejected by CARLA. Therefore live preflight plus `try_spawn_actor` remains mandatory; a JSON-valid specification is not automatically executable.
+
+The accepted local cases prove the selected one- and two-Audi placements, observer before/after views, 18-sensor visibility, no ego overlap/collision, completion of the 110 m route, clean world reload, and replay from stored `scene_spec.json`. They do not claim all anchors/offsets on this route, other vehicle blueprints, or any animal are valid. The actual constraints and fixtures are versioned in `configs/stage6_scene_editing.json` and `fixtures/stage6/`.
+
 ## Proposed Project Decisions
 
 Implement these unless evidence calls for a revision. Do not attribute them to the assignment author.
 
 | ID | Proposal | Validate before finalizing |
 |---|---|---|
-| P01 | LLM → validated SceneSpec → restricted CARLA executor | Schema must cover real operations and impossible requests |
+| P01 | Accepted as D23: LLM → validated SceneSpec → restricted CARLA executor | Stage 6 must validate the schema, operations, replay, and impossible requests |
 | P02 | Superseded by D19: fixed 0.05 s world step, synchronous TM, frame-keyed 0.5 s sensor period | Revalidate at Stage-4 route duration and matrix scale |
 | P03 | Superseded by D04: AV2 log `54bc6dbc-ebfb-3fba-b5b3-57f88b4b79ca` with preserved raw calibration | Reuse the signed calibration record in later dataset runs |
 | P04 | Superseded by D13 for route selection; use direct `Waypoint.next()` routes and retain GlobalRoutePlanner only as a later fallback if Traffic Manager path submission requires it | Valid actor spawn, TM following, enough duration for events |
