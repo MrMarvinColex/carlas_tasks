@@ -2,7 +2,7 @@
 
 This is the portable context package for the test assignment “Using LLMs with the CARLA Autonomous Driving Simulator.” It was prepared on 16 September 2026 from the original PDF and the user’s clarifications. The working deadline is 21 September; the PDF does not state a year, and 2026 is inferred from the current context.
 
-**This package now contains the reproducible environment, map probes, five approved/driven routes, the validated 18-camera recorder/validator, a completed ten-cell Stage-4 baseline matrix with externally checksum-verified Mac copies, and a bounded Stage-6 API/CARLA pilot. The pilot has a common adapter, three fixed prompts, nine first attempts across GPT-Astra/Qwen-27B/Qwen-8B, six passing saved-provenance 18-camera executions, three correct animal refusals, and a comparison table. Its selected run artifacts have user-reported checksum-verified Mac copies; it is not a statistical repeat study or a cost measurement.**
+**This package now contains the reproducible environment, map probes, five approved/driven routes, the validated 18-camera recorder/validator, a completed ten-cell Stage-4 baseline matrix with externally checksum-verified Mac copies, a bounded Stage-6 API/CARLA pilot, and a completed Stage-7 animal capability. Stage 7 adds an independently packaged AnimaSim deer, a strict passive SceneSpec and one saved-provenance replay for each of GPT-Astra, Qwen-27B and Qwen-8B. Its external backup is user-reported; the destination and independent checksum evidence were not supplied. It is not a statistical repeat study, cost measurement, or full-rig edited-drive dataset.**
 
 ## What the Project Builds
 
@@ -113,6 +113,6 @@ The selected AV2 source is log `54bc6dbc-ebfb-3fba-b5b3-57f88b4b79ca`. CARLA use
 
 ## Current Starting Point
 
-CARLA 0.9.16 is validated offscreen on the RTX A6000. Stages 1–4 are complete: the Stage-3 external copy is user-confirmed, and the Stage-4 ten-cell baseline matrix passed validation and has user-reported checksum-verified Mac copies. A usable animal asset and the LLM stages remain outstanding. See [STATUS](docs/STATUS.md) for details.
+CARLA 0.9.16 is validated offscreen on the RTX A6000. Stages 1–7 are complete: the Stage-3 external copy is user-confirmed, the Stage-4 ten-cell baseline matrix has user-reported checksum-verified Mac copies, and Stage 7 has a user-reported external backup without a recorded destination or independent checksum. Stage 8 full-rig edited drives remain. See [STATUS](docs/STATUS.md) for details.
 
 Before deleting a VM, push code and verify an external copy of results. According to the user, Stop does not end billing and Delete is irreversible. This package performs no VM operations.

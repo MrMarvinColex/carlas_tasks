@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "scene_spec_version": "1.1",
+  "description": "Stage-7 animal protocol exposes only the locally verified AnimaSim deer crossing from the grounded probe.",
+  "map_name": "Town01_Opt",
+  "approved_routes_run": "runs/20260923T160431Z-shorter-routes-b72a9d",
+  "weather_source_config": "configs/stage4_baseline_matrix.json",
+  "allowed_route_ids": [
+    "route_01_straight"
+  ],
+  "allowed_weather_ids": [
+    "clear_day"
+  ],
+  "animal": {
+    "type": "deer",
+    "blueprint_id": "static.prop.deer",
+    "semantic_class_id": 21,
+    "trajectory_kind": "lateral_crossing"
+  },
+  "constraints": {
+    "anchor_progress_m": 32.0,
+    "start_lateral_offset_m": 6.0,
+    "end_lateral_offset_m": -6.0,
+    "speed_mps": 2.0,
+    "start_time_s": 0.0,
+    "maximum_seed": 2147483647,
+    "spawn_z_offset_m": 0.0
+  }
+}

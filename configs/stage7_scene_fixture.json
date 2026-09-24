@@ -1,0 +1,20 @@
+{
+  "version": "1.1",
+  "map_name": "Town01_Opt",
+  "route_id": "route_01_straight",
+  "weather_id": "clear_day",
+  "seed": 2026092407,
+  "animal": {
+    "type": "deer",
+    "anchor": {
+      "route_progress_m": 32.0
+    },
+    "trajectory": {
+      "kind": "lateral_crossing",
+      "start_lateral_offset_m": 6.0,
+      "end_lateral_offset_m": -6.0
+    },
+    "speed_mps": 2.0,
+    "start_time_s": 0.0
+  }
+}

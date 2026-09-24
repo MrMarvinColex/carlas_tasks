@@ -38,9 +38,15 @@ Each completed drive has one `transforms.json` containing the vehicle position/o
 
 ### D06. A Real Animal With the Simplest Sufficient Motion
 
-**Status:** user clarification; feasibility not yet confirmed.
+**Status:** user clarification; Stage-7 asset and constrained API protocol completed on 2026-09-24.
 
 Leg animation is unnecessary, but the object must look like an animal, exist in the 3D scene, move, and affect the scene. Define the effect before evaluation. Visibility, physical collision, and Traffic Manager response are different checks. If no suitable asset exists, discuss a changed approach. A pedestrian is valid for debugging but does not complete the animal requirement.
+
+**2026-09-24 initial asset gate:** the pinned 0.9.16 Docker content and the prior live blueprint catalogue have no observed usable animal. Official raw-asset authoring needs Unreal Editor import and a new CARLA package, which is outside the runtime-only constraint. A third-party cooked boar pack was not accepted because it pins itself to exact CARLA 0.9.15. Do not substitute it, a pedestrian, a cube, or an overlay. AnimaSim v0.2.1 is the first source-verified candidate: it publishes a cooked archive explicitly for CARLA 0.9.16, uses only a consumer-side `ImportAssets.sh` step, and declares static `Dynamic` animal props. Before acceptance, verify the release checksum and archive contents and run the complete live probe in a derived image. Keep the pinned base untouched and do not claim animation, collision, semantic pixels or smooth motion until measured.
+
+**2026-09-24 runtime decision:** accept AnimaSim v0.2.1 `static.prop.deer` as the Stage-7 asset capability, narrowly and conditionally. The archived release hash matched; the derived image leaves the pinned base image unchanged; `static.prop.deer` passed grounded spawn, RGB and raw semantic `Dynamic=21` visibility, a route-relative 12 m 2 m/s kinematic path with maximum 0.100006 m command step per 0.05 s tick, and a directly driven ego collision sensor probe in `20260924T135331Z-animasim-deer-front-probe-grounded-d91894`. The prop has no skeletal animation, and movement is repeated `set_transform`, not physical locomotion. Its collision event does not demonstrate Traffic Manager braking. Stage-7 SceneSpec may therefore expose only deer type, approved route anchor/trajectory, speed and start time; no arbitrary coordinates, blueprint IDs, controller, animation or TM-behaviour field is permitted.
+
+**2026-09-24 protocol closure:** `configs/stage7_scene_editing.json` and `scripts/stage7_scene_spec.py` implement the decision as version 1.1, fixing every value except an integer seed and rejecting unsupported fields. The one-request-per-model protocol `20260924T140505Z-api-verified-deer-crossing-e6313d` passed for GPT-Astra, Qwen-27B and Qwen-8B; all three saved-provenance CARLA replays passed in the same grounded probe. This measures compliance with the single verified capability, not open-ended generation quality or a parameter-count effect. Retain exact providers/model IDs/settings, raw sanitized responses, usage and API latency; no cost was calculated.
 
 ### D07. Three API-Only LLM Variants
 

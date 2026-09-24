@@ -475,6 +475,70 @@ The user rented a Massed Compute VM with an RTX A6000 48 GB, Ubuntu 22.04.5, 6 v
 
 **Result:** the Stage-6 technical pilot and its selected external preservation requirement are complete. The next independent stage is the moving-animal asset decision/validation.
 
+## 2026-09-24 13:13 UTC — Stage 7 Initial Animal-Asset Audit
+
+**Type:** local package inspection and source review; no CARLA server, image modification, asset download, LLM call, or scene change.
+
+- Confirmed that no CARLA container is running and that the locally installed server image remains `carlasim/carla:0.9.16@sha256:aaf1df22702780ece072069e23d03c4879b002ae028c79744b09c4c7ddbae953`.
+- Used a temporary Docker container with `--rm --network none` to inspect `/workspace/CarlaUE4/Content` by filename. Its animal-name search found `DogHouse` assets only; Blueprint roots did not contain an Animal directory. This supplements, but does not replace, the prior live blueprint-catalogue observation of 214 IDs with zero animal candidates. It does not prove that every arbitrarily named hidden mesh is absent.
+- Read the official 0.9.16 prop-authoring procedure. A raw external mesh must be imported through the Unreal Editor, registered, and included in a newly made CARLA package. That path violates U02, so an FBX/GLB download is not a valid runtime-only solution.
+- Investigated one possible cooked boar pack only at its public source. It declares itself an untagged pre-release and pins its content pack to exact CARLA 0.9.15. It supplies no 0.9.16 compatibility evidence, so it was not downloaded, installed, or used as a candidate.
+
+**Result:** Stage 7 is `IN_PROGRESS`, with the exact blocker narrowed to a licence-clear prebuilt animal package/blueprint that explicitly supports CARLA 0.9.16. No animal scenario has been created and Stage-7 acceptance is not met.
+
+**Next action:** continue source discovery without changing the image; only then run the isolated spawn, RGB, semantic, height and collision probe. If no exact-version package exists, request a user decision about relaxing the runtime-only constraint or retain item 4 as an explicit limitation.
+
+## 2026-09-24 13:24 UTC — Stage 7 AnimaSim Source Verification
+
+**Type:** public-source and local read-only installation-path verification; no asset archive download, image mutation, CARLA server, scene change, or LLM call.
+
+- Verified Git refs for `danwahl/animasim`: tag `v0.2.1` resolves to the current public commit. The release API lists `animasim-carla-0.2.1.tar.gz`, 243,116,126 bytes, with SHA-256 `4462ef4099a7057764c7d9fdf5788efdf0ddd6daad156e55440c55a8a834e071`; the author's release text explicitly calls it a cooked standalone CARLA 0.9.16 package.
+- Read the versioned CARLA README, manifest and `spawn_deer.py`. They declare twelve `static.prop.<animal>` blueprints, including `static.prop.deer`. The objects are unanimated static meshes tagged `Dynamic`; there is no dedicated Animal semantic class. The README distinguishes author-side cooking from consumer-side import and says consumers use `ImportAssets.sh` with a stock 0.9.16 build.
+- Confirmed inside a temporary `--rm --network none` instance of the pinned Docker image that `/workspace/ImportAssets.sh` and `/workspace/Import/` exist. The script only enumerates `Import/*.tar.gz` and extracts them; this supports a derived-image test that leaves the official base image unchanged.
+- Confirmed the AnimaSim repository code licence is MIT and the declared Quaternius source-model page marks the Ultimate Animated Animal Pack CC0. The archive contents and attribution files still require local inspection after download.
+
+**Result:** AnimaSim is a plausible, exact-version, prebuilt Stage-7 candidate and removes the earlier source-availability blocker. It is not yet validated in this project: do not claim import success, blueprint availability, visual quality, semantic pixels, collision, Traffic Manager response, or motion until the isolated probe completes.
+
+**Next action:** on user approval, download only the pinned release archive into a temporary staging directory, verify its published SHA-256 and contents, build a separate derived CARLA image, and run `static.prop.deer` through the minimal spawn → RGB → raw-semantic → height/bounding-box → collision test.
+
+## 2026-09-24 13:55 UTC — Stage 7 AnimaSim Runtime Validation
+
+**Type:** derived-image CARLA API probe; no Unreal Editor/build and no LLM call.
+
+- Downloaded the public AnimaSim v0.2.1 archive into an isolated temporary directory. Its 243,116,126 bytes and SHA-256 exactly matched the release (`4462ef4099a7057764c7d9fdf5788efdf0ddd6daad156e55440c55a8a834e071`). Archive contents included the cooked AnimaSim package and deer assets.
+- Built local derived image `carlasim/carla:0.9.16-animasim-v0.2.1` (`sha256:2d6fb34a8e78b159b225ff206473854f040c3e8612dba3c6e22ae85d52f5b9b9`) using only `/workspace/ImportAssets.sh`. Labels retain the pinned base digest and the archive hash; the base image was not changed. The live 0.9.16 blueprint library exposed all 12 documented imported animal IDs, including `static.prop.deer`.
+- Added `configs/stage7_animasim_probe.json` and `scripts/stage7_animal_probe.py`. They limit this pre-LLM probe to Town01_Opt route 1, clear weather and one front-centre RGB/semantic pair, preserve raw semantic IDs, persist route-relative actor commands/snapshots, and enforce grounded height, full endpoint reach, per-tick movement bound and collision trace.
+- Retained three finalized diagnostics: actor API `semantic_tags` was empty for the imported prop (`20260924T133953Z-animasim-deer-front-probe-dbb71d`); the next run initially used class 20 before direct enum inspection identified CARLA `Dynamic=21` (`20260924T134221Z-animasim-deer-front-probe-retry-65ee88`); the corrected eight-sample run had not reached the 12 m endpoint (`20260924T134700Z-animasim-deer-front-probe-dynamic21-d324b4`). They are registered rather than overwritten.
+- The grounded accepted run `20260924T135331Z-animasim-deer-front-probe-grounded-d91894` passed all checks. It recorded 14 aligned 2 Hz RGB/raw-ID/preview pairs. `static.prop.deer` was visually reviewed in RGB and preview, gained 1,187–1,544 raw Dynamic=21 pixels above baseline, had bbox-min/ground difference 0.0 m, and completed the 12 m trajectory at 2 m/s with 139 0.05 s commands, maximum 0.100006 m requested step and 0.0000076 m endpoint error. A deliberately driven ego collision sensor recorded `static.prop.deer`; no Traffic Manager response was tested. CARLA client/server were 0.9.16. The 55-file manifest passed a local source-to-source hash check; output is 38,025,444 bytes and local-only.
+- Updated `scripts/stop_carla.sh` so the expected image is supplied by `CARLA_IMAGE`, retaining its refusal to stop a differently imaged container. Both derived-image servers were stopped successfully after their probes.
+
+**Result:** the asset feasibility gate is complete. AnimaSim deer is now the only verified Stage-7 animal capability, with explicitly kinematic (unanimated) motion and direct collision geometry. Stage 7 remains `IN_PROGRESS`: its SceneSpec/executor extension and common GPT/Qwen protocol are not yet implemented.
+
+**Next action:** add only deer type, route-relative trajectory, speed and start-time fields to the strict SceneSpec; then use identical model requests and test the accepted specifications before starting Stage 8 full-rig drives.
+
+## 2026-09-24 14:08 UTC — Stage 7 Strict SceneSpec and Three-Model Replay
+
+**Type:** bounded API protocol plus saved-provenance CARLA replays; no model code execution.
+
+- Added `configs/stage7_scene_editing.json`, `scripts/stage7_scene_spec.py` and a fixture. Version 1.1 is a separate strict extension and leaves Stage-6 v1.0 untouched. It accepts only the measured deer, 32 m route anchor, named +6 m to -6 m lateral crossing, 2 m/s and 0 s start; only an integer seed varies. It rejects direct coordinates, asset IDs, code, controllers, animation and traffic reaction fields. `scripts/stage7_animal_probe.py` can apply a separately validated SceneSpec and records its digest/provenance; it never executes response text.
+- Added fixed protocol `configs/stage7_api_protocol.json` and `scripts/stage7_api_adapter.py`. Run `20260924T140505Z-api-verified-deer-crossing-e6313d` made exactly three first-attempt JSON-mode calls: OpenAI `gpt-6-astra`, DashScope `qwen3.8-27b` and `qwen3-8b`. All HTTP responses and strict task checks passed. API latencies were 7.506985, 3.334434 and 6.004154 s; usage was retained but price deliberately was not calculated. The resulting SceneSpecs were identical outside seed (GPT 1; both Qwen 42).
+- Replayed each saved passed SceneSpec in the derived AnimaSim image: `20260924T140639Z-api-gpt-deer-crossing-9284ba`, `...-api-qwen27-deer-crossing-4146e3` and `...-api-qwen8-deer-crossing-9490d8`. All three passed grounded spawn, 14 aligned front-centre RGB/raw-ID/preview observations, Dynamic semantic effect, bounded complete trajectory and direct collision checks. Dynamic=21 delta ranges were 1,187–1,544; 1,194–1,543; and 1,185–1,544 pixels respectively. RGB and semantic preview from the GPT replay were visually reviewed.
+- Added `scripts/stage7_build_comparison.py`; its `stage7_comparison.json` binds API timing/usage/response digest to replay metrics and declares scope/limitations. All four final manifests passed local source-to-source verification (24 entries for API, 58 each execution). The three replays and API record are registered as local-only artifacts. CARLA was stopped.
+
+**Result:** Stage 7 is `DONE`. The project has a real, licence-traced animal and a safe LLM-to-CARLA path for only the measured capability. This does not demonstrate leg animation, full-rig edited recordings, Traffic Manager braking or an open-ended model-quality comparison.
+
+**Next action:** Stage 8 should replay the saved animal SceneSpec on the selected equivalent routes/weather with the existing full nine-position RGB/semantic rig, then compare against the baseline matrix.
+
+## 2026-09-24 14:40 UTC — Stage 7 Completion and Backup Confirmation
+
+**Type:** project-state closure; no CARLA, API, asset, or VM operation.
+
+- The user confirmed that a Stage-7 backup was made and requested completion to be recorded before committing and pushing the implementation.
+- Retained Stage 7 as `DONE`: its acceptance was already artifact-confirmed by the grounded AnimaSim probe, constrained three-model protocol, and saved-provenance replays.
+- Marked the nine Stage-7 registry entries `backup_status=user_reported`. No external destination, transfer output, or manifest comparison was supplied, so no entry is called `verified` and `external_location` remains unrecorded.
+
+**Result:** Stage 7 is formally closed with user-reported external preservation and artifact-confirmed local manifest validation. The next independent task remains Stage 8 full 18-sensor edited drives and comparison to matching baseline cells.
+
 ## Template for the Next Entry
 
 ```text
