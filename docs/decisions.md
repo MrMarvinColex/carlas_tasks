@@ -44,9 +44,9 @@ Leg animation is unnecessary, but the object must look like an animal, exist in 
 
 ### D07. Three API-Only LLM Variants
 
-**Status:** user clarification; providers and IDs remain open.
+**Status:** user clarification; API access/advertised model IDs and one bounded pre-CARLA generation smoke are artifact-confirmed on 2026-09-24.
 
-Compare GPT-Astra, a Qwen model around 27B, and one around 8B. `gpt-6-astra`, `Qwen/Qwen3.8-27B`, and `Qwen/Qwen3-8B` were candidates in the discussion; real API access is unverified. A public model card does not guarantee an endpoint. Different Qwen generations make this more than a parameter-count comparison, and conclusions must acknowledge that.
+Compare GPT-Astra, a Qwen model around 27B, and one around 8B. The sanitized zero-inference inventory `20260924T120821Z-api-model-inventory-5f0d01` authenticated `OPENAI_API_KEY` at `api.openai.com` and found `gpt-6-astra`; it authenticated `DASHSCOPE_API_KEY` at the Singapore Model Studio endpoint and found `qwen3.8-27b` plus `qwen3-8b`. The bounded pre-CARLA smoke `20260924T121813Z-api-generation-smoke-611d18` then made one JSON-mode request to `gpt-6-astra` and `qwen3-8b`; both outputs passed strict local SceneSpec validation and resolution. This is not yet an evaluation: `qwen3.8-27b`, retries, cost, structured-output enforcement and CARLA application remain untested. Different Qwen generations make this more than a parameter-count comparison, and conclusions must acknowledge that.
 
 ### D08. Disposable VM, External Memory
 
@@ -178,13 +178,21 @@ This supersedes D16's adopted lengths/endpoints, D18's descriptive suffixes and 
 
 ### D23. Versioned SceneSpec and Restricted CARLA Executor
 
-**Status:** accepted as the Stage-6 design after the Stage-5 primary-source review on 2026-09-24; the pre-API parser, validator, restricted executor, world reset and replay passed locally on 2026-09-24. API-model integration remains untested.
+**Status:** accepted as the Stage-6 design after the Stage-5 primary-source review on 2026-09-24. The pre-API parser/validator/executor passed locally, then all three selected API variants completed the shared fixed pilot and six saved model SceneSpecs passed fresh-world CARLA execution on 2026-09-24.
 
 Use a project-owned, versioned `SceneSpec` as passive data between an API-hosted LLM and CARLA. The model may select only operations, identifiers, spatial anchors, and parameters that the executor actually supports. A deterministic validator checks schema, enums, numeric bounds, blueprint availability, the fixed map/routes, spatial feasibility, and conflicts before any world mutation. A fixed executor maps accepted fields to allow-listed CARLA Python API calls; no model-produced Python or Scenic program is executed, and model output is never parsed with `eval()`.
 
 After application, record and check the actual selected blueprints, transforms, visibility, requested event, and errors. Preserve the original request, raw response, parsed SceneSpec, resolved configuration, model/provider/settings, timing, retries, seeds, and outcome. A resolved configuration must replay without another LLM call. The map, five routes, and 18-sensor recorder remain controlled project components rather than model-editable fields unless a later explicit decision changes that boundary.
 
-This accepts proposal P01 and adapts the common useful parts of ScenarioGen, TTSG, TrafficComposer, and ChatScene without importing their local-model, unsafe parsing, multimodal, or executable-DSL components. Local implementation evidence is `20260924T110210Z-local-straight-parked-vehicle-observer-fix-213a80`, its fresh-world replay `20260924T110353Z-local-straight-replay-ad721d`, and the two-vehicle `clear_day` case `20260924T110725Z-local-straight-composite-safe-af8031`. This does not validate any provider/model response, API latency, cost, or cross-model comparison.
+This accepts proposal P01 and adapts the common useful parts of ScenarioGen, TTSG, TrafficComposer, and ChatScene without importing their local-model, unsafe parsing, multimodal, or executable-DSL components. Local implementation evidence is `20260924T110210Z-local-straight-parked-vehicle-observer-fix-213a80`, its fresh-world replay `20260924T110353Z-local-straight-replay-ad721d`, and the two-vehicle `clear_day` case `20260924T110725Z-local-straight-composite-safe-af8031`. `20260924T123036Z-api-fixed-protocol-884ef7` then records all nine first attempts, and its `stage6_comparison.json` links every accepted model SceneSpec to a passing saved-provenance CARLA run. The bounded pilot does not establish provider-enforced strict-schema compliance, a statistically meaningful repeat rate, a provider price/cost, other routes/blueprints, or animal support.
+
+### D25. Spend-Bounded First-Attempt Stage-6 Pilot
+
+**Status:** accepted and artifact-confirmed on 2026-09-24; it is a pilot protocol, not a replacement for larger repeat studies.
+
+Before the paid calls, fix exactly three model variants, three natural-language task types, one repeat, zero retries, a 60 s timeout and a 256-output-token ceiling. The resulting maximum is nine calls. The task set deliberately includes one valid simple SceneSpec, one valid composite SceneSpec and one moving-animal request that the current executor cannot support. Success means strict response parsing plus exact task correspondence; for executable specifications it additionally means a saved-provenance CARLA run with 18-camera validation, semantic-supported visibility and completed/no-collision route. A valid but misplaced SceneSpec is a failure; the adapter does not repair it. A correct structured animal refusal is a success for the impossible-request task and is not passed to CARLA.
+
+The fixed run `20260924T123036Z-api-fixed-protocol-884ef7` has nine of nine first attempts passing. It preserves reported token usage and latency but assigns no cost because no dated provider price record was fetched. There are six passing saved-provenance CARLA executions, one per valid model/task response; a second GPT simple-scene replay completed after the orchestration handle returned and remains visible in the comparison instead of being selected away. This supersedes P06 only for this deliberately bounded Stage-6 pilot; later broader evaluation must declare its own budget and repeat count.
 
 ### D24. Narrow Pre-API Executor Envelope on the Straight Control Route
 

@@ -426,6 +426,55 @@ The user rented a Massed Compute VM with an RTX A6000 48 GB, Ubuntu 22.04.5, 6 v
 
 **Next action:** after connectivity returns, verify provider access and a trial-spend limit before any API request; then implement the adapter without widening the verified SceneSpec capability list.
 
+## 2026-09-24 12:10 UTC — Stage 6 API Access and Model Inventory
+
+**Type:** authenticated provider-access check; no text generation, CARLA connection, or model-comparison attempt.
+
+- Added `scripts/stage6_api_access_check.py` and three unit checks. It reads local `.env` without printing secrets, makes only authenticated model-list requests, and records endpoints, HTTP status, latency and model identifiers in a run directory. The Model Studio parser handles its documented `output.models` response separately from OpenAI-compatible `data`.
+- The sandboxed access probe `20260924T120700Z-api-access-check-5610fb` failed before authentication because the sandbox blocks provider networking. The elevated retry `20260924T120719Z-api-access-check-elevated-31c96f` authenticated both credentials but was finalized incomplete because version one did not retain Model Studio model IDs. Both manifests are retained.
+- The corrected run `20260924T120821Z-api-model-inventory-5f0d01` passed: OpenAI returned 132 model IDs including `gpt-6-astra` in 1.075 s; Alibaba Model Studio authenticated at the Singapore endpoint and returned 161 Qwen IDs including `qwen3.8-27b` and `qwen3-8b` in 2.192 s. Its three-entry manifest was independently rechecked. No text, structured response, token usage, cost, CARLA operation or model-quality result was produced.
+- Updated `.env.example` with the authenticated provider settings and initial IDs only; `.env` remains ignored, unprinted and untracked.
+
+**Result:** provider credentials, one DashScope region and advertised target model IDs are now artifact-confirmed. Stage 6 remains `IN_PROGRESS`: a spend limit, common API adapter, fixed prompts, actual completions, validation, timing/cost and comparison are not yet present.
+
+**Next action:** establish a small explicit spend limit, then add one common adapter and make the first constrained `SceneSpec` completion without starting CARLA.
+
+## 2026-09-24 12:19 UTC — Stage 6 Bounded API Generation Smoke
+
+**Type:** two paid API requests, one per provider; strict local validation only, no CARLA process.
+
+- Added `scripts/stage6_api_generation_smoke.py` with three unit checks. It makes at most one request per selected provider, caps output at 16–256 tokens (192 used), saves prompt/request/raw response/usage/timing, and never writes the API key. OpenAI uses the documented Responses JSON mode; DashScope uses its OpenAI-compatible chat JSON mode with thinking disabled for this small request.
+- `20260924T121813Z-api-generation-smoke-611d18` passed for OpenAI `gpt-6-astra` and DashScope `qwen3-8b`. OpenAI reported 250 input and 146 output tokens, 5.817 s API latency; DashScope reported 265 prompt and 138 completion tokens, 4.508 s. Both responses were parsed and resolved without manual correction into the same permitted parked-Audi target transform. Their raw responses are retained locally; no secret appears in the run.
+- The run deliberately did not start CARLA, so it proves generation and local validation only. It does not prove provider-enforced strict schemas, Qwen-27B behaviour, actual price, repeated success, visual effect, or executor/CARLA success. Its 12-entry manifest was rechecked locally.
+
+**Result:** the first paid Stage-6 model responses are artifact-confirmed and safe to pass onward only through the existing validator. Stage 6 remains `IN_PROGRESS`.
+
+**Next action:** refactor this bounded smoke path into the common API adapter, fix prompts/retry/timeout settings, then run one saved generated SceneSpec through the already-tested CARLA executor.
+
+## 2026-09-24 12:30–12:45 UTC — Stage 6 Fixed API/CARLA Pilot
+
+**Type:** completed local Stage-6 pilot; paid API generation plus CARLA execution; external copy still pending.
+
+- Added `configs/stage6_api_protocol.json` and `scripts/stage6_api_adapter.py`. The protocol was fixed before paid calls: `gpt-6-astra`, `qwen3.8-27b`, `qwen3-8b`; simple/composite/impossible-animal prompts; one repeat, zero automatic retries, 60 s timeout and 256 output-token ceiling. The adapter records only sanitized request data, raw provider response, extracted JSON, strict local validation, timing and reported usage; it never executes model text. Exact task matching rejects a syntactically valid but incorrectly placed object.
+- `20260924T123036Z-api-fixed-protocol-884ef7` completed all nine planned first attempts. Every SceneSpec passed syntax, policy and exact-request validation; each animal request returned the required `unsupported_capability` refusal. Reported API latency spans 3.465898–10.565166 s. Usage is retained but cost is `not calculated`, because no dated provider price record was retrieved. A wrapper return occurred while the last Qwen request was finishing; safe resume read the eight already saved attempt results and only wrote the missing result, without reissuing them.
+- Extended `scripts/stage6_local_scene.py` with `--api-attempt-result`, which binds a replay to a passed saved adapter result and carries provider/model/usage/API/local-validation timing into the CARLA evidence. `20260924T123330Z-api-provenance-local-check-627a7b` first validated that binding without a CARLA connection.
+- Executed all six accepted model SceneSpecs in fresh `Town01_Opt` worlds. Each has before/after RGB, three aligned 2 Hz 18-sensor samples (81 PNGs), semantic-supported parked-vehicle visibility, zero collision, completed 110 m route and stopped ego. Selected CARLA application/validation wall time is 39.186744–41.130043 s. The first GPT simple-scene process completed after the orchestration handle returned; its extra passing replay is preserved and registered rather than discarded or substituted.
+- Added `scripts/stage6_build_comparison.py`; `stage6_comparison.json` and `.csv` link every API attempt to execution evidence and leave cost explicitly uncalculated. Twenty focused Stage-6/Stage-3 checks and `py_compile` passed. The protocol run, provenance check and seven execution runs were finalized and all nine manifests rechecked locally (61, 7, then seven sets of 100 signed files). `.env` was confirmed ignored and untracked. CARLA was stopped.
+
+**Result:** the technical pilot satisfies the Stage-6 acceptance criteria locally: the three accessible variants followed one saved protocol, all first attempts are visible, scenes replayed from saved configurations without new API calls, and the comparison retains latency/usage/validation/execution evidence. It is intentionally one repeat only, does not infer provider cost, does not prove provider-enforced strict schemas, and does not validate animal behaviour or a statistical model ranking.
+
+**Next action:** make an external copy of `20260924T123036Z-api-fixed-protocol-884ef7` plus the six selected passing CARLA runs, verify each copy with `scripts/verify_export.py`, then record destinations/check time in the artifact registry. Do not mark those records externally backed up before receiving the verification output.
+
+## 2026-09-24 12:59 UTC — Stage 6 External Copy Confirmed
+
+**Type:** user-reported external checksum verification; no VM-side data mutation.
+
+- The user ran `rsync -avP` from the Mac for the full `/home/Ubuntu/carlas_tasks/runs/` and `logs/` trees to `/Users/madness/Science/CARLA/runs_1/` and `logs_1/`.
+- They then supplied Mac-terminal output for `rsync -nrc --itemize-changes` over both source/destination pairs. Both comparisons returned no itemized differences. This is direct checksum-mode evidence reported by the user, not an agent-operated Mac check.
+- Updated the nine new Stage-6 pilot registry rows with their actual Mac locations and `backup_status=verified`. No source artifact, model response, API key or VM resource was changed.
+
+**Result:** the Stage-6 technical pilot and its selected external preservation requirement are complete. The next independent stage is the moving-animal asset decision/validation.
+
 ## Template for the Next Entry
 
 ```text

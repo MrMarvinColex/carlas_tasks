@@ -1,6 +1,6 @@
 # Using LLMs to Edit CARLA Scenes
 
-**Working report. Status: Stages 1–4 are completed. The Stage-3 rig passed local validation and has a user-confirmed off-VM copy; the Stage-4 baseline matrix has user-reported checksum-verified Mac copies. LLM, animal, and comparison experiments remain.**
+**Working report. Status: Stages 1–4 and the bounded Stage-6 LLM/CARLA pilot are completed. The Stage-3 rig passed local validation and has a user-confirmed off-VM copy; the Stage-4 matrix and selected Stage-6 evidence have user-reported checksum-verified Mac copies. Animal and repeated-drive experiments remain.**
 
 Document start date: 16 September 2026. Target deadline: 21 September 2026 in the current context; the source PDF specifies only day and month, without a year. Author/executor: complete before submission.
 
@@ -190,23 +190,32 @@ The executor creates a clean world for every attempt, reapplies direct RoadLines
 
 | Parameter | Fixed selection |
 |---|---|
-| Model A / provider / ID | Target: GPT-Astra; access not verified |
-| Model B / provider / ID | Target: Qwen around 27B; access not verified |
-| Model C / provider / ID | Target: Qwen around 8B; access not verified |
-| API versions / regions | Not selected |
-| Prompt set / schema | Not written |
-| Repeats / retries / timeout | Not selected |
-| Metrics | Schema validity, execution, fulfilment, latency, errors; usage/cost where available |
+| Model A / provider / ID | OpenAI Responses / `gpt-6-astra` |
+| Model B / provider / ID | Alibaba Model Studio Singapore compatible chat / `qwen3.8-27b` |
+| Model C / provider / ID | Alibaba Model Studio Singapore compatible chat / `qwen3-8b` |
+| Prompt set / schema | Same constrained capability context; `simple_parked_audi`, `composite_two_parked_audis`, `unsupported_moving_animal`; JSON-object mode plus project-local strict parser/task matcher |
+| Repeats / retries / timeout | One repeat, zero automatic retries, 60 s timeout, maximum 256 output tokens; maximum nine API calls fixed before requests |
+| Metrics | First-attempt syntax/policy/task success, structured refusal, reported usage, API latency, local validation time, CARLA time, 18-camera validation, visibility and route result; price not calculated |
 
-Use equivalent scene context and tasks for all variants. Record the raw response, parsed specification, validation result, executor result, complete response latency, and model/provider settings. Separate first-attempt success from success after retries. Do not substitute a manually corrected successful scene for the actual model outcome.
+`scripts/stage6_api_adapter.py` preserves every sanitized request, raw response, extracted JSON, local validation and provider usage beneath the one protocol run. It does not execute model-produced code. A valid SceneSpec must also exactly match its requested map/route/weather/object count/anchors before the fixed executor can use it. An animal response is successful only when it is the prescribed `unsupported_capability` refusal. No manual correction or retry changed a model response.
 
-The API adapter and this table remain unfilled because no provider/model access or spending limit has been verified, and no model call was made. The pre-API fixtures and local executor are not attributed to GPT-Astra or Qwen.
+`20260924T123036Z-api-fixed-protocol-884ef7` completed all nine planned first attempts. Six accepted SceneSpecs were later replayed in fresh worlds through `scripts/stage6_local_scene.py` with saved API provenance; every one passed 18-camera validation, semantic-supported visibility and collision-free completion of the 110 m straight route. The three animal requests were never sent to CARLA because their correct result is refusal. The machine-readable source is `stage6_comparison.{json,csv}` in that run. Provider token usage is recorded, but price is not derived because no dated provider price was fetched.
 
 ### 3.3. Results Table
 
-| Model | Task/prompt ID | Attempts | Schema-valid | Executed | Request fulfilled | End-to-end latency | API latency | CARLA time | Artifact |
-|---|---|---:|---|---|---|---:|---:|---:|---|
-| Not run | — | — | — | — | — | — | — | — | — |
+| Model | Task/prompt ID | Attempts | Strict/task-valid | CARLA result | API latency | CARLA time | Usage (in/out/total) |
+|---|---|---:|---|---|---:|---:|---:|
+| OpenAI / `gpt-6-astra` | simple parked Audi | 1 | Yes | Passed; 18 cameras/visibility/route | 4.279 s | 39.187 s* | 351 / 101 / 452 |
+| OpenAI / `gpt-6-astra` | composite two Audis | 1 | Yes | Passed; 18 cameras/visibility/route | 6.909 s | 40.832 s | 356 / 151 / 507 |
+| OpenAI / `gpt-6-astra` | unsupported moving animal | 1 | Yes | Correct refusal; not applicable | 3.466 s | — | 333 / 57 / 390 |
+| DashScope / `qwen3.8-27b` | simple parked Audi | 1 | Yes | Passed; 18 cameras/visibility/route | 5.511 s | 41.130 s | 379 / 159 / 538 |
+| DashScope / `qwen3.8-27b` | composite two Audis | 1 | Yes | Passed; 18 cameras/visibility/route | 4.950 s | 40.217 s | 385 / 245 / 630 |
+| DashScope / `qwen3.8-27b` | unsupported moving animal | 1 | Yes | Correct refusal; not applicable | 5.328 s | — | 359 / 66 / 425 |
+| DashScope / `qwen3-8b` | simple parked Audi | 1 | Yes | Passed; 18 cameras/visibility/route | 5.103 s | 40.982 s | 371 / 95 / 466 |
+| DashScope / `qwen3-8b` | composite two Audis | 1 | Yes | Passed; 18 cameras/visibility/route | 4.953 s | 40.114 s | 377 / 144 / 521 |
+| DashScope / `qwen3-8b` | unsupported moving animal | 1 | Yes | Correct refusal; not applicable | 10.565 s | — | 351 / 38 / 389 |
+
+*The first GPT simple-scene process completed after the orchestration handle returned; its separate successful replay (40.727 s CARLA time) is retained in the comparison JSON rather than replacing the first execution. All costs are `not calculated`; the table is a one-repeat pilot, not a statistically sufficient ranking. The user later supplied Mac output from zero-difference checksum-mode `rsync` comparisons of the full VM `runs/` and `logs/` trees to `/Users/madness/Science/CARLA/runs_1/` and `logs_1/`; this is user-reported external verification of the selected Stage-6 artifacts.
 
 **Early capability result:** Town01's exposed blueprint catalogue contained 214 entries (41 vehicle, 52 walker, 19 sensor) and no name matching the project animal-candidate pattern. This does not prove that no compatible prebuilt animal package exists; mesh/asset spawning, visibility, motion, collision, and Traffic Manager response remain untested. Evidence: `20260917T110520Z-map-api-676d`.
 

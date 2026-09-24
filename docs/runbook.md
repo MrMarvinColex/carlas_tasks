@@ -49,6 +49,28 @@ This path was verified on the same VM in `runs/20260916T210617Z-carla-smoke-beb2
 
 The primary operational destination is the user's Mac: `/Users/madness/Научка/CARLA/runs/<run_id>/`. From the Mac, the SSH configuration names the VM `carla-vm`; pull a completed run with `rsync -avP carla-vm:/home/Ubuntu/carlas_tasks/runs/<run_id>/ "/Users/madness/Научка/CARLA/runs/<run_id>/"`. Do not add `--delete`. For the stage-0 smoke run, a dry-run listed 7 entries, the transfer completed, and Mac-side checksum output reported `OK` for all three manifest entries. The precise record is `stage0-smoke-20260916` in `artifacts/index.csv`.
 
+### Stage-6 pilot export (2026-09-24, user-reported verified)
+
+The Stage-6 API/CARLA pilot has one small API evidence run and six selected passing scene-execution runs; the extra GPT replay is retained locally but is optional for a minimal external evidence set. The user copied the complete VM `runs/` and `logs/` trees to `/Users/madness/Science/CARLA/runs_1/` and `logs_1/`, then supplied a zero-difference `rsync -nrc --itemize-changes` comparison for both trees. This is user-reported checksum verification. The command below remains the exact procedure for a future incremental copy. Replace `LOCAL_PROJECT` and `MAC_STAGE6_RUNS` with absolute Mac paths; neither must contain `.env`.
+
+```sh
+stage6_runs=(
+  20260924T123036Z-api-fixed-protocol-884ef7
+  20260924T123600Z-api-openai-simple-carla-retry
+  20260924T123800Z-api-qwen27-simple-carla
+  20260924T123801Z-api-qwen8-simple-carla
+  20260924T123802Z-api-openai-composite-carla
+  20260924T123803Z-api-qwen27-composite-carla
+  20260924T123804Z-api-qwen8-composite-carla
+)
+for run_id in "${stage6_runs[@]}"; do
+  rsync -avP "carla-vm:/home/Ubuntu/carlas_tasks/runs/${run_id}/" "MAC_STAGE6_RUNS/${run_id}/"
+  python3 "LOCAL_PROJECT/scripts/verify_export.py" "MAC_STAGE6_RUNS/${run_id}" "MAC_STAGE6_RUNS/${run_id}"
+done
+```
+
+The verification must print `PASS` for every copied run. Then preserve the terminal output, tell the agent the actual Mac destination and verification time, and change only those registry records from `not_copied` to `verified`. Do not treat a completed `rsync` transfer by itself as verification.
+
 ## 4. Structure of One Recorded Run
 
 Implemented Stage-3 structure (later stages may add scene-specific files):
