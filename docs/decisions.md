@@ -208,6 +208,14 @@ For the user's initial Stage-6 work, the executor is deliberately limited to `To
 
 The accepted local cases prove the selected one- and two-Audi placements, observer before/after views, 18-sensor visibility, no ego overlap/collision, completion of the 110 m route, clean world reload, and replay from stored `scene_spec.json`. They do not claim all anchors/offsets on this route, other vehicle blueprints, or any animal are valid. The actual constraints and fixtures are versioned in `configs/stage6_scene_editing.json` and `fixtures/stage6/`.
 
+### D26. Close the Experimental Scope Before Stage 8
+
+**Status:** user decision on 2026-09-24.
+
+Do not run the planned Stage-8 full-rig edited-drive matrix. Preserve Stage 8 as `TODO`, because choosing not to run it is not the same as meeting its acceptance criteria. The final submission may report the completed baseline matrix, full-rig static-scene executions, and front-centre animal capability probe, but it must explicitly avoid claiming a repeated 18-sensor edited-drive comparison or a Traffic Manager braking response to the deer.
+
+Prepare a separate Russian Markdown report of approximately 3–8 rendered pages, with no calendar dates, no internal 0–9 stage framing, no title page, and no results table. Organize it by the assignment's technical themes, use plain language, explain route selection, place limitations beside their associated results, include a small set of portable images, and link the key implementation/source repositories. Keep the evidence-heavy English working report unchanged as the audit source.
+
 ## Proposed Project Decisions
 
 Implement these unless evidence calls for a revision. Do not attribute them to the assignment author.

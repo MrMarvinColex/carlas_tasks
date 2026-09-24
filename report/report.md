@@ -1,6 +1,6 @@
 # Using LLMs to Edit CARLA Scenes
 
-**Working report. Status: Stages 1–7 are completed. The Stage-3 rig passed local validation and has a user-confirmed off-VM copy; the Stage-4 matrix and selected Stage-6 evidence have user-reported checksum-verified Mac copies. A Stage-7 external backup is user-reported, but its destination and checksum evidence were not supplied. Full-rig edited repeated drives remain.**
+**Working report. Status: Stages 1–7 are completed. The Stage-3 rig passed local validation and has a user-confirmed off-VM copy; the Stage-4 matrix and selected Stage-6 evidence have user-reported checksum-verified Mac copies. A Stage-7 external backup is user-reported, but its destination and checksum evidence were not supplied. The user chose not to run Stage 8, so no full-rig edited repeated-drive comparison is claimed. A standalone reader-facing Russian draft is available at [`final_report_ru.md`](final_report_ru.md); this English file remains the evidence-heavy working record.**
 
 Document start date: 16 September 2026. Target deadline: 21 September 2026 in the current context; the source PDF specifies only day and month, without a year. Author/executor: complete before submission.
 
@@ -233,44 +233,45 @@ Use the same request set for the animal’s appearance and motion across LLMs. S
 
 The animal is a static mesh without skeletal animation, so this demonstrates bounded kinematic visual motion—not physical gait. CARLA exposed no `Actor.semantic_tags` for the imported prop; the semantic conclusion relies on the lossless image IDs and runtime enum. The direct collision probe does not establish that Traffic Manager will brake for the prop.
 
-**Constrained model comparison:** SceneSpec v1.1 exposes only the verified deer type, the fixed route-relative 32 m anchor, fixed lateral crossing, 2 m/s and 0 s start; the seed is the only free field. The shared first-attempt protocol made one JSON-mode request each to GPT-Astra, Qwen-27B and Qwen-8B. All three validated; their specifications were identical apart from GPT seed 1 versus Qwen seed 42. One saved-provenance front-centre replay per response also passed: dynamic-pixel effect was 1,187–1,544 (GPT), 1,194–1,543 (Qwen-27B), and 1,185–1,544 (Qwen-8B); all completed the bounded trajectory and direct collision test. API latency was 7.507, 3.334 and 6.004 seconds, respectively. Raw requests/responses/usage, exact model IDs, resolution, execution metrics and the machine comparison are preserved in `20260924T140505Z-api-verified-deer-crossing-e6313d`; price was not calculated. Since one exact capability was deliberately offered, this is a protocol-compliance result, not a ranking of model creativity, scale, price or safety. The full nine-camera recording is reserved for Stage 8.
+**Constrained model comparison:** SceneSpec v1.1 exposes only the verified deer type, the fixed route-relative 32 m anchor, fixed lateral crossing, 2 m/s and 0 s start; the seed is the only free field. The shared first-attempt protocol made one JSON-mode request each to GPT-Astra, Qwen-27B and Qwen-8B. All three validated; their specifications were identical apart from GPT seed 1 versus Qwen seed 42. One saved-provenance front-centre replay per response also passed: dynamic-pixel effect was 1,187–1,544 (GPT), 1,194–1,543 (Qwen-27B), and 1,185–1,544 (Qwen-8B); all completed the bounded trajectory and direct collision test. API latency was 7.507, 3.334 and 6.004 seconds, respectively. Raw requests/responses/usage, exact model IDs, resolution, execution metrics and the machine comparison are preserved in `20260924T140505Z-api-verified-deer-crossing-e6313d`; price was not calculated. Since one exact capability was deliberately offered, this is a protocol-compliance result, not a ranking of model creativity, scale, price or safety. A full nine-camera animal recording was planned but not run after the user closed the experimental scope; only the front-centre capability result is claimed.
 
 ## 5. Repeated Drives on Edited Scenes
 
-Define scene versions that cover the outcomes of sections 3 and 4. Recheck waypoints and the applicability of the same five routes, then record the same weather conditions and camera rig.
+This planned experiment was intentionally left outside the final scope at the user's request. No full-rig edited-drive matrix was recorded, and no acceptance or comparison claim is made for it.
 
 | Scene version | LLM provenance/attempt | Routes/weather | Drive success | Data validated | Link |
 |---|---|---|---|---|---|
 | Not created yet | — | — | Not measured | No | — |
 
-Compare completion time, collisions, animal visibility, data completeness, and agreement of edits with requests. Preserve failed drives. Separate the count of LLM attempts from the count of replayed drives. Do not attribute changes caused by another seed, weather, or control setting to visual editing.
+If the scope is reopened later, compare completion time, collisions, animal visibility, data completeness, and agreement of edits with requests. Preserve failed drives. Separate the count of LLM attempts from the count of replayed drives. Do not attribute changes caused by another seed, weather, or control setting to visual editing.
 
 ## 6. Dataset and Reproducibility
 
-After implementation, describe the actual format, JSON schema, frame/timestamp convention, coordinate units, calibrations, semantic IDs, and real launch commands. Documentation must not retain commands for scripts that do not exist.
+The implementation records the actual JSON schema, frame/timestamp convention, coordinate units, calibrations, lossless semantic IDs, configuration, code state, container identity, and real launch commands. Each completed run has a SHA-256 manifest; failed diagnostics are retained rather than rewritten as successes.
 
 | Metric | Actual value |
 |---|---|
-| Number of scenes / routes / weather conditions | One short Stage-3 rig check on the beginning of route 1; baseline matrix not yet run |
-| Number of complete and failed drives | One complete 18-sensor short check; three retained calibration/body diagnostics and one successful one-view pilot |
-| Total simulation time | Full-rig accepted span 1.500000022 s after warm-up |
-| Image / pose-record count | 72 required images + 36 previews + 4 ego poses in the full-rig check |
-| Data volume | 165,463,137 bytes including validation, contact sheets, metadata, and manifest |
-| Validator / version | `scripts/stage3_validate_dataset.py`; all checks passed |
-| External copy | User-confirmed; external checksum output not supplied in this session |
+| Baseline coverage | Five routes × two weather profiles = ten accepted drives |
+| Baseline completion | 10/10 drives passed route and dataset validation without collision |
+| Baseline simulation time | 164.5 s |
+| Baseline image / pose-record count | 9,153 PNG files and 339 synchronized ego-pose samples |
+| Baseline data volume | Approximately 12.9 GB |
+| Edited-scene evidence | Six full-rig parked-vehicle replays and three front-centre deer replays passed their declared checks |
+| Validators | `scripts/stage3_validate_dataset.py`, route checks in `scripts/stage4_baseline.py`, strict SceneSpec validation, and per-run manifest verification |
+| External copy | Baseline matrix and selected LLM evidence have user-reported checksum-verified Mac copies; the deer backup is user-reported without a supplied path or checksum comparison |
 
 State the Git commit/tag, image digest, pinned dependencies, configurations, and seeds. Data and code must be usable without the current VM. Include checksum manifests in the submission.
 
 ## 7. Limitations and Conclusions
 
-There are no final conclusions before experiments are complete. Later, explicitly discuss:
+The reader-facing conclusions and limitations are consolidated in [`final_report_ru.md`](final_report_ru.md). The main evidence boundaries are:
 
 - runtime-editing limits and marking removal;
-- animal availability, movement realism, semantics, and TM response;
+- animal movement realism, semantics, and the unverified Traffic Manager response;
 - differences between the camera model and AV2;
-- completeness of seasonal simulation;
+- the use of two fixed CARLA weather profiles rather than complete seasonal simulation;
 - effects of provider/network/reasoning settings on LLM latency;
-- sample size, repeatability, and failed attempts;
+- the one-repeat model and baseline protocol, plus retained failed attempts;
 - reproducibility on a new VM.
 
 ## 8. Submission Materials
