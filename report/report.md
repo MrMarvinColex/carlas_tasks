@@ -159,13 +159,20 @@ The user ran checksum-mode `rsync -nrc --itemize-changes` for both `runs/` and `
 
 ## 2. Review of Publications and Repositories
 
-**Status:** the research review has not yet been completed. The initial technical links in `docs/knowledge.md` do not replace a method review.
+**Status:** completed on 24 September 2026 from the primary publications and author repositories below. The source code was inspected but not executed; reported metrics remain author-reported rather than independently reproduced.
 
-| Paper/repository | Year/version | LLM role | What changes | CARLA/code | Limitations | Applicability |
-|---|---|---|---|---|---|---|
-| Complete from primary sources | — | — | — | — | — | — |
+| Work | Method and LLM role | CARLA/code | Main evidence and limitation | Use in this project |
+|---|---|---|---|---|
+| [ScenarioGen](https://cse.buffalo.edu/tech-reports/2026-22.pdf) / [repository](https://github.com/harshit88a/scenario-gen) | Text is converted to a constrained JSON scenario, structurally validated, and passed to a fixed CARLA runner. | CARLA 0.9.15; author code; repository licence not confirmed. | The report gives three qualitative CARLA examples and reports over 90% first-attempt structural validity on about 50 prompts. This does not measure geometric correctness or repeatability. | Closest architectural analogue for separating the LLM, data specification, validator, and executor. Its local fine-tuned model is outside this project's API-only constraint. |
+| [TTSG](https://arxiv.org/abs/2409.09575) / [repository](https://github.com/basiclab/TTSG) | Multiple LLM steps extract actors and road constraints, rank existing road segments, and produce an actor plan for runtime execution. | Tested with CARLA 0.9.15; author code; licence status not confirmed from a licence file. | On ten prompts, the authors report scene accuracy increasing from 0.560 to 0.800 with road ranking. The implementation selects its own map/road and uses `eval()` on model output before validation. | Supplies the useful idea of grounding spatial requests against map geometry. This project must restrict grounding to five existing `Town01_Opt` routes and parse data safely. |
+| [TrafficComposer](https://arxiv.org/abs/2505.14881) / [repository](https://github.com/TrafficComposer/TrafficComposer) | Text and a reference image are converted into a traffic intermediate representation (IR); the LLM handles the textual part. | CARLA and LGSVL are evaluation targets; the repository exposes the IR pipeline, but not a complete reproducible CARLA conversion path; licence not confirmed. | The reported 97.0 ± 1.2% result is similarity to manually annotated IR, not successful CARLA scene execution. The visual pipeline adds models and an input not required here. | Supports using an explicit intermediate representation. A reference image is optional research context rather than a required Stage-6 input. |
+| [ChatScene](https://openaccess.thecvf.com/content/CVPR2024/papers/Zhang_ChatScene_Knowledge-Enabled_Safety-Critical_Scenario_Generation_for_Autonomous_Vehicles_CVPR_2024_paper.pdf) / [repository](https://github.com/javyduck/ChatScene) | An LLM and a knowledge base assemble Scenic programs; SafeBench/Scenic samples and optimizes runtime CARLA scenarios on fixed routes. | Repository instructions use CARLA 0.9.13 and include an MIT licence file. | The reported collision rate evaluates selected safety-critical scenes, not fidelity to arbitrary text. The repository documents manual changes to generated Scenic files. | Motivates reusable, route-aware scenario primitives, but generated executable Scenic code does not satisfy the project's restricted-executor boundary. |
 
-Compare runtime scenarios, geometry editing, and image post-processing. For nearby but non-identical tasks, state the distinction explicitly. The section’s conclusion should justify the project architecture.
+All four selected works change actors, weather, placement, or behaviour in a running simulator using existing maps and assets. Methods that author new Unreal geometry and methods that alter only rendered pixels address different tasks: neither establishes a reproducible physical scene under the CARLA Python API. None of the four is a drop-in solution for CARLA 0.9.16, `Town01_Opt`, the fixed five routes, or the validated 18-sensor rig.
+
+The review therefore supports a deliberately small architecture for this test assignment. An API model returns a versioned `SceneSpec` containing only supported objects, spatial anchors, parameters, and actions. A deterministic validator checks schema, numeric ranges, blueprint availability, route/map compatibility, and spatial feasibility. A fixed executor maps accepted fields to previously tested CARLA calls, and post-application checks verify the actual actors, positions, visibility, and requested event. The request, raw response, parsed specification, resolved transforms/blueprints, seeds, outcome, and timing are saved so the accepted scene can be replayed without another model call.
+
+ScenarioGen provides the clearest separation of specification from execution; TTSG contributes geometry-aware grounding; TrafficComposer supports an explicit IR; and ChatScene demonstrates reusable scenario primitives on fixed routes. The project adopts these principles without copying their local-model, unsafe parsing, multimodal, or executable-DSL components. None of the reviewed systems creates a missing animal asset, so that remains a separate Stage-7 dependency.
 
 ## 3. Natural-Language Scene Editing
 
@@ -256,4 +263,4 @@ Publication occurs only after explicit instruction. Before publishing, check sec
 
 ## Appendices and Sources
 
-The primary assignment document is retained in the local package; requirements are captured in `docs/requirements.md`. The technical-source index is `docs/knowledge.md`; research sources must be added after stage 5. Screenshots and tables must point to a concrete run ID and immutable configuration.
+The primary assignment document is retained in the local package; requirements are captured in `docs/requirements.md`. The technical-source index is `docs/knowledge.md`, including the Stage-5 primary publications and author repositories. Screenshots and experimental tables must point to a concrete run ID and immutable configuration.

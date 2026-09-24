@@ -184,8 +184,12 @@ For T seconds, C=9 positions, two sensor types, and 2 Hz, expect roughly `36*T` 
 | S15 | [GPT-6 Astra API card](https://developers.openai.com/api/docs/models/gpt-6-astra) | Candidate model; account access unverified |
 | S16 | [Qwen3.8-27B](https://huggingface.co/Qwen/Qwen3.8-27B) | Candidate card, not a verified API endpoint |
 | S17 | [Qwen3-8B](https://huggingface.co/Qwen/Qwen3-8B) | Smaller candidate from another series |
+| S18 | [ScenarioGen report](https://cse.buffalo.edu/tech-reports/2026-22.pdf) and [author repository](https://github.com/harshit88a/scenario-gen) | JSON schema, validator, fixed CARLA runner; accessed 2026-09-24 |
+| S19 | [TTSG paper](https://arxiv.org/abs/2409.09575) and [author repository](https://github.com/basiclab/TTSG) | Language parsing and road-geometry grounding; accessed 2026-09-24 |
+| S20 | [TrafficComposer paper](https://arxiv.org/abs/2505.14881) and [author repository](https://github.com/TrafficComposer/TrafficComposer) | Explicit multimodal traffic intermediate representation; accessed 2026-09-24 |
+| S21 | [ChatScene paper](https://openaccess.thecvf.com/content/CVPR2024/papers/Zhang_ChatScene_Knowledge-Enabled_Safety-Critical_Scenario_Generation_for_Autonomous_Vehicles_CVPR_2024_paper.pdf) and [author repository](https://github.com/javyduck/ChatScene) | Knowledge-enabled Scenic generation and route-aware scenario selection; accessed 2026-09-24 |
 
-This index is a technical starting point. It **does not complete assignment item 2**: stage 5 still needs a review of research methods for LLM-driven CARLA editing, including primary papers and author repositories.
+The Stage-5 method review is complete for the four selected, most relevant runtime-scenario approaches. Detailed comparison and project applicability are summarized in section 2 of `report/report.md`.
 
 ## 11. Adding Knowledge
 
