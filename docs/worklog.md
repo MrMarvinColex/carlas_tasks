@@ -539,6 +539,29 @@ The user rented a Massed Compute VM with an RTX A6000 48 GB, Ubuntu 22.04.5, 6 v
 
 **Result:** Stage 7 is formally closed with user-reported external preservation and artifact-confirmed local manifest validation. The next independent task remains Stage 8 full 18-sensor edited drives and comparison to matching baseline cells.
 
+## 2026-09-24 15:10 UTC — Standalone Final Report Draft
+
+**Type:** user-directed scope closure and report preparation; no CARLA, model API, dataset mutation, publication, or VM operation.
+
+- Recorded the user's decision not to run Stage 8. Kept it `TODO` rather than presenting an unperformed comparison as complete; Stage 9 is now `IN_PROGRESS`.
+- Added `report/final_report_ru.md`, a standalone 2,300-word Russian Markdown report. It contains no calendar dates, internal stage names/numbers, title page, or result table. It uses logical sections, plain language, route-selection details, local limitations, a final conclusion, and repository links.
+- Selected only artifact-confirmed visuals and made five portable composites in `report/assets/final_report/`: RoadLines before/after, route-selection overview, nine-camera RGB/semantic sheets, an LLM-generated two-Audi scene, and deer RGB/semantic motion. The source runs were not modified; the report copies total about 4.7 MiB.
+- The route image is explicitly captioned as the visual-selection geometry before operational shortening/reordering. The animal section explicitly limits the evidence to kinematic motion, a front-centre probe and direct collision geometry, not leg animation, a full-rig edited-drive dataset or Traffic Manager braking.
+
+**Checks:** all five image links resolve locally; the Markdown has no table rows, date strings or `stage`/`этап` wording; `git diff --check` passes. Pagination depends on the renderer, but 2,300 words plus five figures is expected to fit the requested 3–8-page range in a normal report layout.
+
+**Result:** the requested report draft is ready for user review. It is not committed, pushed or published yet.
+
+## 2026-09-24 15:33 UTC — Final Report Private-Branch Handoff
+
+**Type:** user-authorized Git commit and push; no report publication, repository-visibility change, external upload, CARLA run, or model API call.
+
+- Staged only the standalone report, its five PNG figures, and the related README/status/decision/worklog/working-report updates.
+- Rechecked the staged diff for whitespace errors and reviewed its file/size summary before committing.
+- Created commit `347d8a6` (`docs: add final Russian report`) and pushed it from local `Dev` to the existing private `origin/Dev` branch.
+
+**Result:** Git reported `5e8af47..347d8a6  Dev -> Dev`. The report is preserved in the private remote. User review and any later public delivery remain separate actions requiring explicit direction.
+
 ## Template for the Next Entry
 
 ```text

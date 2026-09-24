@@ -48,6 +48,7 @@ Tools, connectors, and personal skills from a previous chat do not automatically
 | [Knowledge base](docs/knowledge.md) | Verified sources, technical hypotheses, pitfalls |
 | [Work log](docs/worklog.md) | History and evidence |
 | [Working report](report/report.md) | Incrementally assembled final submission |
+| [Standalone Russian report](report/final_report_ru.md) | Reader-facing final draft with selected figures and conclusions |
 | [Artifact registry](artifacts/index.csv) | Result locations and backup-verification state |
 
 ## Stages
@@ -113,6 +114,6 @@ The selected AV2 source is log `54bc6dbc-ebfb-3fba-b5b3-57f88b4b79ca`. CARLA use
 
 ## Current Starting Point
 
-CARLA 0.9.16 is validated offscreen on the RTX A6000. Stages 1–7 are complete: the Stage-3 external copy is user-confirmed, the Stage-4 ten-cell baseline matrix has user-reported checksum-verified Mac copies, and Stage 7 has a user-reported external backup without a recorded destination or independent checksum. Stage 8 full-rig edited drives remain. See [STATUS](docs/STATUS.md) for details.
+CARLA 0.9.16 is validated offscreen on the RTX A6000. Stages 1–7 are complete: the Stage-3 external copy is user-confirmed, the Stage-4 ten-cell baseline matrix has user-reported checksum-verified Mac copies, and Stage 7 has a user-reported external backup without a recorded destination or independent checksum. The user chose not to run the planned Stage-8 full-rig edited-drive comparison; the standalone final-report draft therefore states that limitation rather than claiming the experiment. See [STATUS](docs/STATUS.md) for details.
 
 Before deleting a VM, push code and verify an external copy of results. According to the user, Stop does not end billing and Delete is irreversible. This package performs no VM operations.

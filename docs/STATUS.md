@@ -1,6 +1,6 @@
 # Current Project Status
 
-Last inspected: **2026-09-24 14:40 UTC**; user timezone: Europe/Moscow.
+Last inspected: **2026-09-24 15:33 UTC**; user timezone: Europe/Moscow.
 
 ## Current Position
 
@@ -64,7 +64,11 @@ The six accepted SceneSpecs were then passed unchanged, with saved API provenanc
 
 **Stage-7 external preservation (2026-09-24):** the user confirmed that a backup of the Stage-7 artifacts was made. This is **user-reported** backup evidence only: no external path, copy command, or checksum/manifest comparison was provided in this session. The nine Stage-7 registry rows therefore record `backup_status=user_reported` rather than `verified`; their local manifests remain the artifact-confirmed integrity evidence.
 
-**Next action:** Stage 7 is complete. For Stage 8, make full 18-sensor edited drives from this saved SceneSpec and compare them to equivalent baseline route/weather cells; preserve the distinction between direct collision and any Traffic Manager behaviour.
+**Final-report scope decision (2026-09-24):** the user chose not to run Stage 8 and requested a concise final report based on the completed evidence. This is a scope decision, not evidence that Stage 8 acceptance was met. `report/final_report_ru.md` is now a standalone Russian draft with no calendar dates or internal stage numbering. It uses plain language, five logical result sections plus reproducibility/conclusion, five image composites copied from validated artifacts, limitations beside the relevant claims, and links to the implementation and source repositories. The five report images total about 4.7 MiB and are in `report/assets/final_report/`.
+
+**Final-report private preservation (2026-09-24):** at the user's request, commit `347d8a6` (`docs: add final Russian report`) was pushed to the private `origin/Dev` branch. This preserves the Markdown report, its five portable images, and the associated scope/documentation updates. It is not public delivery and does not authorize changing repository visibility or uploading the report/dataset elsewhere.
+
+**Next action:** review the standalone report with the user and make any requested editorial corrections. Prepare public code/report/dataset publication only when explicitly authorized. Do not add full-rig edited-drive or Traffic Manager braking claims.
 
 ## Stage Status
 
@@ -78,8 +82,8 @@ The six accepted SceneSpecs were then passed unchanged, with saved API provenanc
 | 5. Literature review | DONE | Four primary works and author repositories were compared; the report records capabilities, evidence limits, and applicability, and D23 fixes the Stage-6 architecture. |
 | 6. LLM scene editing | DONE | All three variants completed the shared 3-prompt, 9-attempt first-attempt protocol; six accepted SceneSpecs passed saved-provenance CARLA/18-camera execution and three animal requests refused correctly. Usage/timing/comparison are saved, price is explicitly not calculated, and the selected evidence now has user-reported checksum-verified Mac copies. |
 | 7. Animal | DONE | Hash-verified AnimaSim deer passed grounded spawn, RGB/raw-semantic visibility, bounded 12 m kinematic motion and direct collision. Strict SceneSpec v1.1 and the identical three-model protocol each passed one saved-provenance replay. No TM-braking claim; an external backup is user-reported, but its path and checksum comparison are not recorded. |
-| 8. Repeated drives | TODO | No baseline or edited recordings exist |
-| 9. Delivery | TODO | A report skeleton exists; nothing has been published |
+| 8. Repeated drives | TODO | The user chose not to run this optional project-plan stage for the final submission; no full-rig edited-drive comparison exists and no acceptance claim is made. |
+| 9. Delivery | IN_PROGRESS | Standalone Russian Markdown report and five portable image composites are preserved in private `origin/Dev` at `347d8a6`; user review, public-code decision, and external report/dataset publication remain. |
 
 ## Known Infrastructure
 
