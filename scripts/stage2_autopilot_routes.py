@@ -433,7 +433,7 @@ def main() -> None:
     parser.add_argument(
         "--routes-run",
         type=Path,
-        default=Path("runs/20260919T062007Z-route-revision-ca00ee"),
+        default=Path("runs/20260923T160431Z-shorter-routes-b72a9d"),
     )
     parser.add_argument("--route-id", action="append", default=[])
     parser.add_argument("--host", default="127.0.0.1")
@@ -511,6 +511,7 @@ def main() -> None:
             "dense_step_m": args.dense_step_m,
             "fixed_delta_seconds": 0.05,
             "traffic_manager_port": args.traffic_manager_port,
+            "traffic_manager_seed": 2026091905,
             "vehicle_blueprint": blueprint.id,
             "traffic_manager_command": args.traffic_manager_command,
             "finish_radius_m": args.finish_radius_m,

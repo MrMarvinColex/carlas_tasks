@@ -2,7 +2,7 @@
 
 This is the portable context package for the test assignment “Using LLMs with the CARLA Autonomous Driving Simulator.” It was prepared on 16 September 2026 from the original PDF and the user’s clarifications. The working deadline is 21 September; the PDF does not state a year, and 2026 is inferred from the current context.
 
-**This package contains documentation, tracking templates, a minimal reproducible stage-0 CARLA client, and stage-1 map/API probes. It does not yet contain route generation, 18-camera recording, a dataset validator, or an LLM executor.** Do not treat later-stage commands as already implemented.
+**This package now contains the reproducible environment, map probes, five approved/driven routes, the validated 18-camera recorder/validator, a completed ten-cell Stage-4 baseline matrix with externally checksum-verified Mac copies, a bounded Stage-6 API/CARLA pilot, and a completed Stage-7 animal capability. Stage 7 adds an independently packaged AnimaSim deer, a strict passive SceneSpec and one saved-provenance replay for each of GPT-Astra, Qwen-27B and Qwen-8B. Its external backup is user-reported; the destination and independent checksum evidence were not supplied. It is not a statistical repeat study, cost measurement, or full-rig edited-drive dataset.**
 
 ## What the Project Builds
 
@@ -97,8 +97,22 @@ The path was smoke-tested on 16 September 2026 in `runs/20260916T210617Z-carla-s
 
 On 17 September 2026, the probes confirmed Town01/Town01_Opt availability. On base Town01, direct RoadLines hiding is semantic-only; Decals and the tested texture calls also fail visible removal. On the explicitly selected `Town01_Opt`, however, `World.enable_environment_objects(RoadLines_ids, False)` removed the yellow markings in paired RGB views and raw semantic class 24 at a straight road, intersection, and traffic-control location, with sampled navigation intact. The coverage is not map-wide: no crosswalk API point was returned. See `docs/STATUS.md` and the six stage-1 registry rows. Apply the operation after every Town01_Opt load and retain RGB/raw-semantic validation. The stage-1 probe runs are local-only until copied and hash-verified on the Mac.
 
+## Stage-3 Camera Check
+
+`scripts/stage3_recording.py` loads the preserved AV2 calibration, aligns its rear-axle ego origin to the CARLA vehicle, spawns RGB/raw-semantic pairs at all nine positions, and groups callbacks by frame before pairing them with the same `WorldSnapshot` ego pose. `scripts/stage3_validate_dataset.py` checks timing, completeness, PNG integrity/dimensions, raw semantic encoding, and ego-body occlusion. The short all-camera run `20260919T162408Z-av2-all-cameras-short-247e3f` passed locally; it is not a complete Stage-4 route recording. The user confirmed its off-VM copy exists.
+
+Example after starting CARLA and creating a Stage-3 run directory:
+
+```sh
+.venv/bin/python scripts/stage3_recording.py --run-dir runs/RUN_ID --sample-count 4 --mount-z-offset-m 0.5
+.venv/bin/python scripts/stage3_validate_dataset.py runs/RUN_ID --require-all-nine
+.venv/bin/python scripts/finalize_run.py runs/RUN_ID --state complete
+```
+
+The selected AV2 source is log `54bc6dbc-ebfb-3fba-b5b3-57f88b4b79ca`. CARLA uses its image dimensions and horizontal FOV derived from `fx`, but not arbitrary principal-point or full distortion coefficients. The explicit 0.5 m mount-height adaptation prevents the Tesla body from appearing in the images.
+
 ## Current Starting Point
 
-The user reported a successful offscreen CARLA 0.9.16 launch on an RTX A6000 48 GB GPU. The stage-1 container is stopped and its image remains on the current VM. The validated marking-removal method is available for Town01_Opt at its declared coverage; routes, camera rig/recording, and a usable animal asset remain outstanding. See [STATUS](docs/STATUS.md) for details.
+CARLA 0.9.16 is validated offscreen on the RTX A6000. Stages 1–7 are complete: the Stage-3 external copy is user-confirmed, the Stage-4 ten-cell baseline matrix has user-reported checksum-verified Mac copies, and Stage 7 has a user-reported external backup without a recorded destination or independent checksum. Stage 8 full-rig edited drives remain. See [STATUS](docs/STATUS.md) for details.
 
 Before deleting a VM, push code and verify an external copy of results. According to the user, Stop does not end billing and Delete is irreversible. This package performs no VM operations.

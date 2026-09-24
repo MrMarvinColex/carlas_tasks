@@ -256,6 +256,289 @@ The user rented a Massed Compute VM with an RTX A6000 48 GB, Ubuntu 22.04.5, 6 v
 
 **Next action:** start Stage 3 by selecting an actual AV2 calibration and validating the nine RGB/semantic sensor pairs and 2 Hz pose/frame alignment on a short drive.
 
+## 2026-09-19 15:49–15:50 UTC — User-Requested Route-Numbering Swap
+
+**Type:** completed and locally verified identifier-only revision plus CARLA revalidation.
+
+- The user requested that the bridge route become route 4 and the more complex four-turn route become route 5. Added `scripts/stage2_route_relabel.py`, which preserves the old signed run, copies only route documents into a fresh revision, changes the identifiers/order, and checks that every geometry-bearing field is unchanged.
+- Revision `20260919T154916Z-route-numbering-swap-b5e941` passed all five geometry-preservation checks. It maps `route_05_bridge_then_turn` → `route_04_bridge_then_turn` and `route_04_four_turns` → `route_05_four_turns`.
+- Re-ran all five Traffic Manager drives against that revision. The current final validation is `20260919T154938Z-tm-autopilot-renumbered-routes-aac495`; every route passed all existing completion/safety checks under its current identifier.
+
+**How checked:** local manifest validation passed for 9 relabelling files and 19 drive files. The relabelling manifest is `6af7ad8fe6cc3ce740aed00c66867b412d602195b44e90aed15cb9d26438272e` (746,813 bytes); the new all-route drive manifest is `a2581991bb20f5ef79e0dabb78f292f53041369ee197ada93fe7edf83f7e9a6b` (2,250,192 bytes).
+
+**Artifacts and external copy:** both new runs are in `artifacts/index.csv` and remain local-only. CARLA was stopped after the revalidation.
+
+**Next action:** Stage 3 — select an actual AV2 calibration and validate nine RGB/semantic sensor pairs with 2 Hz frame/pose alignment.
+
+## 2026-09-19 16:13–16:30 UTC — Stage 3 AV2 Rig and 2 Hz Recording
+
+**Type:** locally completed technical implementation and validation; stage acceptance still awaits verified external copy.
+
+- Retrieved only the two official calibration Feather files for AV2 Sensor log `54bc6dbc-ebfb-3fba-b5b3-57f88b4b79ca` from the documented public S3 bucket. Preserved the raw files, exact extracted values, URLs, retrieval condition, and SHA-256 under `configs/av2/`; no camera dataset was downloaded.
+- Added pure coordinate-conversion helpers and tests, the frame-keyed synchronous recorder, and the PNG/dataset validator. The recorder derives the Tesla rear axle from wheel positions after one world tick, attaches RGB and semantic sensors at all nine converted poses, saves raw semantic IDs separately from palettes, writes partial transforms during capture, and measures wall/GPU/RAM/data throughput.
+- Retained three failed one-view pilots. The first treated CARLA world wheel coordinates as actor-local. The second attempted inversion before the actor's first synchronous tick, when its transform was still identity. The third corrected the origin and passed frame/file checks, but visual review found the Tesla hood. The successful one-view pilot uses a declared +0.5 m local-z clearance adaptation and has zero ego pixels in the validated bottom strip.
+- Full run `20260919T162408Z-av2-all-cameras-short-247e3f` used 18 sensors and accepted four time points. It produced 72 required RGB/raw-semantic images, 36 palette previews, four ego poses, two contact sheets, calibration/configuration records, validation, and resource measurements.
+
+**How checked:** eight offline unit tests and Python compilation passed. The dataset validator parsed JSON, verified unique increasing frames, 0.5 s timing within 0.0001 s, same-frame sensor/pose timestamps, all expected paths and dimensions, PNG signatures/chunk CRCs/zlib streams, 8-bit raw semantic encoding, and zero ego-body pixels in the bottom 10%. All 108 PNGs passed; no callbacks were missing, duplicated, or late after stop. RGB and semantic contact sheets passed manual review. The finalized 119-entry manifest passed local entry-by-entry verification; manifest SHA-256 is `8a203ea291a126682997bafbfb7816cabad7d1eb33cf6188ce0a10f1d2915e61`, and the directory occupies 165,463,137 bytes.
+
+**Performance:** accepted simulation span 1.500000022 s; wall duration 126.905 s; measured output before validation about 109.34 MB per accepted simulation second; sampled GPU memory peak 4,657 MiB; sampled host used-memory peak about 8.08 GB. These are short-run observations, not long-run guarantees.
+
+**Artifacts and external copy:** the full run, successful one-view pilot, and three failed pilots are registered in `artifacts/index.csv`, all with `backup_status=not_copied`. The CARLA container was stopped. Stage 3 remains `IN_PROGRESS` only because its acceptance criterion requires a verified off-VM copy.
+
+**Git preservation:** Stage-3 code, raw calibration sources, tests, registry entries, and documentation were committed as `3fbe0de` and pushed to private `origin/Dev`. Run metadata retains the truthful pre-commit `22c49c0` plus dirty-state indicator.
+
+**Next action:** from the Mac, pull the full run to `/Users/madness/Научка/CARLA/runs/20260919T162408Z-av2-all-cameras-short-247e3f/`, run `scripts/verify_export.py` or an equivalent manifest check against that destination, then record the proof and mark Stage 3 DONE.
+
+## 2026-09-23 11:28–11:36 UTC — New-VM Environment Recovery
+
+**Type:** new-VM setup and short local smoke verification; historical data transfer is still in progress.
+
+- Checked clean private `Dev` worktree at `0255434fbd779d9de735ee615c8aa21cabc7fc19`, `/home/Ubuntu/carlas_tasks`, and the preflight output. GPU, NVIDIA runtime, passwordless Docker, memory, and disk prerequisites passed. No CARLA image or containers existed initially.
+- The first `scripts/setup.sh` attempt failed because the pre-existing `.venv` had no `pip` and the OS lacked `ensurepip`. Installed `python3.10-venv` through apt; the second setup succeeded with Python 3.10.12 and `carla==0.9.16`.
+- Pulled `carlasim/carla:0.9.16`; its digest matched the recorded `aaf1df22...` digest. Started the offscreen server, captured one 800×600 RGB frame, finalized the run, verified all three manifest entries locally, and stopped the container. The frame was not visually reviewed.
+
+**Evidence:** temporary run `/tmp/carla-recovery-runs/20260923T113354Z-new-vm-recovery-3f3dcb/` (manifest SHA-256 `4412e91afe7bafc312d52915e46f306c487086dcee0d490a80c40a79c76558fc`); server log `/tmp/carla-recovery-logs/carla-20260923T113324Z.log`. Run metadata records clean Git state, client/server 0.9.16, default `Town10HD_Opt`, frame 1459, and timestamp 14.433419645647518 s. These `/tmp` files are not externally backed up or registered as deliverable artifacts.
+
+**Next action:** after the user's Mac-to-VM rsync completes, verify restored manifests and the historical Stage-3 short run. Obtain separate confirmation that its Mac copy passed the manifest check before closing Stage 3.
+
+## 2026-09-23 12:01 UTC — Stage 3 Closure by User-Confirmed External Copy
+
+**Type:** user-reported off-VM-copy evidence; local run validation remains artifact-confirmed.
+
+- The user confirmed that an external copy of `20260919T162408Z-av2-all-cameras-short-247e3f` exists and explicitly instructed that Stage 3 be marked complete.
+- No Mac-side `scripts/verify_export.py` output or SHA-256 comparison output was supplied in this session. Therefore the registry uses `backup_status=user_confirmed`, rather than `verified`; the complete run's local 119-entry manifest validation and SHA-256 `8a203ea291a126682997bafbfb7816cabad7d1eb33cf6188ce0a10f1d2915e61` remain the artifact-confirmed integrity evidence.
+
+**Result:** Stage 3 is `DONE` at the user's direction. Its technical camera/recording acceptance was already complete; the external-copy existence is user-reported. Preserve or obtain the external manifest-verification output before any irreversible VM deletion or final delivery.
+
+**Next action:** wait for a separately assigned Stage-4 task; do not start baseline recording automatically.
+
+## 2026-09-23 12:30 UTC — Stage 4 Matrix and Full-Route Recording Pilot
+
+**Type:** Stage-4 implementation and active experiment; no accepted baseline result yet.
+
+- Fixed `configs/stage4_baseline_matrix.json`: five approved routes, `clear_day` and `wet_cloudy_day`, one repeat each (10 planned baseline runs). It records exact CARLA parameters, fixed simulation/sensor periods, Traffic Manager seed, disk guardrails, and a `route_05_four_turns` clear-day pilot. Weather labels are not seasonal claims.
+- Added `scripts/stage4_baseline.py`, which applies the selected baseline scene after every map load, drives one route with Traffic Manager, records all 18 sensor streams at 2 Hz from same-frame snapshots, retains raw semantic IDs and palettes separately, writes partial transforms, tracks collision/timeout/stuck/completion metrics, then invokes the existing dataset validator after a completed drive.
+- Local checks passed: the matrix has exactly 10 planned route-weather runs; the runner and dependent Stage-3 recorder/validator compile; 245 GiB were free before recording; the image digest matched the pinned image; and only one CARLA container was started.
+- Retained failed diagnostic `20260923T123049Z-baseline-pilot-route05-clear-day-19873f`: its first runner revision incorrectly required calibration JSON insertion order to match camera order and stopped before sensors or frames were created. It was finalized `failed`; the check now compares camera sets.
+- Active run `20260923T123315Z-baseline-pilot-route05-clear-day-retry-ba0f8c` is recording the 508.150 m `route_05_four_turns` in `clear_day`. It had accepted 56 complete 18-stream time points when this entry was written; do not infer final drive or validation success until it exits.
+
+**Next action:** wait for this run to finish, inspect `drive_result.json` and both validators, finalize its manifest, stop CARLA, measure the output, then decide whether the remaining nine runs fit the fixed batch policy.
+
+## 2026-09-23 13:13 UTC — Stage 4 Pilot Stopped at User Request
+
+**Type:** incomplete experiment retained at the user's instruction.
+
+- The user asked to stop the active full-route pilot. The recorder process and then the sole `carla-server` container were stopped; no further Stage-4 drive was started.
+- Retry run `20260923T123315Z-baseline-pilot-route05-clear-day-retry-ba0f8c` had 77 complete, same-frame 18-stream samples in `transforms.partial.json`, covering 38.5 s of simulation time. Its output before finalization was 3,621,970,754 bytes; finalized directory size is 3,622,361,120 bytes. It has no final `transforms.json`, route result, or dataset validation and is therefore `incomplete`, not an accepted baseline drive.
+- Finalized it with the explicit user-stop reason. Local manifest verification passed for all 2,110 signed files; manifest SHA-256 is `914e2bca06e417d0200571f128cd4f88d067f2116f3620e0ac2d2844c2f3d016`. The earlier no-frame runner diagnostic also passed its two-entry local manifest check (`5957c7944db104058be7d876a0c5b26a832b8b511561f4b46c05c4df883acb26`). Neither artifact has an external copy.
+
+**Result:** Stage 4 remains `IN_PROGRESS`. The 10-run matrix and recorder exist, but no complete route dataset has been accepted. CARLA is stopped.
+
+**Next action:** wait for user direction before restarting the pilot, reducing/optimising its output strategy, or changing the approved matrix.
+
+## 2026-09-23 13:32–14:01 UTC — Stage 4 Bounded Asynchronous Writer Benchmark
+
+**Type:** throughput optimisation and validation; not a baseline route-completion drive.
+
+- Reworked `scripts/stage4_baseline.py` so CARLA buffers are detached at capture time and RGB, lossless raw semantic IDs, and CARLA CityScapes-palette previews are encoded in a bounded four-worker queue. The tick loop applies measured backpressure at the queue limit rather than dropping frames. Resource sampling was reduced to every ten accepted samples plus endpoints.
+- Retained two failed implementation probes: `20260923T133242Z-async-writer-smoke-ab869f` called `carla.Image.save_to_disk()` concurrently and timed out after capture; `20260923T133736Z-async-writer-buffer-smoke-664bbb` used an incomplete manually reconstructed palette. They are finalized with manifests. The corrected 5 s smoke `20260923T134010Z-async-writer-local-palette-smoke-cbcacd` accepted eight samples, passed all 216 PNG checks and visual RGB/semantic contact-sheet review, and showed 2.656 s writer backpressure.
+- The user-requested 120 s simulation-time benchmark `20260923T134157Z-async-writer-120s-throughput-28fd4a` recorded 238 samples over 118.500 s. It wrote 4,284 RGB, 2,142 raw semantic, and 2,142 palette-preview PNGs. All 6,426 PNGs passed CRC/decode/dimension/frame/timestamp/ego-body checks; no duplicate callbacks or collision occurred. Recording-phase wall time was 710.624 s, including 71.187 s bounded-writer backpressure; output at summary time was 8,785,235,973 bytes. The final local directory is 8,787,483,638 bytes; its 6,441-entry manifest passed local verification and has SHA-256 `5855146939f2fe225c472d304be524d3176fe5a124d1c14f5ebfcc3b23303873`.
+- This run is explicitly a throughput benchmark, not baseline evidence. It continued after the 508.150 m route endpoint, so the route-deviation acceptance criterion is not evaluated; no baseline matrix cell is complete. The server was no longer running after recorder completion; `scripts/stop_carla.sh` confirmed no remaining `carla-server` container.
+
+**Next action:** on user instruction, run a fresh route-completion pilot using the verified writer, validate it as a baseline record, and export it before continuing the matrix.
+
+## 2026-09-23 16:04–16:07 UTC — Shorter Routes and Camera-Free Drive Validation
+
+**Evidence type:** user-requested geometry revision; artifact-confirmed local CARLA tests.
+
+- The user asked to retain the middle half of routes 1–3, crop route 4 to one/two turns and 40–50 working points, and crop route 5 to about two turns and 60–70 working points. The objective was shorter driving time and less recorded data. Added `scripts/stage2_route_trim.py` to choose contiguous slices of the signed September-19 reference chains and reuse the existing adaptive-spacing/turn-detection helpers; no new map search or camera rendering was required.
+- First offline run `20260923T160409Z-shorter-routes-5e6883` generated geometry but failed its metadata update because `carla.__version__` does not exist. Retained and finalized it as failed. Replaced that lookup with installed-package metadata and created a fresh revision `20260923T160431Z-shorter-routes-b72a9d`.
+- Source windows (inclusive) are 28–83, 32–93, 31–94, 34–158 and 19–132. New lengths are 110.000 / 125.106 / 122.838 / 251.108 / 225.939 m; working counts are 12 / 32 / 32 / 44 / 60. Route 4 retains one left turn before the complete original bridge plus 12 m exit margin, and is named `route_04_turn_then_bridge`. Route 5 retains the middle left/right pair, and is named `route_05_two_turns`. All dense waypoint fields other than local ordinal remain identical to the source slice.
+- Ran existing `stage2_autopilot_routes.py` once for all five routes in `20260923T160409Z-shorter-routes-autopilot-b8548d`. CARLA reconstructed every waypoint and verified all 416 `next(2.0)` edges. Every new start spawned, every route completed, collision counts were zero, max deviations were 0.996–1.246 m, and every post-finish stop passed. The trajectory approached every retained turn centre within 0.292 m; route 4 passed the recorded bridge exit before braking. The driving phase took only 1.2–2.2 wall seconds per route without cameras, plus server/map setup.
+- Same-controller/seed comparison against the historical five-route drive measured simulation driving times 30.35→16.05, 23.65→12.70, 28.10→15.35, 41.45→14.90 and 63.15→29.85 s. Total 186.70→88.85 s, a 52.41% reduction; the 4 s braking/stopped observation is excluded consistently. No new image-volume or recorder-wall-time claim is made. `duration_comparison.json` preserves the basis, image digest, controller seed and executed script hash.
+- Updated Stage-4 source, route IDs and pilot plus the autopilot default to the validated revision. The original route manifest still passed all nine entries. New geometry (11 entries), drive (21 entries) and failed-generator (10 entries) manifests all verified locally. New runs remain local-only. Stopped CARLA after tests; no camera recording was started.
+
+**Result:** all requested route reductions and efficient validation are complete. Stage 2 remains DONE; Stage 4 remains IN_PROGRESS. The next camera run should use `route_05_two_turns` and the revised matrix, followed by measurement/validation and export.
+
+## 2026-09-23 16:15–16:21 UTC — Stage 4 Shortened-Route Baseline Pilot
+
+**Type:** completed local baseline-matrix cell; external preservation still pending.
+
+- Recorded the first current-matrix cell with `scripts/stage4_baseline.py`: `route_05_two_turns` under `clear_day`, using the shortened, drive-validated route revision and the bounded four-worker PNG writer.
+- The drive completed at 217.939 m projected progress of its 225.939 m route (required 214.642 m), with 0 collisions, 1.246 m maximum deviation, and a passed post-finish stopped-vehicle check. It accepted 58 same-frame 18-sensor samples over 28.500 s of simulation time.
+- The run contains 522 RGB, 522 raw 8-bit semantic-ID, and 522 CityScapes palette-preview PNGs. `validation.json` passed all timing, frame/pose alignment, count, PNG-integrity and ego-body checks; `baseline_validation.json` passed all route, collision and stop checks. RGB and semantic contact sheets were visually reviewed.
+- The recording phase lasted 170.993 wall seconds, including 2.160 s explicit writer backpressure. Output at summary was 2,203,449,831 bytes (77.314 MB per accepted simulation second); final run size is 2,205,036,691 bytes. Finalization generated a 1,581-entry manifest with SHA-256 `1bb4bbace43e741cc94316f10748fb2b4d7f5ac6337554623b7fb1f34098249c`; local entry-by-entry verification passed.
+- Stopped `carla-server` after completion. The artifact is registered as `stage4-baseline-pilot-short-route05-clear-day-20260923` with `backup_status=not_copied`.
+
+**Result:** Steps 1–2 of the Stage-4 pilot workflow are complete locally. Step 3 requires a Mac-side copy and manifest verification; do not start a second baseline cell until this first copy is preserved.
+
+**Next action:** from the Mac, use the documented `rsync` pull for `20260923T161516Z-baseline-pilot-route05-two-turns-clear-day-895150`, then run `scripts/verify_export.py` against the copied directory and record the result.
+
+## 2026-09-23 16:31 UTC — Stage 4 Sequential Batch Prepared (Not Run)
+
+**Type:** user-authorized operational preparation; no new CARLA experiment.
+
+- The user authorized temporarily deferring the matrix policy of exporting after two completed runs and asked for a `tmux`-friendly script that records the nine remaining cells without chat supervision. The per-run free-disk safety threshold remains active.
+- Added `scripts/stage4_batch.py`. It reads the fixed matrix, detects completed cells only from finalized passing `baseline_validation.json` records, deterministically orders the remaining cells from the stored seed, and never launches concurrent recorders. Each successful recorder invocation is finalized and locally manifest-verified before the next starts. A failure or Ctrl-C stops the batch and preserves/finalizes the current run; CARLA is stopped in the cleanup path. It writes a human-readable log and JSON result summary under `logs/`.
+- Checked with `python -m py_compile` and `--dry-run`. The dry run made no writes or CARLA calls and found exactly one completed cell (`route_05_two_turns`/`clear_day`) and nine remaining cells. `git diff --check` passed.
+
+**Result:** batch infrastructure is ready but no batch recording has been started. The external-copy requirement remains pending and is not waived.
+
+**Next action:** user starts the documented command in a `tmux` window, then reports the batch summary path and exit status for review.
+
+## 2026-09-23 16:33–17:03 UTC; closure recorded 21:01 UTC — Stage 4 Complete Baseline Matrix
+
+**Type:** completed and validated Stage-4 dataset; external verification is user-reported with supplied checksum command output.
+
+- The first `tmux` batch completed seven cells, then the user interrupted the eighth retry. The supervisor finalized that partial run as `incomplete`, generated its 385-entry manifest and locally verified it. The second batch completed the successful retry and final outstanding cell. Both batches stopped `carla-server` successfully.
+- The ten accepted cells cover every route/weather pair once. All have `outcome=completed`, zero collisions, a stopped ego vehicle, route deviation no greater than 1.246 m, and passing `validation.json` plus `baseline_validation.json`. Their local manifests were rechecked after the batches: all 9,303 signed entries passed.
+- Accepted totals are 339 2 Hz samples, 3,051 RGB + 3,051 raw semantic-ID + 3,051 palette-preview PNGs, 164.500 s accepted simulation span, 1,076.278 s recording wall time, 24.292 s writer backpressure and 12,904,099,739 finalized bytes. Clear and wet representative RGB/semantic contact sheets were visually reviewed. The long-route stopped pilot and the current interrupted retry remain registered as incomplete, not silently removed.
+- The user copied the full `runs/` and `logs/` trees to `/Users/madness/Science/CARLA/runs_1/` and `logs_1/`. They supplied the Mac-terminal result of two checksum-mode `rsync -nrc --itemize-changes` comparisons, each with no difference output. The artifact registry records this as externally verified while explicitly identifying the proof as user-supplied.
+
+**Result:** Stage 4 is `DONE`: the chosen matrix is complete, every accepted record validates, failures are retained, weather settings are recorded in the fixed matrix, and the data/log copies are checksum-verified off VM. No CARLA or validator process is active.
+
+**Next action:** begin Stage 5 only on a separate request; it is a literature/repository review and needs no CARLA recording.
+
+## 2026-09-24 10:22 UTC — Stage 5 Literature and Repository Review Complete
+
+**Type:** documented primary-source review; no CARLA, model API, or author code execution.
+
+- Reviewed the user's detailed analysis of ScenarioGen, TTSG, TrafficComposer, and ChatScene against assignment item 2 and the project's CARLA 0.9.16, `Town01_Opt`, fixed-route, API-only, and restricted-executor constraints.
+- Replaced the report placeholder with a compact four-work comparison covering method, LLM role, CARLA/code status, reported evidence, limitations, and concrete project use. The report explicitly separates runtime scenario construction from Unreal geometry authoring and rendered-image post-processing.
+- Added the four primary publication/repository pairs to the knowledge source index and recorded the shared conclusion: use a passive versioned SceneSpec, strict validation, a fixed allow-listed executor, post-application checks, and replay from resolved configuration.
+- Accepted that architecture as D23. This is a design decision informed by literature, not an implementation or CARLA experiment. The source code was inspected but not run, author-reported metrics were not independently reproduced, and the animal-asset blocker remains outside the capability of the reviewed methods.
+
+**Result:** Stage 5 meets its acceptance criteria and is `DONE`. Evidence is in `report/report.md` section 2, `docs/knowledge.md` section 8 and sources S18–S21, and `docs/decisions.md` D23.
+
+**Next action:** Stage 6 begins by verifying available API providers/model IDs and the trial-spend limit, then implementing and locally testing the SceneSpec/validator/executor/replay path before model comparison calls.
+
+## 2026-09-24 11:09 UTC — Stage 6 Pre-API SceneSpec and CARLA Validation
+
+**Type:** local implementation and CARLA validation; no LLM endpoint, key, provider lookup or internet dependency.
+
+- Added `configs/stage6_scene_editing.json`, strict passive `SceneSpec`/refusal parsing in `scripts/stage6_scene_spec.py`, a fixed allow-listed CARLA executor in `scripts/stage6_local_scene.py`, and deterministic valid/invalid/refusal fixtures. The model-facing format contains route-relative anchors only; it cannot carry Python, Scenic, direct world coordinates, `NaN`, duplicate keys or unrecognised fields.
+- Added seven Stage-6 unit checks. They passed together with the existing eight Stage-3 checks. The validator distinguishes syntactically bad JSON, policy violations, structural spatial conflicts, live map/blueprint failures and a correct structured animal refusal.
+- Validated the selected narrow envelope on `Town01_Opt`/`route_01_straight`: the one-Audi wet scene `20260924T110210Z-local-straight-parked-vehicle-observer-fix-213a80` and its fresh-world replay `20260924T110353Z-local-straight-replay-ad721d` passed camera validation (3 aligned 2 Hz samples, 81 PNGs), semantic-supported visibility, zero collisions, route completion and stopped ego. The same saved SceneSpec reproduced the actual transform and result. The two-Audi `clear_day` scene `20260924T110725Z-local-straight-composite-safe-af8031` also passed.
+- Retained and finalized five failed diagnostics rather than discarding them: two sandbox-loopback client failures, a right-side target that remained on a driving lane, an observer camera callback wait fixed before the accepted run, and a point that conflicted with static geometry. The live map showed that a JSON-valid position is not necessarily spawnable; `try_spawn_actor` stays a mandatory feasibility check. A local structured moving-animal refusal is preserved in `20260924T110820Z-local-animal-refusal-85c432`.
+- Every accepted local run has a manifest and local self-verification. No external copy exists yet, and the API-comparison portion of Stage 6 has not started.
+
+**Result:** Stage-6 work items 1–4 from the attached plan are complete for the initial straight-route envelope. Stage 6 remains `IN_PROGRESS` because provider/model IDs, credentials/access, spending limit, shared API prompt protocol, model attempts, latency/cost and comparison are still absent.
+
+**Next action:** after connectivity returns, verify provider access and a trial-spend limit before any API request; then implement the adapter without widening the verified SceneSpec capability list.
+
+## 2026-09-24 12:10 UTC — Stage 6 API Access and Model Inventory
+
+**Type:** authenticated provider-access check; no text generation, CARLA connection, or model-comparison attempt.
+
+- Added `scripts/stage6_api_access_check.py` and three unit checks. It reads local `.env` without printing secrets, makes only authenticated model-list requests, and records endpoints, HTTP status, latency and model identifiers in a run directory. The Model Studio parser handles its documented `output.models` response separately from OpenAI-compatible `data`.
+- The sandboxed access probe `20260924T120700Z-api-access-check-5610fb` failed before authentication because the sandbox blocks provider networking. The elevated retry `20260924T120719Z-api-access-check-elevated-31c96f` authenticated both credentials but was finalized incomplete because version one did not retain Model Studio model IDs. Both manifests are retained.
+- The corrected run `20260924T120821Z-api-model-inventory-5f0d01` passed: OpenAI returned 132 model IDs including `gpt-6-astra` in 1.075 s; Alibaba Model Studio authenticated at the Singapore endpoint and returned 161 Qwen IDs including `qwen3.8-27b` and `qwen3-8b` in 2.192 s. Its three-entry manifest was independently rechecked. No text, structured response, token usage, cost, CARLA operation or model-quality result was produced.
+- Updated `.env.example` with the authenticated provider settings and initial IDs only; `.env` remains ignored, unprinted and untracked.
+
+**Result:** provider credentials, one DashScope region and advertised target model IDs are now artifact-confirmed. Stage 6 remains `IN_PROGRESS`: a spend limit, common API adapter, fixed prompts, actual completions, validation, timing/cost and comparison are not yet present.
+
+**Next action:** establish a small explicit spend limit, then add one common adapter and make the first constrained `SceneSpec` completion without starting CARLA.
+
+## 2026-09-24 12:19 UTC — Stage 6 Bounded API Generation Smoke
+
+**Type:** two paid API requests, one per provider; strict local validation only, no CARLA process.
+
+- Added `scripts/stage6_api_generation_smoke.py` with three unit checks. It makes at most one request per selected provider, caps output at 16–256 tokens (192 used), saves prompt/request/raw response/usage/timing, and never writes the API key. OpenAI uses the documented Responses JSON mode; DashScope uses its OpenAI-compatible chat JSON mode with thinking disabled for this small request.
+- `20260924T121813Z-api-generation-smoke-611d18` passed for OpenAI `gpt-6-astra` and DashScope `qwen3-8b`. OpenAI reported 250 input and 146 output tokens, 5.817 s API latency; DashScope reported 265 prompt and 138 completion tokens, 4.508 s. Both responses were parsed and resolved without manual correction into the same permitted parked-Audi target transform. Their raw responses are retained locally; no secret appears in the run.
+- The run deliberately did not start CARLA, so it proves generation and local validation only. It does not prove provider-enforced strict schemas, Qwen-27B behaviour, actual price, repeated success, visual effect, or executor/CARLA success. Its 12-entry manifest was rechecked locally.
+
+**Result:** the first paid Stage-6 model responses are artifact-confirmed and safe to pass onward only through the existing validator. Stage 6 remains `IN_PROGRESS`.
+
+**Next action:** refactor this bounded smoke path into the common API adapter, fix prompts/retry/timeout settings, then run one saved generated SceneSpec through the already-tested CARLA executor.
+
+## 2026-09-24 12:30–12:45 UTC — Stage 6 Fixed API/CARLA Pilot
+
+**Type:** completed local Stage-6 pilot; paid API generation plus CARLA execution; external copy still pending.
+
+- Added `configs/stage6_api_protocol.json` and `scripts/stage6_api_adapter.py`. The protocol was fixed before paid calls: `gpt-6-astra`, `qwen3.8-27b`, `qwen3-8b`; simple/composite/impossible-animal prompts; one repeat, zero automatic retries, 60 s timeout and 256 output-token ceiling. The adapter records only sanitized request data, raw provider response, extracted JSON, strict local validation, timing and reported usage; it never executes model text. Exact task matching rejects a syntactically valid but incorrectly placed object.
+- `20260924T123036Z-api-fixed-protocol-884ef7` completed all nine planned first attempts. Every SceneSpec passed syntax, policy and exact-request validation; each animal request returned the required `unsupported_capability` refusal. Reported API latency spans 3.465898–10.565166 s. Usage is retained but cost is `not calculated`, because no dated provider price record was retrieved. A wrapper return occurred while the last Qwen request was finishing; safe resume read the eight already saved attempt results and only wrote the missing result, without reissuing them.
+- Extended `scripts/stage6_local_scene.py` with `--api-attempt-result`, which binds a replay to a passed saved adapter result and carries provider/model/usage/API/local-validation timing into the CARLA evidence. `20260924T123330Z-api-provenance-local-check-627a7b` first validated that binding without a CARLA connection.
+- Executed all six accepted model SceneSpecs in fresh `Town01_Opt` worlds. Each has before/after RGB, three aligned 2 Hz 18-sensor samples (81 PNGs), semantic-supported parked-vehicle visibility, zero collision, completed 110 m route and stopped ego. Selected CARLA application/validation wall time is 39.186744–41.130043 s. The first GPT simple-scene process completed after the orchestration handle returned; its extra passing replay is preserved and registered rather than discarded or substituted.
+- Added `scripts/stage6_build_comparison.py`; `stage6_comparison.json` and `.csv` link every API attempt to execution evidence and leave cost explicitly uncalculated. Twenty focused Stage-6/Stage-3 checks and `py_compile` passed. The protocol run, provenance check and seven execution runs were finalized and all nine manifests rechecked locally (61, 7, then seven sets of 100 signed files). `.env` was confirmed ignored and untracked. CARLA was stopped.
+
+**Result:** the technical pilot satisfies the Stage-6 acceptance criteria locally: the three accessible variants followed one saved protocol, all first attempts are visible, scenes replayed from saved configurations without new API calls, and the comparison retains latency/usage/validation/execution evidence. It is intentionally one repeat only, does not infer provider cost, does not prove provider-enforced strict schemas, and does not validate animal behaviour or a statistical model ranking.
+
+**Next action:** make an external copy of `20260924T123036Z-api-fixed-protocol-884ef7` plus the six selected passing CARLA runs, verify each copy with `scripts/verify_export.py`, then record destinations/check time in the artifact registry. Do not mark those records externally backed up before receiving the verification output.
+
+## 2026-09-24 12:59 UTC — Stage 6 External Copy Confirmed
+
+**Type:** user-reported external checksum verification; no VM-side data mutation.
+
+- The user ran `rsync -avP` from the Mac for the full `/home/Ubuntu/carlas_tasks/runs/` and `logs/` trees to `/Users/madness/Science/CARLA/runs_1/` and `logs_1/`.
+- They then supplied Mac-terminal output for `rsync -nrc --itemize-changes` over both source/destination pairs. Both comparisons returned no itemized differences. This is direct checksum-mode evidence reported by the user, not an agent-operated Mac check.
+- Updated the nine new Stage-6 pilot registry rows with their actual Mac locations and `backup_status=verified`. No source artifact, model response, API key or VM resource was changed.
+
+**Result:** the Stage-6 technical pilot and its selected external preservation requirement are complete. The next independent stage is the moving-animal asset decision/validation.
+
+## 2026-09-24 13:13 UTC — Stage 7 Initial Animal-Asset Audit
+
+**Type:** local package inspection and source review; no CARLA server, image modification, asset download, LLM call, or scene change.
+
+- Confirmed that no CARLA container is running and that the locally installed server image remains `carlasim/carla:0.9.16@sha256:aaf1df22702780ece072069e23d03c4879b002ae028c79744b09c4c7ddbae953`.
+- Used a temporary Docker container with `--rm --network none` to inspect `/workspace/CarlaUE4/Content` by filename. Its animal-name search found `DogHouse` assets only; Blueprint roots did not contain an Animal directory. This supplements, but does not replace, the prior live blueprint-catalogue observation of 214 IDs with zero animal candidates. It does not prove that every arbitrarily named hidden mesh is absent.
+- Read the official 0.9.16 prop-authoring procedure. A raw external mesh must be imported through the Unreal Editor, registered, and included in a newly made CARLA package. That path violates U02, so an FBX/GLB download is not a valid runtime-only solution.
+- Investigated one possible cooked boar pack only at its public source. It declares itself an untagged pre-release and pins its content pack to exact CARLA 0.9.15. It supplies no 0.9.16 compatibility evidence, so it was not downloaded, installed, or used as a candidate.
+
+**Result:** Stage 7 is `IN_PROGRESS`, with the exact blocker narrowed to a licence-clear prebuilt animal package/blueprint that explicitly supports CARLA 0.9.16. No animal scenario has been created and Stage-7 acceptance is not met.
+
+**Next action:** continue source discovery without changing the image; only then run the isolated spawn, RGB, semantic, height and collision probe. If no exact-version package exists, request a user decision about relaxing the runtime-only constraint or retain item 4 as an explicit limitation.
+
+## 2026-09-24 13:24 UTC — Stage 7 AnimaSim Source Verification
+
+**Type:** public-source and local read-only installation-path verification; no asset archive download, image mutation, CARLA server, scene change, or LLM call.
+
+- Verified Git refs for `danwahl/animasim`: tag `v0.2.1` resolves to the current public commit. The release API lists `animasim-carla-0.2.1.tar.gz`, 243,116,126 bytes, with SHA-256 `4462ef4099a7057764c7d9fdf5788efdf0ddd6daad156e55440c55a8a834e071`; the author's release text explicitly calls it a cooked standalone CARLA 0.9.16 package.
+- Read the versioned CARLA README, manifest and `spawn_deer.py`. They declare twelve `static.prop.<animal>` blueprints, including `static.prop.deer`. The objects are unanimated static meshes tagged `Dynamic`; there is no dedicated Animal semantic class. The README distinguishes author-side cooking from consumer-side import and says consumers use `ImportAssets.sh` with a stock 0.9.16 build.
+- Confirmed inside a temporary `--rm --network none` instance of the pinned Docker image that `/workspace/ImportAssets.sh` and `/workspace/Import/` exist. The script only enumerates `Import/*.tar.gz` and extracts them; this supports a derived-image test that leaves the official base image unchanged.
+- Confirmed the AnimaSim repository code licence is MIT and the declared Quaternius source-model page marks the Ultimate Animated Animal Pack CC0. The archive contents and attribution files still require local inspection after download.
+
+**Result:** AnimaSim is a plausible, exact-version, prebuilt Stage-7 candidate and removes the earlier source-availability blocker. It is not yet validated in this project: do not claim import success, blueprint availability, visual quality, semantic pixels, collision, Traffic Manager response, or motion until the isolated probe completes.
+
+**Next action:** on user approval, download only the pinned release archive into a temporary staging directory, verify its published SHA-256 and contents, build a separate derived CARLA image, and run `static.prop.deer` through the minimal spawn → RGB → raw-semantic → height/bounding-box → collision test.
+
+## 2026-09-24 13:55 UTC — Stage 7 AnimaSim Runtime Validation
+
+**Type:** derived-image CARLA API probe; no Unreal Editor/build and no LLM call.
+
+- Downloaded the public AnimaSim v0.2.1 archive into an isolated temporary directory. Its 243,116,126 bytes and SHA-256 exactly matched the release (`4462ef4099a7057764c7d9fdf5788efdf0ddd6daad156e55440c55a8a834e071`). Archive contents included the cooked AnimaSim package and deer assets.
+- Built local derived image `carlasim/carla:0.9.16-animasim-v0.2.1` (`sha256:2d6fb34a8e78b159b225ff206473854f040c3e8612dba3c6e22ae85d52f5b9b9`) using only `/workspace/ImportAssets.sh`. Labels retain the pinned base digest and the archive hash; the base image was not changed. The live 0.9.16 blueprint library exposed all 12 documented imported animal IDs, including `static.prop.deer`.
+- Added `configs/stage7_animasim_probe.json` and `scripts/stage7_animal_probe.py`. They limit this pre-LLM probe to Town01_Opt route 1, clear weather and one front-centre RGB/semantic pair, preserve raw semantic IDs, persist route-relative actor commands/snapshots, and enforce grounded height, full endpoint reach, per-tick movement bound and collision trace.
+- Retained three finalized diagnostics: actor API `semantic_tags` was empty for the imported prop (`20260924T133953Z-animasim-deer-front-probe-dbb71d`); the next run initially used class 20 before direct enum inspection identified CARLA `Dynamic=21` (`20260924T134221Z-animasim-deer-front-probe-retry-65ee88`); the corrected eight-sample run had not reached the 12 m endpoint (`20260924T134700Z-animasim-deer-front-probe-dynamic21-d324b4`). They are registered rather than overwritten.
+- The grounded accepted run `20260924T135331Z-animasim-deer-front-probe-grounded-d91894` passed all checks. It recorded 14 aligned 2 Hz RGB/raw-ID/preview pairs. `static.prop.deer` was visually reviewed in RGB and preview, gained 1,187–1,544 raw Dynamic=21 pixels above baseline, had bbox-min/ground difference 0.0 m, and completed the 12 m trajectory at 2 m/s with 139 0.05 s commands, maximum 0.100006 m requested step and 0.0000076 m endpoint error. A deliberately driven ego collision sensor recorded `static.prop.deer`; no Traffic Manager response was tested. CARLA client/server were 0.9.16. The 55-file manifest passed a local source-to-source hash check; output is 38,025,444 bytes and local-only.
+- Updated `scripts/stop_carla.sh` so the expected image is supplied by `CARLA_IMAGE`, retaining its refusal to stop a differently imaged container. Both derived-image servers were stopped successfully after their probes.
+
+**Result:** the asset feasibility gate is complete. AnimaSim deer is now the only verified Stage-7 animal capability, with explicitly kinematic (unanimated) motion and direct collision geometry. Stage 7 remains `IN_PROGRESS`: its SceneSpec/executor extension and common GPT/Qwen protocol are not yet implemented.
+
+**Next action:** add only deer type, route-relative trajectory, speed and start-time fields to the strict SceneSpec; then use identical model requests and test the accepted specifications before starting Stage 8 full-rig drives.
+
+## 2026-09-24 14:08 UTC — Stage 7 Strict SceneSpec and Three-Model Replay
+
+**Type:** bounded API protocol plus saved-provenance CARLA replays; no model code execution.
+
+- Added `configs/stage7_scene_editing.json`, `scripts/stage7_scene_spec.py` and a fixture. Version 1.1 is a separate strict extension and leaves Stage-6 v1.0 untouched. It accepts only the measured deer, 32 m route anchor, named +6 m to -6 m lateral crossing, 2 m/s and 0 s start; only an integer seed varies. It rejects direct coordinates, asset IDs, code, controllers, animation and traffic reaction fields. `scripts/stage7_animal_probe.py` can apply a separately validated SceneSpec and records its digest/provenance; it never executes response text.
+- Added fixed protocol `configs/stage7_api_protocol.json` and `scripts/stage7_api_adapter.py`. Run `20260924T140505Z-api-verified-deer-crossing-e6313d` made exactly three first-attempt JSON-mode calls: OpenAI `gpt-6-astra`, DashScope `qwen3.8-27b` and `qwen3-8b`. All HTTP responses and strict task checks passed. API latencies were 7.506985, 3.334434 and 6.004154 s; usage was retained but price deliberately was not calculated. The resulting SceneSpecs were identical outside seed (GPT 1; both Qwen 42).
+- Replayed each saved passed SceneSpec in the derived AnimaSim image: `20260924T140639Z-api-gpt-deer-crossing-9284ba`, `...-api-qwen27-deer-crossing-4146e3` and `...-api-qwen8-deer-crossing-9490d8`. All three passed grounded spawn, 14 aligned front-centre RGB/raw-ID/preview observations, Dynamic semantic effect, bounded complete trajectory and direct collision checks. Dynamic=21 delta ranges were 1,187–1,544; 1,194–1,543; and 1,185–1,544 pixels respectively. RGB and semantic preview from the GPT replay were visually reviewed.
+- Added `scripts/stage7_build_comparison.py`; its `stage7_comparison.json` binds API timing/usage/response digest to replay metrics and declares scope/limitations. All four final manifests passed local source-to-source verification (24 entries for API, 58 each execution). The three replays and API record are registered as local-only artifacts. CARLA was stopped.
+
+**Result:** Stage 7 is `DONE`. The project has a real, licence-traced animal and a safe LLM-to-CARLA path for only the measured capability. This does not demonstrate leg animation, full-rig edited recordings, Traffic Manager braking or an open-ended model-quality comparison.
+
+**Next action:** Stage 8 should replay the saved animal SceneSpec on the selected equivalent routes/weather with the existing full nine-position RGB/semantic rig, then compare against the baseline matrix.
+
+## 2026-09-24 14:40 UTC — Stage 7 Completion and Backup Confirmation
+
+**Type:** project-state closure; no CARLA, API, asset, or VM operation.
+
+- The user confirmed that a Stage-7 backup was made and requested completion to be recorded before committing and pushing the implementation.
+- Retained Stage 7 as `DONE`: its acceptance was already artifact-confirmed by the grounded AnimaSim probe, constrained three-model protocol, and saved-provenance replays.
+- Marked the nine Stage-7 registry entries `backup_status=user_reported`. No external destination, transfer output, or manifest comparison was supplied, so no entry is called `verified` and `external_location` remains unrecorded.
+
+**Result:** Stage 7 is formally closed with user-reported external preservation and artifact-confirmed local manifest validation. The next independent task remains Stage 8 full 18-sensor edited drives and comparison to matching baseline cells.
+
 ## Template for the Next Entry
 
 ```text

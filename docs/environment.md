@@ -39,6 +39,12 @@ The VRAM figure is from a small test run; it cannot estimate 18 full-resolution 
 - **artifact-confirmed:** Python 3.10.12 client environment at `.venv`, with `carla==0.9.16`. Installing `python3.10-venv` was required because the original OS image lacked `ensurepip`.
 - **artifact-confirmed:** run `20260916T210617Z-carla-smoke-beb230` connected to CARLA, recorded matching client/server 0.9.16 versions, saved an 800×600 RGB PNG, and passed its local manifest check. Its default map was `Carla/Maps/Town10HD_Opt`; no Town01 operation was performed.
 
+## 2026-09-23 New-VM Recovery Check
+
+**Artifact-confirmed on the replacement VM:** Ubuntu 22.04.5, kernel 6.8.0-90-generic, RTX A6000 with driver 580.126.09 and 49,140 MiB VRAM, NVIDIA Container Toolkit 1.18.1, Docker 29.1.5 via passwordless `sudo`, 94 GiB RAM, and 266 GiB free before the image pull (246 GiB afterwards). The existing `.venv` lacked `pip`; `scripts/setup.sh` failed first with missing `ensurepip`. Installing `python3.10-venv` with apt also upgraded the Ubuntu Python 3.10 packages. A second `scripts/setup.sh` run succeeded: Python 3.10.12 and `carla==0.9.16` import correctly.
+
+`sudo docker pull carlasim/carla:0.9.16` yielded digest `sha256:aaf1df22702780ece072069e23d03c4879b002ae028c79744b09c4c7ddbae953` and image ID `sha256:98d224668ad013627b63b9c42d4fa5f87c4f5d267f6e10a647788e39b48983b5`. `scripts/run_carla.sh` opened the server at `127.0.0.1:2000`. Temporary smoke run `/tmp/carla-recovery-runs/20260923T113354Z-new-vm-recovery-3f3dcb/` captured an 800×600 RGB PNG on `Carla/Maps/Town10HD_Opt`; client/server both reported 0.9.16. All three manifest entries passed local hash verification. The frame has not been visually reviewed, and the temporary run has no external backup. `scripts/stop_carla.sh` stopped the test container; `docker ps -a` then showed no containers. Historical run restoration from the Mac remains unverified.
+
 ## Selected Execution Model
 
 - CARLA Server: Docker on the GPU VM, offscreen rendering.

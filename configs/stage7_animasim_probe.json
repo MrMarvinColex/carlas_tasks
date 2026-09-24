@@ -1,0 +1,68 @@
+{
+  "schema_version": 1,
+  "description": "Minimal Stage-7 AnimaSim deer probe. This is deliberately a one-camera asset/motion validation, not an 18-camera dataset drive.",
+  "map_name": "Town01_Opt",
+  "approved_routes_run": "runs/20260923T160431Z-shorter-routes-b72a9d",
+  "route_id": "route_01_straight",
+  "scene_spec_config": "configs/stage7_scene_editing.json",
+  "weather_source_config": "configs/stage4_baseline_matrix.json",
+  "weather_id": "clear_day",
+  "base_image": {
+    "name": "carlasim/carla:0.9.16",
+    "digest": "sha256:aaf1df22702780ece072069e23d03c4879b002ae028c79744b09c4c7ddbae953"
+  },
+  "derived_image": "carlasim/carla:0.9.16-animasim-v0.2.1",
+  "asset": {
+    "name": "AnimaSim",
+    "version": "v0.2.1",
+    "release_url": "https://github.com/danwahl/animasim/releases/download/v0.2.1/animasim-carla-0.2.1.tar.gz",
+    "archive_bytes": 243116126,
+    "archive_sha256": "4462ef4099a7057764c7d9fdf5788efdf0ddd6daad156e55440c55a8a834e071",
+    "blueprint_id": "static.prop.deer",
+    "expected_semantic_class_id": 21,
+    "expected_animal_blueprints": [
+      "static.prop.alpaca",
+      "static.prop.bull",
+      "static.prop.cow",
+      "static.prop.deer",
+      "static.prop.donkey",
+      "static.prop.fox",
+      "static.prop.horse",
+      "static.prop.horse_white",
+      "static.prop.husky",
+      "static.prop.shibainu",
+      "static.prop.stag",
+      "static.prop.wolf"
+    ],
+    "licence": {
+      "animasim_code": "MIT",
+      "source_models": "Quaternius Ultimate Animated Animal Pack, CC0",
+      "attribution_source": "https://quaternius.com/packs/ultimateanimatedanimals.html"
+    }
+  },
+  "camera": {
+    "calibration": "configs/av2/54bc6dbc-ebfb-3fba-b5b3-57f88b4b79ca/calibration.json",
+    "name": "ring_front_center",
+    "mount_z_offset_m": 0.5,
+    "sensor_tick_seconds": 0.5,
+    "warmup_seconds": 1.0,
+    "motion_sample_count": 14
+  },
+  "motion": {
+    "fixed_delta_seconds": 0.05,
+    "anchor_progress_m": 32.0,
+    "start_lateral_offset_m": 6.0,
+    "end_lateral_offset_m": -6.0,
+    "speed_mps": 2.0,
+    "spawn_z_offset_m": 0.0,
+    "maximum_step_multiplier": 1.25,
+    "minimum_total_motion_m": 4.0
+  },
+  "collision_probe": {
+    "anchor_progress_m": 12.0,
+    "lateral_offset_m": 0.0,
+    "throttle": 0.3,
+    "maximum_simulation_seconds": 8.0
+  },
+  "ego_blueprint": "vehicle.tesla.model3"
+}

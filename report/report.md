@@ -1,6 +1,6 @@
 # Using LLMs to Edit CARLA Scenes
 
-**Working report. Status: Stages 1–2 are completed; cameras, recording, LLM, animal, and comparison experiments remain.**
+**Working report. Status: Stages 1–7 are completed. The Stage-3 rig passed local validation and has a user-confirmed off-VM copy; the Stage-4 matrix and selected Stage-6 evidence have user-reported checksum-verified Mac copies. A Stage-7 external backup is user-reported, but its destination and checksum evidence were not supplied. Full-rig edited repeated drives remain.**
 
 Document start date: 16 September 2026. Target deadline: 21 September 2026 in the current context; the source PDF specifies only day and month, without a year. Author/executor: complete before submission.
 
@@ -10,7 +10,7 @@ Recording rule: distinguish planned methods from completed experiments. For ever
 
 The assignment requires controlling CARLA through Python, recording five routes using cameras placed as in Argoverse 2, and studying natural-language scene editing with several LLMs. Per the user’s clarification, changes are limited to CARLA runtime capabilities and models are called through APIs. The selected rig has nine positions and two sensor types per position, recorded at 2 Hz of simulation time. Ego-vehicle poses are stored separately.
 
-The user reported a successful CARLA 0.9.16 offscreen test on the GPU VM. Stage 1 subsequently verified Town01 loading, basic World/Actor/Blueprint operations, rendered weather changes, and the exposed map/object catalogues. Base Town01 direct RoadLines hiding was semantic-only, but the installed `Town01_Opt` passed paired RGB/raw-semantic checks at a straight road, intersection, and traffic-control location using direct RoadLines hiding; sampled navigation remained available. Stage 2 constructed five connected approved routes, saved their geometry and DebugHelper views, then drove all five with a spawned Traffic Manager vehicle under explicit completion and safety checks. Camera recording and all later research outcomes remain unconfirmed.
+The user reported a successful CARLA 0.9.16 offscreen test on the GPU VM. Stage 1 subsequently verified Town01 loading, basic World/Actor/Blueprint operations, rendered weather changes, and the exposed map/object catalogues. Base Town01 direct RoadLines hiding was semantic-only, but the installed `Town01_Opt` passed paired RGB/raw-semantic checks at a straight road, intersection, and traffic-control location using direct RoadLines hiding; sampled navigation remained available. Stage 2 constructed five connected approved routes, saved their geometry and DebugHelper views, then drove all five with a spawned Traffic Manager vehicle under explicit completion and safety checks. Stage 3 selected a real AV2 calibration and locally validated all 18 camera streams with same-frame ego poses at 2 Hz. The user confirmed an off-VM copy of the completed rig run exists; its external checksum output was not supplied in this session. All later research outcomes remain unconfirmed.
 
 After experiments, replace this section with a short abstract of the actual results, data volume, and limitations.
 
@@ -30,6 +30,8 @@ After experiments, replace this section with a short abstract of the actual resu
 | Launch command | `bash scripts/run_carla.sh` (same-VM smoke verified; see `docs/runbook.md`) |
 | Code / commit | Run began from `0e52c6a8ef7cb4bbb6116c6c40a72e772a7b6a1d`; reproducible stage-0 implementation was subsequently preserved at `ce26b8e`, now in private branch `Dev` after the branch rename |
 | Verification run | `20260916T210617Z-carla-smoke-beb230`; verified Mac copy and manifest check at 2026-09-16 21:19 UTC |
+
+**Replacement-VM check (2026-09-23):** the pinned Python client and exact image digest were reinstalled on a newly rented VM. A temporary offscreen smoke run `20260923T113354Z-new-vm-recovery-3f3dcb` returned one 800×600 RGB frame with client/server 0.9.16, and its three manifest entries passed local hash verification. The frame was not visually reviewed, and previous experiments have not yet been verified after transfer from the Mac. This is environment recovery evidence only, not a new Town01 or 18-camera result. See `docs/environment.md` and `docs/worklog.md`.
 
 ### 1.2. Basic Use
 
@@ -65,45 +67,58 @@ Describe discretisation resolution, route provenance, and visualisation of the c
 
 | Route | Adaptive waypoint count | Length, m | Start/finish | Provenance | File/run |
 |---|---|---|---|---|---|
-| `route_01_straight` | 23 | 220.061 | (92.405, 227.220) → (92.367, 7.159) | Approved adaptive subset; 111-point connected 2 m reference | `routes/route_01_straight.json`, run `20260919T062007Z-route-revision-ca00ee` |
-| `route_02_left` | 44 | 253.109 | (130.365, -2.047) → (-2.041, 123.409) | Approved adaptive subset; 126-point connected 2 m reference | `routes/route_02_left.json`, same run |
-| `route_03_right` | 45 | 246.838 | (334.773, 210.670) → (200.928, 326.600) | Approved adaptive subset; 126-point connected 2 m reference | `routes/route_03_right.json`, same run |
-| `route_04_four_turns` | 119 | 508.150 | (396.368, 19.923) → (88.399, 192.263) | Approved adaptive subset; 252-point connected 2 m reference | `routes/route_04_four_turns.json`, same run |
-| `route_05_bridge_then_turn` | 101 | 495.316 | (301.340, 330.610) → (334.889, 18.076) | Approved adaptive subset; 244-point connected 2 m reference | `routes/route_05_bridge_then_turn.json`, same run |
+| `route_01_straight` | 12 | 110.000 | (92.396, 171.220) → (92.379, 61.220) | Middle-half crop; 56-point connected 2 m reference | `routes/route_01_straight.json`, run `20260923T160431Z-shorter-routes-b72a9d` |
+| `route_02_left` | 32 | 125.106 | (66.364, -2.038) → (-2.049, 59.407) | Middle-half crop retaining one left turn; 62-point reference | `routes/route_02_left.json`, same run |
+| `route_03_right` | 32 | 122.838 | (334.735, 272.670) → (262.928, 326.607) | Middle-half crop retaining one right turn; 64-point reference | `routes/route_03_right.json`, same run |
+| `route_04_turn_then_bridge` | 44 | 251.108 | (369.340, 330.610) → (396.291, 101.661) | One left turn then complete original bridge crossing; 125-point reference | `routes/route_04_turn_then_bridge.json`, same run |
+| `route_05_two_turns` | 60 | 225.939 | (372.484, -1.986) → (270.760, 129.491) | Original middle left/right pair; 114-point reference | `routes/route_05_two_turns.json`, same run |
 
 **Superseded initial route-selection result:** after reapplying RoadLines hiding to 25 objects, the probe sampled all 3,266 values returned by `Map.generate_waypoints(2.0)`. A fixed selection seed (`20260917`) chose distinct native spawn anchors. Each of the 295 transitions was rechecked by confirming that the stored successor appeared in the predecessor's `next(2.0)` response. The run retains the full network sample, a route index, five complete route files, a clean map overview, and one temporary line-only DebugHelper overview per route. A controlled RGB comparison found that `draw_point`, not the map or RoadLines operation, had caused black texture occluders in the earlier preview; all waypoint points are now cleared before camera capture. This establishes only map-graph connectivity and visual route inspection; the run used no ego actor or Traffic Manager. Client/server version was 0.9.16; it began at `096d990` with the rendering correction uncommitted, which is recorded in its metadata.
 
-**Approved replacement set:** the user approved all five geometries on 2026-09-19. Run `20260919T062007Z-route-revision-ca00ee` preserves the approved first three dense waypoint identities, extends route 4 to four turns, and supplies route 5 with a complete outer automobile-bridge crossing followed by a turn. Adaptive counts are 23, 44, 45, 119, and 101; every corresponding dense 2 m edge passed direct-successor validation. This table supersedes the original five 60-point routes for subsequent implementation.
+**Current shortened set:** on 2026-09-23 the user requested reduced driving time and recording volume. The table shows contiguous crops of the previously approved, signed `20260919T154916Z-route-numbering-swap-b5e941` set. Original dense coordinates/identities are unchanged and 10/2 m adaptive spacing is preserved. All 416 retained dense edges passed CARLA direct-successor checks; all five new starts and drives passed. Earlier versions remain immutable historical evidence. The new bridge route turns before crossing; the fifth route retains two turns, so their descriptive IDs changed accordingly.
 
 ### 1.6. Traffic Manager Autopilot
 
 Describe vehicle spawning, path assignment, TM settings, completion criterion, timeout, and stuck-vehicle handling. Attach actual trajectories for five drives and deviations from routes.
 
-**Result:** completed on `Carla/Maps/Town01_Opt` in run `20260919T065802Z-tm-autopilot-approved-routes-106f97`. One Tesla Model 3 was spawned at each stored route start after RoadLines hiding was reapplied; world and Traffic Manager used a 0.05 s synchronous step. The initial adaptive and dense `set_path` trials were accepted but departed route 1 after 94 m at a later branch, so both are retained as incomplete diagnostics. The final method submitted derived `set_route` junction instructions (`Left`/`Right`/`Straight`) and projected every sampled vehicle pose onto the preserved 2 m reference chain.
+**Current result:** all five shorter routes passed in `20260923T160409Z-shorter-routes-autopilot-b8548d`. The same Tesla/controller, fixed 0.05 s step and TM seed as the historical comparison were used, without cameras. Maximum deviations were 0.996–1.246 m; collisions were zero; all post-finish stops passed. Every retained turn was traversed and the complete bridge exit was reached before braking.
+
+| Route | Old driving simulation time, s | Shortened driving simulation time, s |
+|---|---:|---:|
+| 1, straight | 30.35 | 16.05 |
+| 2, left | 23.65 | 12.70 |
+| 3, right | 28.10 | 15.35 |
+| 4, bridge | 41.45 | 14.90 |
+| 5, two turns | 63.15 | 29.85 |
+| Total | 186.70 | 88.85 |
+
+These times run from the initial vehicle snapshot to route completion, excluding the subsequent 3 s braking and 1 s stopped observation. The 52.41% time reduction supports an expected reduction in 2 Hz image volume; new recorded image sizes and recorder wall times remain unmeasured. Evidence: `duration_comparison.json` in the current drive run.
+
+**Historical longer-route result:** completed on `Carla/Maps/Town01_Opt` in run `20260919T154938Z-tm-autopilot-renumbered-routes-aac495`. One Tesla Model 3 was spawned at each stored route start after RoadLines hiding was reapplied; world and Traffic Manager used a 0.05 s synchronous step. The initial adaptive and dense `set_path` trials were accepted but departed route 1 after 94 m at a later branch, so both are retained as incomplete diagnostics. The final method submitted derived `set_route` junction instructions (`Left`/`Right`/`Straight`) and projected every sampled vehicle pose onto the preserved 2 m reference chain.
 
 | Route | Outcome | Finish distance, m | Maximum deviation, m | Collisions |
 |---|---:|---:|---:|---:|
 | `route_01_straight` | Completed | 7.885 | 0.997 | 0 |
 | `route_02_left` | Completed | 7.199 | 1.204 | 0 |
 | `route_03_right` | Completed | 7.935 | 0.999 | 0 |
-| `route_04_four_turns` | Completed | 7.923 | 1.247 | 0 |
-| `route_05_bridge_then_turn` | Completed | 7.706 | 1.232 | 0 |
+| `route_04_bridge_then_turn` | Completed | 7.706 | 1.232 | 0 |
+| `route_05_four_turns` | Completed | 7.923 | 1.247 | 0 |
 
 The criterion was finish distance ≤8 m plus ≥95% reference progress; each route also passed timeout, stuck, deviation (≤15 m), and post-finish-stop checks. This is a CARLA Traffic Manager navigation test, not an evaluation of learned visual perception. No cameras or dataset frames were recorded in this stage.
 
 ### 1.7. Camera and Transform Recording at 2 Hz
 
-Plan: synchronous simulation, cameras with a 0.5 s period, and frame-ID matching to the ego pose from the same snapshot. Both simulation and wall-clock time are recorded separately. A complete `transforms.json` is written at the end of a drive.
+The implemented recorder uses a synchronous 0.05 s world step and Traffic Manager, with all cameras set to a 0.5 s sensor period. Callbacks are grouped by CARLA frame ID and accepted only when every expected sensor is present and the timestamp matches the ego `ActorSnapshot` from that frame's `WorldSnapshot`. Complete warm-up frames are discarded explicitly. GPU callback delay therefore cannot pair an image with a later `vehicle.get_transform()` call. A partial transform document is updated after each accepted sample; final `transforms.json` is written only after the requested capture completes.
 
-Describe the actual world step, phase/warm-up, semantic-ID encoding, handling of camera delay, capture window, omissions, and recovery after interruption.
+RGB is saved losslessly as PNG. The semantic camera's raw R-channel class ID is written unchanged to an 8-bit grayscale PNG, while a separate CityScapes-palette PNG is a human-readable preview. The validator checks JSON, unique frames, timing, camera sets, file paths, PNG signatures/chunk CRCs/decompression, dimensions, raw encoding, and ego-body pixels. It also creates contact sheets for visual review.
 
 | Check | Measurement | Artifact |
 |---|---|---|
-| Simulation-timestamp interval | Not measured | — |
-| Completeness of 18 frames per timestamp | Not measured | — |
-| Ego-pose/frame alignment | Not checked | — |
-| Drops/duplicates | Not measured | — |
-| JSON/images are readable | Not checked | — |
+| Simulation-timestamp interval | 0.5000000 s within 0.0001 s tolerance; four samples | `20260919T162408Z-av2-all-cameras-short-247e3f/validation.json` |
+| Completeness of 18 frames per timestamp | 4/4 complete; 72 required RGB/raw-ID images | Same validation |
+| Ego-pose/frame alignment | All sensor timestamps equal the same-frame snapshot timestamp | Same validation |
+| Drops/duplicates | 0 missing, 0 duplicate keys, 0 late events after stop | `capture_summary.json` |
+| JSON/images are readable | `transforms.json` parsed; all 108 PNGs including previews decoded and CRC-checked | Same validation |
 
 ### 1.8. Argoverse 2 Cameras
 
@@ -111,14 +126,14 @@ Nine viewpoints: `ring_front_center`, `ring_front_left`, `ring_front_right`, `ri
 
 | Item | Actual selection |
 |---|---|
-| AV2 log ID / calibration source | Not selected |
-| CARLA vehicle | Not selected |
-| Ego-origin transform | Not calculated |
-| Extrinsics for nine cameras | Not applied |
-| Intrinsics / FOV / resolutions | Not configured |
-| Verification of all views | Not completed |
+| AV2 log ID / calibration source | Sensor log `54bc6dbc-ebfb-3fba-b5b3-57f88b4b79ca`; official public S3 Feather files with preserved SHA-256 |
+| CARLA vehicle | `vehicle.tesla.model3` |
+| Ego-origin transform | AV2 rear-axle centre aligned to the CARLA rear-wheel midpoint after the first synchronous tick; AV2 y-left converted to CARLA y-right |
+| Extrinsics for nine cameras | Quaternion rotations converted through explicit ego/optical bases; uniform `+0.5 m` local-z clearance adaptation declared |
+| Intrinsics / FOV / resolutions | AV2 width/height and horizontal FOV from `fx`; front-centre 1550×2048, other eight 2048×1550 |
+| Verification of all views | Numerical rotation/body checks plus RGB and semantic contact-sheet review passed |
 
-After implementation, attach the source and applied calibration, axis/unit definition, rotation conversion, numerical checks, and a contact sheet of all nine views. List optical-model differences if exact equivalence cannot be achieved.
+CARLA 0.9.16 cannot set the small AV2 principal-point offsets or reproduce the full `k1/k2/k3` model, so distortion was disabled and exact optical equivalence is not claimed. Exact rear-axle placement exposed the Tesla hood; a retained failed pilot demonstrates this, and the declared 0.5 m height adaptation removes the body from every validated view. Raw source, applied transforms, numerical checks, and projection limits are in the run's `calibration.json`.
 
 ### 1.9. Baseline Drives and Weather
 
@@ -126,17 +141,38 @@ Record the route × weather × repeat matrix, seeds, and actual weather settings
 
 Explain the limits of seasonality: changing rain, clouds, and sun is not a full seasonal change. State the measured number of drives, duration, size, recording speed, resource usage, and validator result.
 
-**Result:** dataset not created.
+**Completed Stage-4 matrix:** the fixed matrix is five shortened routes × `clear_day`/`wet_cloudy_day` × one repeat. All ten cells completed with zero collision, stopped ego vehicle, maximum route deviation 1.246 m (limit 15 m), and passed the drive, dataset, timing, raw-semantic, PNG-integrity and ego-body checks. Contact sheets were generated for every cell; representative clear and wet RGB/semantic sheets were visually reviewed.
+
+| Route | Clear-day samples | Wet-cloudy-day samples | Accepted simulation span, s |
+|---|---:|---:|---:|
+| `route_01_straight` | 31 | 30 | 15.0 / 14.5 |
+| `route_02_left` | 24 | 24 | 11.5 / 11.5 |
+| `route_03_right` | 29 | 29 | 14.0 / 14.0 |
+| `route_04_turn_then_bridge` | 28 | 28 | 13.5 / 13.5 |
+| `route_05_two_turns` | 58 | 58 | 28.5 / 28.5 |
+
+The accepted dataset has 339 aligned 2 Hz poses, 3,051 RGB, 3,051 raw 8-bit semantic-ID and 3,051 CityScapes-palette PNGs (9,153 PNGs total). It spans 164.500 s of accepted simulation time. Recording consumed 1,076.278 wall seconds, including 24.292 s explicit bounded-writer backpressure. The final ten run directories occupy 12,904,099,739 bytes; their 9,303 manifest entries were rechecked locally. An earlier user-stopped long-route pilot and one batch-interrupted partial retry remain retained as incomplete artifacts, rather than being counted as matrix cells.
+
+The user ran checksum-mode `rsync -nrc --itemize-changes` for both `runs/` and `logs/` from the VM to `/Users/madness/Science/CARLA/runs_1/` and `logs_1/` on the Mac. Both commands had no difference output. This is user-reported terminal evidence that the external copies match the VM source byte-for-byte; it satisfies the preservation requirement while remaining distinct from an agent-operated Mac-side check.
+
+**Route-source update (2026-09-23):** the matrix now selects the shorter, drive-validated revision above, with `route_05_two_turns` as its pilot. The 120 s benchmark used the historical long-route source and remains a throughput measurement. A full camera recording on the shorter routes is the next experiment.
 
 ## 2. Review of Publications and Repositories
 
-**Status:** the research review has not yet been completed. The initial technical links in `docs/knowledge.md` do not replace a method review.
+**Status:** completed on 24 September 2026 from the primary publications and author repositories below. The source code was inspected but not executed; reported metrics remain author-reported rather than independently reproduced.
 
-| Paper/repository | Year/version | LLM role | What changes | CARLA/code | Limitations | Applicability |
-|---|---|---|---|---|---|---|
-| Complete from primary sources | — | — | — | — | — | — |
+| Work | Method and LLM role | CARLA/code | Main evidence and limitation | Use in this project |
+|---|---|---|---|---|
+| [ScenarioGen](https://cse.buffalo.edu/tech-reports/2026-22.pdf) / [repository](https://github.com/harshit88a/scenario-gen) | Text is converted to a constrained JSON scenario, structurally validated, and passed to a fixed CARLA runner. | CARLA 0.9.15; author code; repository licence not confirmed. | The report gives three qualitative CARLA examples and reports over 90% first-attempt structural validity on about 50 prompts. This does not measure geometric correctness or repeatability. | Closest architectural analogue for separating the LLM, data specification, validator, and executor. Its local fine-tuned model is outside this project's API-only constraint. |
+| [TTSG](https://arxiv.org/abs/2409.09575) / [repository](https://github.com/basiclab/TTSG) | Multiple LLM steps extract actors and road constraints, rank existing road segments, and produce an actor plan for runtime execution. | Tested with CARLA 0.9.15; author code; licence status not confirmed from a licence file. | On ten prompts, the authors report scene accuracy increasing from 0.560 to 0.800 with road ranking. The implementation selects its own map/road and uses `eval()` on model output before validation. | Supplies the useful idea of grounding spatial requests against map geometry. This project must restrict grounding to five existing `Town01_Opt` routes and parse data safely. |
+| [TrafficComposer](https://arxiv.org/abs/2505.14881) / [repository](https://github.com/TrafficComposer/TrafficComposer) | Text and a reference image are converted into a traffic intermediate representation (IR); the LLM handles the textual part. | CARLA and LGSVL are evaluation targets; the repository exposes the IR pipeline, but not a complete reproducible CARLA conversion path; licence not confirmed. | The reported 97.0 ± 1.2% result is similarity to manually annotated IR, not successful CARLA scene execution. The visual pipeline adds models and an input not required here. | Supports using an explicit intermediate representation. A reference image is optional research context rather than a required Stage-6 input. |
+| [ChatScene](https://openaccess.thecvf.com/content/CVPR2024/papers/Zhang_ChatScene_Knowledge-Enabled_Safety-Critical_Scenario_Generation_for_Autonomous_Vehicles_CVPR_2024_paper.pdf) / [repository](https://github.com/javyduck/ChatScene) | An LLM and a knowledge base assemble Scenic programs; SafeBench/Scenic samples and optimizes runtime CARLA scenarios on fixed routes. | Repository instructions use CARLA 0.9.13 and include an MIT licence file. | The reported collision rate evaluates selected safety-critical scenes, not fidelity to arbitrary text. The repository documents manual changes to generated Scenic files. | Motivates reusable, route-aware scenario primitives, but generated executable Scenic code does not satisfy the project's restricted-executor boundary. |
 
-Compare runtime scenarios, geometry editing, and image post-processing. For nearby but non-identical tasks, state the distinction explicitly. The section’s conclusion should justify the project architecture.
+All four selected works change actors, weather, placement, or behaviour in a running simulator using existing maps and assets. Methods that author new Unreal geometry and methods that alter only rendered pixels address different tasks: neither establishes a reproducible physical scene under the CARLA Python API. None of the four is a drop-in solution for CARLA 0.9.16, `Town01_Opt`, the fixed five routes, or the validated 18-sensor rig.
+
+The review therefore supports a deliberately small architecture for this test assignment. An API model returns a versioned `SceneSpec` containing only supported objects, spatial anchors, parameters, and actions. A deterministic validator checks schema, numeric ranges, blueprint availability, route/map compatibility, and spatial feasibility. A fixed executor maps accepted fields to previously tested CARLA calls, and post-application checks verify the actual actors, positions, visibility, and requested event. The request, raw response, parsed specification, resolved transforms/blueprints, seeds, outcome, and timing are saved so the accepted scene can be replayed without another model call.
+
+ScenarioGen provides the clearest separation of specification from execution; TTSG contributes geometry-aware grounding; TrafficComposer supports an explicit IR; and ChatScene demonstrates reusable scenario primitives on fixed routes. The project adopts these principles without copying their local-model, unsafe parsing, multimodal, or executable-DSL components. None of the reviewed systems creates a missing animal asset, so that remains a separate Stage-7 dependency.
 
 ## 3. Natural-Language Scene Editing
 
@@ -144,27 +180,42 @@ Compare runtime scenarios, geometry editing, and image post-processing. For near
 
 The user request and description of available capabilities are sent to an LLM API. The model returns a structured scene description. A validator checks syntax, parameters, and action feasibility; an executor then applies permitted CARLA operations. A saved configuration can replay the scene without another model call.
 
-This is a project design. Concrete components, SceneSpec version, refusal handling, and scene reset are recorded after implementation. Arbitrary code from a model response is never executed.
+**Pre-API implementation result (24 September 2026):** `SceneSpec` v1.0 is implemented as strict passive JSON in `scripts/stage6_scene_spec.py`; the executor is `scripts/stage6_local_scene.py`. The initial protocol is intentionally narrow: `Town01_Opt`, the straight control route `route_01_straight`, `clear_day`/`wet_cloudy_day`, and one to three parked `vehicle.audi.a2` actors. The ego stays a Tesla Model 3. A specification contains only map/route/weather IDs, a seed, an allow-listed operation, blueprint ID and a route-progress anchor with side/offsets; it has no Python, Scenic or world-coordinate field. Duplicate keys, non-finite numbers, unsupported fields and malformed types are rejected. A separate `unsupported_capability` response records an impossible moving-animal request without pretending that an executor failure is a model success.
+
+The executor creates a clean world for every attempt, reapplies direct RoadLines hiding, checks the current map/route and blueprint library, calculates actual transforms, requires CARLA spawn feasibility, applies weather, saves before/after observer views, records three aligned 2 Hz samples from all 18 cameras, checks semantic-supported object visibility, then completes the simple 110 m Traffic Manager route. Arbitrary code from a model response is never executed. A saved `scene_spec.json` replays through this same path without an API call.
+
+`20260924T110210Z-local-straight-parked-vehicle-observer-fix-213a80` created one Audi in `wet_cloudy_day`; its three camera samples (81 PNGs) passed the existing validation and the route completed without collision (maximum deviation 0.999 m). Its fresh-world replay `20260924T110353Z-local-straight-replay-ad721d` reproduced the SceneSpec, blueprint and actual transform exactly, with the same visibility and route result. `20260924T110725Z-local-straight-composite-safe-af8031` repeated the check for two Audis in `clear_day`. These are local CARLA checks, not LLM experiments. The retained failed placements show why live feasibility validation is necessary: a right-side target remained on a driving lane and another left-side target intersected static map geometry.
 
 ### 3.2. Comparison Protocol
 
 | Parameter | Fixed selection |
 |---|---|
-| Model A / provider / ID | Target: GPT-Astra; access not verified |
-| Model B / provider / ID | Target: Qwen around 27B; access not verified |
-| Model C / provider / ID | Target: Qwen around 8B; access not verified |
-| API versions / regions | Not selected |
-| Prompt set / schema | Not written |
-| Repeats / retries / timeout | Not selected |
-| Metrics | Schema validity, execution, fulfilment, latency, errors; usage/cost where available |
+| Model A / provider / ID | OpenAI Responses / `gpt-6-astra` |
+| Model B / provider / ID | Alibaba Model Studio Singapore compatible chat / `qwen3.8-27b` |
+| Model C / provider / ID | Alibaba Model Studio Singapore compatible chat / `qwen3-8b` |
+| Prompt set / schema | Same constrained capability context; `simple_parked_audi`, `composite_two_parked_audis`, `unsupported_moving_animal`; JSON-object mode plus project-local strict parser/task matcher |
+| Repeats / retries / timeout | One repeat, zero automatic retries, 60 s timeout, maximum 256 output tokens; maximum nine API calls fixed before requests |
+| Metrics | First-attempt syntax/policy/task success, structured refusal, reported usage, API latency, local validation time, CARLA time, 18-camera validation, visibility and route result; price not calculated |
 
-Use equivalent scene context and tasks for all variants. Record the raw response, parsed specification, validation result, executor result, complete response latency, and model/provider settings. Separate first-attempt success from success after retries. Do not substitute a manually corrected successful scene for the actual model outcome.
+`scripts/stage6_api_adapter.py` preserves every sanitized request, raw response, extracted JSON, local validation and provider usage beneath the one protocol run. It does not execute model-produced code. A valid SceneSpec must also exactly match its requested map/route/weather/object count/anchors before the fixed executor can use it. An animal response is successful only when it is the prescribed `unsupported_capability` refusal. No manual correction or retry changed a model response.
+
+`20260924T123036Z-api-fixed-protocol-884ef7` completed all nine planned first attempts. Six accepted SceneSpecs were later replayed in fresh worlds through `scripts/stage6_local_scene.py` with saved API provenance; every one passed 18-camera validation, semantic-supported visibility and collision-free completion of the 110 m straight route. The three animal requests were never sent to CARLA because their correct result is refusal. The machine-readable source is `stage6_comparison.{json,csv}` in that run. Provider token usage is recorded, but price is not derived because no dated provider price was fetched.
 
 ### 3.3. Results Table
 
-| Model | Task/prompt ID | Attempts | Schema-valid | Executed | Request fulfilled | End-to-end latency | API latency | CARLA time | Artifact |
-|---|---|---:|---|---|---|---:|---:|---:|---|
-| Not run | — | — | — | — | — | — | — | — | — |
+| Model | Task/prompt ID | Attempts | Strict/task-valid | CARLA result | API latency | CARLA time | Usage (in/out/total) |
+|---|---|---:|---|---|---:|---:|---:|
+| OpenAI / `gpt-6-astra` | simple parked Audi | 1 | Yes | Passed; 18 cameras/visibility/route | 4.279 s | 39.187 s* | 351 / 101 / 452 |
+| OpenAI / `gpt-6-astra` | composite two Audis | 1 | Yes | Passed; 18 cameras/visibility/route | 6.909 s | 40.832 s | 356 / 151 / 507 |
+| OpenAI / `gpt-6-astra` | unsupported moving animal | 1 | Yes | Correct refusal; not applicable | 3.466 s | — | 333 / 57 / 390 |
+| DashScope / `qwen3.8-27b` | simple parked Audi | 1 | Yes | Passed; 18 cameras/visibility/route | 5.511 s | 41.130 s | 379 / 159 / 538 |
+| DashScope / `qwen3.8-27b` | composite two Audis | 1 | Yes | Passed; 18 cameras/visibility/route | 4.950 s | 40.217 s | 385 / 245 / 630 |
+| DashScope / `qwen3.8-27b` | unsupported moving animal | 1 | Yes | Correct refusal; not applicable | 5.328 s | — | 359 / 66 / 425 |
+| DashScope / `qwen3-8b` | simple parked Audi | 1 | Yes | Passed; 18 cameras/visibility/route | 5.103 s | 40.982 s | 371 / 95 / 466 |
+| DashScope / `qwen3-8b` | composite two Audis | 1 | Yes | Passed; 18 cameras/visibility/route | 4.953 s | 40.114 s | 377 / 144 / 521 |
+| DashScope / `qwen3-8b` | unsupported moving animal | 1 | Yes | Correct refusal; not applicable | 10.565 s | — | 351 / 38 / 389 |
+
+*The first GPT simple-scene process completed after the orchestration handle returned; its separate successful replay (40.727 s CARLA time) is retained in the comparison JSON rather than replacing the first execution. All costs are `not calculated`; the table is a one-repeat pilot, not a statistically sufficient ranking. The user later supplied Mac output from zero-difference checksum-mode `rsync` comparisons of the full VM `runs/` and `logs/` trees to `/Users/madness/Science/CARLA/runs_1/` and `logs_1/`; this is user-reported external verification of the selected Stage-6 artifacts.
 
 **Early capability result:** Town01's exposed blueprint catalogue contained 214 entries (41 vehicle, 52 walker, 19 sensor) and no name matching the project animal-candidate pattern. This does not prove that no compatible prebuilt animal package exists; mesh/asset spawning, visibility, motion, collision, and Traffic Manager response remain untested. Evidence: `20260917T110520Z-map-api-676d`.
 
@@ -174,7 +225,15 @@ The edited scene must contain an actual animal, visible on the cameras, whose pr
 
 Use the same request set for the animal’s appearance and motion across LLMs. Store its parameters and trajectory separately from the ego JSON. Add confirming frames/video and measurements.
 
-**Results and conclusions:** unavailable until experiments are conducted.
+**Initial asset audit (24 September 2026):** the pinned `carlasim/carla:0.9.16` Docker image was inspected without starting CARLA. The exposed blueprint catalogue had no animal candidate, and an additional read-only search of its packaged content found only `DogHouse` among animal-name candidates; no usable animal actor has been observed. This is not a proof that no arbitrarily named mesh exists. CARLA's 0.9.16 prop-authoring documentation requires Unreal Editor import and a new package for a raw external asset, which does not fit the runtime-only constraint. A located third-party cooked boar pack explicitly targets exact CARLA 0.9.15 and is an untagged pre-release, so it was neither downloaded nor treated as 0.9.16-compatible.
+
+**Runtime asset result (24 September 2026):** the AnimaSim v0.2.1 release archive matched its published 243,116,126-byte size and SHA-256 `4462ef4099a7057764c7d9fdf5788efdf0ddd6daad156e55440c55a8a834e071`. It was imported into a separate image (`sha256:2d6fb…f5b9b9`) derived from the pinned CARLA image; the base was unchanged. The live CARLA 0.9.16 blueprint library contained the advertised twelve static-animal props, including `static.prop.deer`.
+
+**Minimal grounded validation:** local run `20260924T135331Z-animasim-deer-front-probe-grounded-d91894` used Town01_Opt, the straight route, clear weather, and only front-centre AV2 RGB plus semantic sensors. That restricted rig is an asset/effect probe, not the 18-sensor dataset. The deer spawned at ground height (bbox minimum minus map ground: 0.0 m), was visually reviewed in RGB and semantic preview, and contributed 1,187–1,544 additional raw `Dynamic` (runtime ID 21) pixels over the no-animal baseline in all fourteen 2 Hz motion observations. Its 12 m lateral route-relative path ran at 2 m/s over 139 simulation-time commands; maximum command displacement was 0.100006 m per 0.05 s tick (limit 0.125 m), and endpoint error was 0.0000076 m. A collision sensor on a deliberately driven Tesla reported an impact with `static.prop.deer`. The 55-file manifest was locally rechecked. The user later confirmed an external Stage-7 backup, but did not provide its location or checksum comparison.
+
+The animal is a static mesh without skeletal animation, so this demonstrates bounded kinematic visual motion—not physical gait. CARLA exposed no `Actor.semantic_tags` for the imported prop; the semantic conclusion relies on the lossless image IDs and runtime enum. The direct collision probe does not establish that Traffic Manager will brake for the prop.
+
+**Constrained model comparison:** SceneSpec v1.1 exposes only the verified deer type, the fixed route-relative 32 m anchor, fixed lateral crossing, 2 m/s and 0 s start; the seed is the only free field. The shared first-attempt protocol made one JSON-mode request each to GPT-Astra, Qwen-27B and Qwen-8B. All three validated; their specifications were identical apart from GPT seed 1 versus Qwen seed 42. One saved-provenance front-centre replay per response also passed: dynamic-pixel effect was 1,187–1,544 (GPT), 1,194–1,543 (Qwen-27B), and 1,185–1,544 (Qwen-8B); all completed the bounded trajectory and direct collision test. API latency was 7.507, 3.334 and 6.004 seconds, respectively. Raw requests/responses/usage, exact model IDs, resolution, execution metrics and the machine comparison are preserved in `20260924T140505Z-api-verified-deer-crossing-e6313d`; price was not calculated. Since one exact capability was deliberately offered, this is a protocol-compliance result, not a ranking of model creativity, scale, price or safety. The full nine-camera recording is reserved for Stage 8.
 
 ## 5. Repeated Drives on Edited Scenes
 
@@ -192,13 +251,13 @@ After implementation, describe the actual format, JSON schema, frame/timestamp c
 
 | Metric | Actual value |
 |---|---|
-| Number of scenes / routes / weather conditions | Not measured |
-| Number of complete and failed drives | Not measured |
-| Total simulation time | Not measured |
-| Image / pose-record count | Not measured |
-| Data volume | Not measured |
-| Validator / version | Not implemented |
-| Verified external copy | Not confirmed |
+| Number of scenes / routes / weather conditions | One short Stage-3 rig check on the beginning of route 1; baseline matrix not yet run |
+| Number of complete and failed drives | One complete 18-sensor short check; three retained calibration/body diagnostics and one successful one-view pilot |
+| Total simulation time | Full-rig accepted span 1.500000022 s after warm-up |
+| Image / pose-record count | 72 required images + 36 previews + 4 ego poses in the full-rig check |
+| Data volume | 165,463,137 bytes including validation, contact sheets, metadata, and manifest |
+| Validator / version | `scripts/stage3_validate_dataset.py`; all checks passed |
+| External copy | User-confirmed; external checksum output not supplied in this session |
 
 State the Git commit/tag, image digest, pinned dependencies, configurations, and seeds. Data and code must be usable without the current VM. Include checksum manifests in the submission.
 
@@ -227,4 +286,4 @@ Publication occurs only after explicit instruction. Before publishing, check sec
 
 ## Appendices and Sources
 
-The primary assignment document is retained in the local package; requirements are captured in `docs/requirements.md`. The technical-source index is `docs/knowledge.md`; research sources must be added after stage 5. Screenshots and tables must point to a concrete run ID and immutable configuration.
+The primary assignment document is retained in the local package; requirements are captured in `docs/requirements.md`. The technical-source index is `docs/knowledge.md`, including the Stage-5 primary publications and author repositories. Screenshots and experimental tables must point to a concrete run ID and immutable configuration.
