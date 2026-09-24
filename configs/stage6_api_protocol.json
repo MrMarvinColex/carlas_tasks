@@ -1,0 +1,112 @@
+{
+  "schema_version": 1,
+  "protocol_id": "stage6-straight-pilot-v1",
+  "description": "A spend-bounded, first-attempt-only Stage-6 comparison on the verified straight control route.",
+  "scene_config": "configs/stage6_scene_editing.json",
+  "request_limits": {
+    "repeat_count": 1,
+    "retry_count": 0,
+    "timeout_s": 60.0,
+    "max_output_tokens": 256,
+    "maximum_total_requests": 9
+  },
+  "models": [
+    {
+      "variant_id": "openai_gpt_6_astra",
+      "provider": "openai_responses",
+      "api_key_env": "OPENAI_API_KEY",
+      "base_url_env": "OPENAI_BASE_URL",
+      "default_base_url": "https://api.openai.com/v1",
+      "model_env": "OPENAI_MODEL",
+      "default_model": "gpt-6-astra",
+      "generation_settings": {
+        "store": false,
+        "json_mode": true
+      }
+    },
+    {
+      "variant_id": "dashscope_qwen_27b",
+      "provider": "dashscope_chat_completions",
+      "api_key_env": "DASHSCOPE_API_KEY",
+      "base_url_env": "DASHSCOPE_BASE_URL",
+      "default_base_url": "https://dashscope-intl.aliyuncs.com/compatible-mode/v1",
+      "model_env": "QWEN_27B_MODEL",
+      "default_model": "qwen3.8-27b",
+      "generation_settings": {
+        "temperature": 0,
+        "enable_thinking": false,
+        "json_mode": true
+      }
+    },
+    {
+      "variant_id": "dashscope_qwen_8b",
+      "provider": "dashscope_chat_completions",
+      "api_key_env": "DASHSCOPE_API_KEY",
+      "base_url_env": "DASHSCOPE_BASE_URL",
+      "default_base_url": "https://dashscope-intl.aliyuncs.com/compatible-mode/v1",
+      "model_env": "QWEN_8B_MODEL",
+      "default_model": "qwen3-8b",
+      "generation_settings": {
+        "temperature": 0,
+        "enable_thinking": false,
+        "json_mode": true
+      }
+    }
+  ],
+  "tasks": [
+    {
+      "task_id": "simple_parked_audi",
+      "expected_kind": "scene_spec",
+      "user_request": "On the fixed straight route in Town01_Opt, use wet_cloudy_day and park exactly one vehicle.audi.a2 10 metres to the left of the route at 40 metres of route progress.",
+      "expected_scene": {
+        "map_name": "Town01_Opt",
+        "route_id": "route_01_straight",
+        "weather_id": "wet_cloudy_day",
+        "edits": [
+          {
+            "blueprint_id": "vehicle.audi.a2",
+            "route_progress_m": 40.0,
+            "side": "left",
+            "longitudinal_offset_m": 0.0,
+            "lateral_offset_m": 10.0
+          }
+        ]
+      }
+    },
+    {
+      "task_id": "composite_two_parked_audis",
+      "expected_kind": "scene_spec",
+      "user_request": "On the same fixed straight route in Town01_Opt, use clear_day and park exactly two vehicle.audi.a2 actors: each 10 metres to the left, at 40 metres and 75 metres of route progress respectively.",
+      "expected_scene": {
+        "map_name": "Town01_Opt",
+        "route_id": "route_01_straight",
+        "weather_id": "clear_day",
+        "edits": [
+          {
+            "blueprint_id": "vehicle.audi.a2",
+            "route_progress_m": 40.0,
+            "side": "left",
+            "longitudinal_offset_m": 0.0,
+            "lateral_offset_m": 10.0
+          },
+          {
+            "blueprint_id": "vehicle.audi.a2",
+            "route_progress_m": 75.0,
+            "side": "left",
+            "longitudinal_offset_m": 0.0,
+            "lateral_offset_m": 10.0
+          }
+        ]
+      }
+    },
+    {
+      "task_id": "unsupported_moving_animal",
+      "expected_kind": "refusal",
+      "user_request": "Place a visibly moving animal beside the fixed straight route in Town01_Opt and make the ego vehicle react to it.",
+      "expected_refusal": {
+        "code": "unsupported_capability",
+        "requested_capability": "moving_animal"
+      }
+    }
+  ]
+}

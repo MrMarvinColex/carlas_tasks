@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Apply and replay one pre-validated Stage-6 SceneSpec without any LLM API.
+"""Apply and replay one pre-validated Stage-6 SceneSpec without an LLM API call.
 
 The command creates a fresh ``Town01_Opt`` world for every invocation.  It
 then reapplies the tested road-line operation, validates a route-relative
@@ -71,6 +71,49 @@ def load_json_object(path: Path) -> dict[str, Any]:
     if not isinstance(value, dict):
         raise RuntimeError(f"expected a JSON object: {path}")
     return value
+
+
+def relative_or_absolute(path: Path, root: Path) -> str:
+    try:
+        return path.resolve().relative_to(root.resolve()).as_posix()
+    except ValueError:
+        return path.resolve().as_posix()
+
+
+def load_api_attempt_provenance(path: Path, scene_spec_path: Path, run_dir: Path) -> dict[str, object]:
+    """Bind an executor replay to one previously validated adapter attempt.
+
+    The adapter has already stored the raw provider response.  This function
+    rejects an arbitrary JSON file being labelled as an API result, but still
+    leaves the SceneSpec itself as passive data for the normal executor path.
+    """
+    record = load_json_object(path)
+    if record.get("status") != "passed" or record.get("result_kind") != "scene_spec":
+        raise RuntimeError("API provenance must name a passed SceneSpec adapter attempt")
+    relative_scene_path = record.get("scene_spec_path")
+    if relative_scene_path != "scene_spec.json":
+        raise RuntimeError("API provenance has an unexpected scene_spec_path")
+    expected_spec_path = (path.parent / str(relative_scene_path)).resolve()
+    if expected_spec_path != scene_spec_path.resolve():
+        raise RuntimeError("--scene-spec does not match the saved API adapter attempt")
+    if not isinstance(record.get("provider"), str) or not isinstance(record.get("model"), str):
+        raise RuntimeError("API provenance lacks provider or model")
+    api_latency = record.get("api_latency_s")
+    local_latency = record.get("local_validation_s")
+    if not isinstance(api_latency, (int, float)) or not isinstance(local_latency, (int, float)):
+        raise RuntimeError("API provenance lacks numeric API/local validation timing")
+    return {
+        "source_path": scene_spec_path.resolve().as_posix(),
+        "source_attempt_result_path": relative_or_absolute(path, run_dir),
+        "kind": "api_validated_scene_spec",
+        "api_call_made": True,
+        "provider": record["provider"],
+        "model": record["model"],
+        "api_latency_s": float(api_latency),
+        "local_validation_s": float(local_latency),
+        "reported_usage": record.get("reported_usage"),
+        "response_sha256": record.get("response_sha256"),
+    }
 
 
 def sha256_file(path: Path) -> str:
@@ -601,7 +644,12 @@ def record_rig_and_drive(
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--run-dir", type=Path, required=True)
-    parser.add_argument("--scene-spec", type=Path, required=True, help="Saved manual or API response JSON; never executable code.")
+    parser.add_argument("--scene-spec", type=Path, required=True, help="Saved manual or API SceneSpec JSON; never executable code.")
+    parser.add_argument(
+        "--api-attempt-result",
+        type=Path,
+        help="Passed attempt_result.json from stage6_api_adapter.py; binds this replay to saved API provenance.",
+    )
     parser.add_argument("--config", type=Path, default=Path("configs/stage6_scene_editing.json"))
     parser.add_argument(
         "--calibration",
@@ -635,20 +683,29 @@ def main() -> None:
         raw_response = spec_path.read_text()
         response = parse_response_json(raw_response)
         config = load_stage6_config(config_path)
-        input_record = {
-            "source_path": spec_path.as_posix(),
-            "source_sha256": hashlib.sha256(raw_response.encode("utf-8")).hexdigest(),
-            "kind": "manual_pre_api_fixture",
-            "api_call_made": False,
-        }
+        input_record = (
+            load_api_attempt_provenance(args.api_attempt_result.resolve(), spec_path, run_dir)
+            if args.api_attempt_result is not None
+            else {
+                "source_path": spec_path.as_posix(),
+                "kind": "manual_pre_api_fixture",
+                "api_call_made": False,
+            }
+        )
+        input_record["source_sha256"] = hashlib.sha256(raw_response.encode("utf-8")).hexdigest()
         write_json(run_dir / "attempt.json", input_record)
         write_json(run_dir / "raw_response.json", json.loads(raw_response))
         if isinstance(response, Refusal):
             write_json(run_dir / "refusal.json", response.as_dict())
             result = {
                 "status": "refused_as_designed",
-                "api_call_made": False,
+                "api_call_made": bool(input_record["api_call_made"]),
                 "refusal": response.as_dict(),
+                "timing": {
+                    "api_latency_s": input_record.get("api_latency_s"),
+                    "local_validation_and_resolution_s": input_record.get("local_validation_s"),
+                    "carla_application_and_validation_wall_s": None,
+                },
                 "wall_duration_s": time.monotonic() - started_wall,
             }
             write_json(run_dir / "execution_result.json", result)
@@ -664,7 +721,8 @@ def main() -> None:
             "config_sha256": sha256_file(config_path),
             "route_geometry": {"route_id": route_geometry.route_id, "length_m": route_geometry.length_m},
             "resolved_scene": resolved.as_dict(),
-            "api_call_made": False,
+            "api_call_made": bool(input_record["api_call_made"]),
+            "api_provenance": input_record if bool(input_record["api_call_made"]) else None,
         }
         write_json(run_dir / "local_validation.json", local_validation)
         write_json(run_dir / "scene_spec.json", response.as_dict())
@@ -736,7 +794,8 @@ def main() -> None:
         )
         execution = {
             "status": "passed" if runtime_result["visibility_passed"] and all(runtime_result["route_check"]["checks"].values()) else "failed",
-            "api_call_made": False,
+            "api_call_made": bool(input_record["api_call_made"]),
+            "api_provenance": input_record if bool(input_record["api_call_made"]) else None,
             "map_name": map_.name,
             "carla_client_version": client.get_client_version(),
             "carla_server_version": client.get_server_version(),
@@ -753,8 +812,8 @@ def main() -> None:
             "visibility_passed": runtime_result["visibility_passed"],
             "route_check": runtime_result["route_check"],
             "timing": {
-                "api_latency_s": None,
-                "local_validation_and_resolution_s": None,
+                "api_latency_s": input_record.get("api_latency_s"),
+                "local_validation_and_resolution_s": input_record.get("local_validation_s"),
                 "carla_application_and_validation_wall_s": time.monotonic() - started_wall,
             },
         }
