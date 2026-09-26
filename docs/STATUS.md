@@ -1,6 +1,6 @@
 # Current Project Status
 
-Last inspected: **2026-09-24 15:33 UTC**; user timezone: Europe/Moscow.
+Last inspected: **2026-09-24 21:03 UTC**; user timezone: Europe/Moscow.
 
 ## Current Position
 
@@ -68,7 +68,9 @@ The six accepted SceneSpecs were then passed unchanged, with saved API provenanc
 
 **Final-report private preservation (2026-09-24):** at the user's request, commit `347d8a6` (`docs: add final Russian report`) was pushed to the private `origin/Dev` branch. This preserves the Markdown report, its five portable images, and the associated scope/documentation updates. It is not public delivery and does not authorize changing repository visibility or uploading the report/dataset elsewhere.
 
-**Next action:** review the standalone report with the user and make any requested editorial corrections. Prepare public code/report/dataset publication only when explicitly authorized. Do not add full-rig edited-drive or Traffic Manager braking claims.
+**Pre-deletion audit (2026-09-24 21:03 UTC):** before any VM deletion, the repository worktree was clean at `543a348` (`docs: record final report handoff`); the local `Dev` branch had no ahead/behind commits relative to its configured upstream; and an authenticated `git ls-remote` confirmed `origin/Dev` resolves to that same commit. Git object verification completed without corruption (the reported dangling trees are unreachable historical objects, not referenced project history). All 94 directories currently under `runs/` have a manifest and a fresh source-to-source verification rehashed all 20,867 signed files successfully. The transfer set currently measures 27 GiB for `runs/`, 156 KiB for `logs/`, and 294 MiB across 28 Codex-session files. Nine early intermediate/diagnostic run directories are intentionally absent from the artifact registry, but the user's whole-tree `runs/` transfer includes them and their local manifests passed. No CARLA or stage process was found by the process audit. `.env` exists but is ignored; no `.env`, PEM, or key path is tracked by Git.
+
+**Next action:** complete the three Mac `rsync` transfers, then run checksum-mode dry-run comparisons for `runs/`, `logs/`, and `.codex/sessions/`. Keep their terminal output. If all three commands print no itemized differences, the data/chat preservation prerequisite for VM deletion is satisfied; clone or fetch the private `Dev` branch on the Mac as an independent code access check. Public-code/report/dataset publication remains separate and is not required to delete the VM. Do not add full-rig edited-drive or Traffic Manager braking claims.
 
 ## Stage Status
 

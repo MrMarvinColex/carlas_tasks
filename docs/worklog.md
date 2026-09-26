@@ -562,6 +562,20 @@ The user rented a Massed Compute VM with an RTX A6000 48 GB, Ubuntu 22.04.5, 6 v
 
 **Result:** Git reported `5e8af47..347d8a6  Dev -> Dev`. The report is preserved in the private remote. User review and any later public delivery remain separate actions requiring explicit direction.
 
+## 2026-09-24 21:03 UTC — Pre-Deletion Preservation Audit
+
+**Type:** local read-only integrity and Git-remote audit; no VM, CARLA, dataset, API, or publication operation.
+
+- Confirmed a clean worktree at `543a348` and zero ahead/behind commits on `Dev`; authenticated `git ls-remote` returned the same `543a3483b8656bd60a7948cd8e3a3cf65559bc31` for `origin/Dev`.
+- `git fsck --full` found no corruption. Its dangling-tree notices are unreachable historical objects and do not affect the checked-out or remote branch.
+- Enumerated 94 directories in `runs/`; each has `manifest.sha256`. Recomputed the source hashes using `scripts/verify_export.py RUN RUN` for every directory: all 94 passed, covering 20,867 signed files. Nine early intermediate/diagnostic directories are not registry rows, but are retained under `runs/` and so included by the selected whole-tree export.
+- Measured the current Mac transfer sources: `runs/` 27 GiB, `logs/` 156 KiB, and `/home/Ubuntu/.codex/sessions/` 294 MiB (28 files). `.env` is present and ignored; Git tracks no `.env`, PEM, or key file paths. No CARLA/stage workload appeared in the process audit.
+- The Mac destinations cannot be inspected from this VM. A completed `rsync` alone is therefore not recorded as checksum verification in this entry; the user must preserve zero-difference `rsync -nrc --itemize-changes` output for all three transferred trees before deleting the VM.
+
+**Result:** the VM-side source data and private `Dev` history are internally consistent and the latest remote commit is confirmed. External preservation remains user-operated and awaiting Mac-side checksum comparison output.
+
+**Next action:** run the documented Mac comparisons; if each has no itemized differences, fetch/clone `origin/Dev` on the Mac and the VM may be deleted at the provider panel without any repository/publication action.
+
 ## Template for the Next Entry
 
 ```text
