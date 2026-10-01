@@ -1,0 +1,1719 @@
+{
+  "adaptive_proposal": {
+    "dense_indices": [
+      0,
+      5,
+      10,
+      15,
+      20,
+      25,
+      30,
+      35,
+      40,
+      45,
+      50,
+      55
+    ],
+    "dense_spacing_m_near_turns": 2.0,
+    "straight_spacing_m": 10.0,
+    "turn_context_m": 12.0,
+    "waypoint_count": 12,
+    "waypoints": [
+      {
+        "is_junction": false,
+        "junction_id": -1,
+        "lane_id": 1,
+        "lane_type": "Driving",
+        "lane_width_m": 4.0,
+        "order": 0,
+        "road_id": 23,
+        "s": 29.380279541015625,
+        "section_id": 0,
+        "transform": {
+          "location": {
+            "x": 92.39602661132812,
+            "y": 171.219970703125,
+            "z": 0.0
+          },
+          "rotation": {
+            "pitch": 360.0,
+            "roll": 0.0,
+            "yaw": 269.99127197265625
+          }
+        },
+        "waypoint_id": 14982337351853883355
+      },
+      {
+        "is_junction": false,
+        "junction_id": -1,
+        "lane_id": 1,
+        "lane_type": "Driving",
+        "lane_width_m": 4.0,
+        "order": 1,
+        "road_id": 23,
+        "s": 19.380279541015625,
+        "section_id": 0,
+        "transform": {
+          "location": {
+            "x": 92.3945083618164,
+            "y": 161.219970703125,
+            "z": 0.0
+          },
+          "rotation": {
+            "pitch": 360.0,
+            "roll": 0.0,
+            "yaw": 269.99127197265625
+          }
+        },
+        "waypoint_id": 7316926665868981356
+      },
+      {
+        "is_junction": false,
+        "junction_id": -1,
+        "lane_id": 1,
+        "lane_type": "Driving",
+        "lane_width_m": 4.0,
+        "order": 2,
+        "road_id": 23,
+        "s": 9.380280494689941,
+        "section_id": 0,
+        "transform": {
+          "location": {
+            "x": 92.39299011230469,
+            "y": 151.219970703125,
+            "z": 0.0
+          },
+          "rotation": {
+            "pitch": 360.0,
+            "roll": 0.0,
+            "yaw": 269.99127197265625
+          }
+        },
+        "waypoint_id": 12309478046673943069
+      },
+      {
+        "is_junction": true,
+        "junction_id": 306,
+        "lane_id": 1,
+        "lane_type": "Driving",
+        "lane_width_m": 4.0,
+        "order": 3,
+        "road_id": 330,
+        "s": 21.380279541015625,
+        "section_id": 0,
+        "transform": {
+          "location": {
+            "x": 92.39147186279297,
+            "y": 141.219970703125,
+            "z": 0.0
+          },
+          "rotation": {
+            "pitch": 360.0,
+            "roll": 0.0,
+            "yaw": 269.99127197265625
+          }
+        },
+        "waypoint_id": 7548572134932968346
+      },
+      {
+        "is_junction": true,
+        "junction_id": 306,
+        "lane_id": 1,
+        "lane_type": "Driving",
+        "lane_width_m": 4.0,
+        "order": 4,
+        "road_id": 330,
+        "s": 11.380280494689941,
+        "section_id": 0,
+        "transform": {
+          "location": {
+            "x": 92.38995361328125,
+            "y": 131.219970703125,
+            "z": 0.0
+          },
+          "rotation": {
+            "pitch": 360.0,
+            "roll": 0.0,
+            "yaw": 269.99127197265625
+          }
+        },
+        "waypoint_id": 13404576196887393339
+      },
+      {
+        "is_junction": true,
+        "junction_id": 306,
+        "lane_id": 1,
+        "lane_type": "Driving",
+        "lane_width_m": 4.0,
+        "order": 5,
+        "road_id": 330,
+        "s": 1.3802804946899414,
+        "section_id": 0,
+        "transform": {
+          "location": {
+            "x": 92.38843536376953,
+            "y": 121.219970703125,
+            "z": 0.0
+          },
+          "rotation": {
+            "pitch": 360.0,
+            "roll": 0.0,
+            "yaw": 269.99127197265625
+          }
+        },
+        "waypoint_id": 11429618365110894991
+      },
+      {
+        "is_junction": false,
+        "junction_id": -1,
+        "lane_id": 1,
+        "lane_type": "Driving",
+        "lane_width_m": 4.0,
+        "order": 6,
+        "road_id": 22,
+        "s": 43.070281982421875,
+        "section_id": 0,
+        "transform": {
+          "location": {
+            "x": 92.38690948486328,
+            "y": 111.21997833251953,
+            "z": 0.0
+          },
+          "rotation": {
+            "pitch": 360.0,
+            "roll": 0.0,
+            "yaw": 269.99127197265625
+          }
+        },
+        "waypoint_id": 11536348503512268020
+      },
+      {
+        "is_junction": false,
+        "junction_id": -1,
+        "lane_id": 1,
+        "lane_type": "Driving",
+        "lane_width_m": 4.0,
+        "order": 7,
+        "road_id": 22,
+        "s": 33.070281982421875,
+        "section_id": 0,
+        "transform": {
+          "location": {
+            "x": 92.38539123535156,
+            "y": 101.21997833251953,
+            "z": 0.0
+          },
+          "rotation": {
+            "pitch": 360.0,
+            "roll": 0.0,
+            "yaw": 269.99127197265625
+          }
+        },
+        "waypoint_id": 15891229403403962902
+      },
+      {
+        "is_junction": false,
+        "junction_id": -1,
+        "lane_id": 1,
+        "lane_type": "Driving",
+        "lane_width_m": 4.0,
+        "order": 8,
+        "road_id": 22,
+        "s": 23.070280075073242,
+        "section_id": 0,
+        "transform": {
+          "location": {
+            "x": 92.38387298583984,
+            "y": 91.21997833251953,
+            "z": 0.0
+          },
+          "rotation": {
+            "pitch": 360.0,
+            "roll": 0.0,
+            "yaw": 269.99127197265625
+          }
+        },
+        "waypoint_id": 10441221801001107766
+      },
+      {
+        "is_junction": false,
+        "junction_id": -1,
+        "lane_id": 1,
+        "lane_type": "Driving",
+        "lane_width_m": 4.0,
+        "order": 9,
+        "road_id": 22,
+        "s": 13.070280075073242,
+        "section_id": 0,
+        "transform": {
+          "location": {
+            "x": 92.3823471069336,
+            "y": 81.21997833251953,
+            "z": 0.0
+          },
+          "rotation": {
+            "pitch": 360.0,
+            "roll": 0.0,
+            "yaw": 269.99127197265625
+          }
+        },
+        "waypoint_id": 3606236629676224024
+      },
+      {
+        "is_junction": false,
+        "junction_id": -1,
+        "lane_id": 1,
+        "lane_type": "Driving",
+        "lane_width_m": 4.0,
+        "order": 10,
+        "road_id": 22,
+        "s": 3.0702805519104004,
+        "section_id": 0,
+        "transform": {
+          "location": {
+            "x": 92.38082885742188,
+            "y": 71.21997833251953,
+            "z": 0.0
+          },
+          "rotation": {
+            "pitch": 360.0,
+            "roll": 0.0,
+            "yaw": 269.99127197265625
+          }
+        },
+        "waypoint_id": 4414152626391062683
+      },
+      {
+        "is_junction": true,
+        "junction_id": 171,
+        "lane_id": 1,
+        "lane_type": "Driving",
+        "lane_width_m": 4.0,
+        "order": 11,
+        "road_id": 179,
+        "s": 15.070280075073242,
+        "section_id": 0,
+        "transform": {
+          "location": {
+            "x": 92.37931060791016,
+            "y": 61.219970703125,
+            "z": 0.0
+          },
+          "rotation": {
+            "pitch": 360.0,
+            "roll": 0.0,
+            "yaw": -90.00869750976562
+          }
+        },
+        "waypoint_id": 3470776095461165996
+      }
+    ]
+  },
+  "autopilot_status": "pending_new_start_drive_test",
+  "branch_seed": 20322468,
+  "candidate_id": "route_01_straight",
+  "candidate_kind": "straight",
+  "candidate_label": "Straight control (middle half)",
+  "dense_reference": {
+    "step_m": 2.0,
+    "waypoint_count": 56,
+    "waypoints": [
+      {
+        "is_junction": false,
+        "junction_id": -1,
+        "lane_id": 1,
+        "lane_type": "Driving",
+        "lane_width_m": 4.0,
+        "order": 0,
+        "road_id": 23,
+        "s": 29.380279541015625,
+        "section_id": 0,
+        "transform": {
+          "location": {
+            "x": 92.39602661132812,
+            "y": 171.219970703125,
+            "z": 0.0
+          },
+          "rotation": {
+            "pitch": 360.0,
+            "roll": 0.0,
+            "yaw": 269.99127197265625
+          }
+        },
+        "waypoint_id": 14982337351853883355
+      },
+      {
+        "is_junction": false,
+        "junction_id": -1,
+        "lane_id": 1,
+        "lane_type": "Driving",
+        "lane_width_m": 4.0,
+        "order": 1,
+        "road_id": 23,
+        "s": 27.380279541015625,
+        "section_id": 0,
+        "transform": {
+          "location": {
+            "x": 92.3957290649414,
+            "y": 169.219970703125,
+            "z": 0.0
+          },
+          "rotation": {
+            "pitch": 360.0,
+            "roll": 0.0,
+            "yaw": 269.99127197265625
+          }
+        },
+        "waypoint_id": 3731545051316921167
+      },
+      {
+        "is_junction": false,
+        "junction_id": -1,
+        "lane_id": 1,
+        "lane_type": "Driving",
+        "lane_width_m": 4.0,
+        "order": 2,
+        "road_id": 23,
+        "s": 25.380279541015625,
+        "section_id": 0,
+        "transform": {
+          "location": {
+            "x": 92.39542388916016,
+            "y": 167.219970703125,
+            "z": 0.0
+          },
+          "rotation": {
+            "pitch": 360.0,
+            "roll": 0.0,
+            "yaw": 269.99127197265625
+          }
+        },
+        "waypoint_id": 7977732912266398482
+      },
+      {
+        "is_junction": false,
+        "junction_id": -1,
+        "lane_id": 1,
+        "lane_type": "Driving",
+        "lane_width_m": 4.0,
+        "order": 3,
+        "road_id": 23,
+        "s": 23.380279541015625,
+        "section_id": 0,
+        "transform": {
+          "location": {
+            "x": 92.3951187133789,
+            "y": 165.219970703125,
+            "z": 0.0
+          },
+          "rotation": {
+            "pitch": 360.0,
+            "roll": 0.0,
+            "yaw": 269.99127197265625
+          }
+        },
+        "waypoint_id": 17251390666949592471
+      },
+      {
+        "is_junction": false,
+        "junction_id": -1,
+        "lane_id": 1,
+        "lane_type": "Driving",
+        "lane_width_m": 4.0,
+        "order": 4,
+        "road_id": 23,
+        "s": 21.380279541015625,
+        "section_id": 0,
+        "transform": {
+          "location": {
+            "x": 92.39481353759766,
+            "y": 163.219970703125,
+            "z": 0.0
+          },
+          "rotation": {
+            "pitch": 360.0,
+            "roll": 0.0,
+            "yaw": 269.99127197265625
+          }
+        },
+        "waypoint_id": 12270249848869390406
+      },
+      {
+        "is_junction": false,
+        "junction_id": -1,
+        "lane_id": 1,
+        "lane_type": "Driving",
+        "lane_width_m": 4.0,
+        "order": 5,
+        "road_id": 23,
+        "s": 19.380279541015625,
+        "section_id": 0,
+        "transform": {
+          "location": {
+            "x": 92.3945083618164,
+            "y": 161.219970703125,
+            "z": 0.0
+          },
+          "rotation": {
+            "pitch": 360.0,
+            "roll": 0.0,
+            "yaw": 269.99127197265625
+          }
+        },
+        "waypoint_id": 7316926665868981356
+      },
+      {
+        "is_junction": false,
+        "junction_id": -1,
+        "lane_id": 1,
+        "lane_type": "Driving",
+        "lane_width_m": 4.0,
+        "order": 6,
+        "road_id": 23,
+        "s": 17.380279541015625,
+        "section_id": 0,
+        "transform": {
+          "location": {
+            "x": 92.39420318603516,
+            "y": 159.219970703125,
+            "z": 0.0
+          },
+          "rotation": {
+            "pitch": 360.0,
+            "roll": 0.0,
+            "yaw": 269.99127197265625
+          }
+        },
+        "waypoint_id": 11843461586206802185
+      },
+      {
+        "is_junction": false,
+        "junction_id": -1,
+        "lane_id": 1,
+        "lane_type": "Driving",
+        "lane_width_m": 4.0,
+        "order": 7,
+        "road_id": 23,
+        "s": 15.380280494689941,
+        "section_id": 0,
+        "transform": {
+          "location": {
+            "x": 92.3938980102539,
+            "y": 157.219970703125,
+            "z": 0.0
+          },
+          "rotation": {
+            "pitch": 360.0,
+            "roll": 0.0,
+            "yaw": 269.99127197265625
+          }
+        },
+        "waypoint_id": 15325635373567316376
+      },
+      {
+        "is_junction": false,
+        "junction_id": -1,
+        "lane_id": 1,
+        "lane_type": "Driving",
+        "lane_width_m": 4.0,
+        "order": 8,
+        "road_id": 23,
+        "s": 13.380280494689941,
+        "section_id": 0,
+        "transform": {
+          "location": {
+            "x": 92.39360046386719,
+            "y": 155.219970703125,
+            "z": 0.0
+          },
+          "rotation": {
+            "pitch": 360.0,
+            "roll": 0.0,
+            "yaw": 269.99127197265625
+          }
+        },
+        "waypoint_id": 1146729806877257766
+      },
+      {
+        "is_junction": false,
+        "junction_id": -1,
+        "lane_id": 1,
+        "lane_type": "Driving",
+        "lane_width_m": 4.0,
+        "order": 9,
+        "road_id": 23,
+        "s": 11.380280494689941,
+        "section_id": 0,
+        "transform": {
+          "location": {
+            "x": 92.39329528808594,
+            "y": 153.219970703125,
+            "z": 0.0
+          },
+          "rotation": {
+            "pitch": 360.0,
+            "roll": 0.0,
+            "yaw": 269.99127197265625
+          }
+        },
+        "waypoint_id": 9323015360923991697
+      },
+      {
+        "is_junction": false,
+        "junction_id": -1,
+        "lane_id": 1,
+        "lane_type": "Driving",
+        "lane_width_m": 4.0,
+        "order": 10,
+        "road_id": 23,
+        "s": 9.380280494689941,
+        "section_id": 0,
+        "transform": {
+          "location": {
+            "x": 92.39299011230469,
+            "y": 151.219970703125,
+            "z": 0.0
+          },
+          "rotation": {
+            "pitch": 360.0,
+            "roll": 0.0,
+            "yaw": 269.99127197265625
+          }
+        },
+        "waypoint_id": 12309478046673943069
+      },
+      {
+        "is_junction": false,
+        "junction_id": -1,
+        "lane_id": 1,
+        "lane_type": "Driving",
+        "lane_width_m": 4.0,
+        "order": 11,
+        "road_id": 23,
+        "s": 7.380280494689941,
+        "section_id": 0,
+        "transform": {
+          "location": {
+            "x": 92.39268493652344,
+            "y": 149.219970703125,
+            "z": 0.0
+          },
+          "rotation": {
+            "pitch": 360.0,
+            "roll": 0.0,
+            "yaw": 269.99127197265625
+          }
+        },
+        "waypoint_id": 13196275159422910807
+      },
+      {
+        "is_junction": false,
+        "junction_id": -1,
+        "lane_id": 1,
+        "lane_type": "Driving",
+        "lane_width_m": 4.0,
+        "order": 12,
+        "road_id": 23,
+        "s": 5.380280494689941,
+        "section_id": 0,
+        "transform": {
+          "location": {
+            "x": 92.39237976074219,
+            "y": 147.219970703125,
+            "z": 0.0
+          },
+          "rotation": {
+            "pitch": 360.0,
+            "roll": 0.0,
+            "yaw": 269.99127197265625
+          }
+        },
+        "waypoint_id": 13766225928287179179
+      },
+      {
+        "is_junction": false,
+        "junction_id": -1,
+        "lane_id": 1,
+        "lane_type": "Driving",
+        "lane_width_m": 4.0,
+        "order": 13,
+        "road_id": 23,
+        "s": 3.3802804946899414,
+        "section_id": 0,
+        "transform": {
+          "location": {
+            "x": 92.39207458496094,
+            "y": 145.219970703125,
+            "z": 0.0
+          },
+          "rotation": {
+            "pitch": 360.0,
+            "roll": 0.0,
+            "yaw": 269.99127197265625
+          }
+        },
+        "waypoint_id": 5518460017271164714
+      },
+      {
+        "is_junction": false,
+        "junction_id": -1,
+        "lane_id": 1,
+        "lane_type": "Driving",
+        "lane_width_m": 4.0,
+        "order": 14,
+        "road_id": 23,
+        "s": 1.3802804946899414,
+        "section_id": 0,
+        "transform": {
+          "location": {
+            "x": 92.39177703857422,
+            "y": 143.219970703125,
+            "z": 0.0
+          },
+          "rotation": {
+            "pitch": 360.0,
+            "roll": 0.0,
+            "yaw": 269.99127197265625
+          }
+        },
+        "waypoint_id": 17036531780932591332
+      },
+      {
+        "is_junction": true,
+        "junction_id": 306,
+        "lane_id": 1,
+        "lane_type": "Driving",
+        "lane_width_m": 4.0,
+        "order": 15,
+        "road_id": 330,
+        "s": 21.380279541015625,
+        "section_id": 0,
+        "transform": {
+          "location": {
+            "x": 92.39147186279297,
+            "y": 141.219970703125,
+            "z": 0.0
+          },
+          "rotation": {
+            "pitch": 360.0,
+            "roll": 0.0,
+            "yaw": 269.99127197265625
+          }
+        },
+        "waypoint_id": 7548572134932968346
+      },
+      {
+        "is_junction": true,
+        "junction_id": 306,
+        "lane_id": 1,
+        "lane_type": "Driving",
+        "lane_width_m": 4.0,
+        "order": 16,
+        "road_id": 330,
+        "s": 19.380279541015625,
+        "section_id": 0,
+        "transform": {
+          "location": {
+            "x": 92.39116668701172,
+            "y": 139.219970703125,
+            "z": 0.0
+          },
+          "rotation": {
+            "pitch": 360.0,
+            "roll": 0.0,
+            "yaw": 269.99127197265625
+          }
+        },
+        "waypoint_id": 4942973977365716250
+      },
+      {
+        "is_junction": true,
+        "junction_id": 306,
+        "lane_id": 1,
+        "lane_type": "Driving",
+        "lane_width_m": 4.0,
+        "order": 17,
+        "road_id": 330,
+        "s": 17.380279541015625,
+        "section_id": 0,
+        "transform": {
+          "location": {
+            "x": 92.39086151123047,
+            "y": 137.219970703125,
+            "z": 0.0
+          },
+          "rotation": {
+            "pitch": 360.0,
+            "roll": 0.0,
+            "yaw": 269.99127197265625
+          }
+        },
+        "waypoint_id": 1126347965312469017
+      },
+      {
+        "is_junction": true,
+        "junction_id": 306,
+        "lane_id": 1,
+        "lane_type": "Driving",
+        "lane_width_m": 4.0,
+        "order": 18,
+        "road_id": 330,
+        "s": 15.380280494689941,
+        "section_id": 0,
+        "transform": {
+          "location": {
+            "x": 92.39055633544922,
+            "y": 135.219970703125,
+            "z": 0.0
+          },
+          "rotation": {
+            "pitch": 360.0,
+            "roll": 0.0,
+            "yaw": 269.99127197265625
+          }
+        },
+        "waypoint_id": 15710162402659923464
+      },
+      {
+        "is_junction": true,
+        "junction_id": 306,
+        "lane_id": 1,
+        "lane_type": "Driving",
+        "lane_width_m": 4.0,
+        "order": 19,
+        "road_id": 330,
+        "s": 13.380280494689941,
+        "section_id": 0,
+        "transform": {
+          "location": {
+            "x": 92.3902587890625,
+            "y": 133.219970703125,
+            "z": 0.0
+          },
+          "rotation": {
+            "pitch": 360.0,
+            "roll": 0.0,
+            "yaw": 269.99127197265625
+          }
+        },
+        "waypoint_id": 9058405293616428012
+      },
+      {
+        "is_junction": true,
+        "junction_id": 306,
+        "lane_id": 1,
+        "lane_type": "Driving",
+        "lane_width_m": 4.0,
+        "order": 20,
+        "road_id": 330,
+        "s": 11.380280494689941,
+        "section_id": 0,
+        "transform": {
+          "location": {
+            "x": 92.38995361328125,
+            "y": 131.219970703125,
+            "z": 0.0
+          },
+          "rotation": {
+            "pitch": 360.0,
+            "roll": 0.0,
+            "yaw": 269.99127197265625
+          }
+        },
+        "waypoint_id": 13404576196887393339
+      },
+      {
+        "is_junction": true,
+        "junction_id": 306,
+        "lane_id": 1,
+        "lane_type": "Driving",
+        "lane_width_m": 4.0,
+        "order": 21,
+        "road_id": 330,
+        "s": 9.380280494689941,
+        "section_id": 0,
+        "transform": {
+          "location": {
+            "x": 92.3896484375,
+            "y": 129.219970703125,
+            "z": 0.0
+          },
+          "rotation": {
+            "pitch": 360.0,
+            "roll": 0.0,
+            "yaw": 269.99127197265625
+          }
+        },
+        "waypoint_id": 17163490121082678759
+      },
+      {
+        "is_junction": true,
+        "junction_id": 306,
+        "lane_id": 1,
+        "lane_type": "Driving",
+        "lane_width_m": 4.0,
+        "order": 22,
+        "road_id": 330,
+        "s": 7.380280494689941,
+        "section_id": 0,
+        "transform": {
+          "location": {
+            "x": 92.38934326171875,
+            "y": 127.219970703125,
+            "z": 0.0
+          },
+          "rotation": {
+            "pitch": 360.0,
+            "roll": 0.0,
+            "yaw": 269.99127197265625
+          }
+        },
+        "waypoint_id": 13278381171424953430
+      },
+      {
+        "is_junction": true,
+        "junction_id": 306,
+        "lane_id": 1,
+        "lane_type": "Driving",
+        "lane_width_m": 4.0,
+        "order": 23,
+        "road_id": 330,
+        "s": 5.380280494689941,
+        "section_id": 0,
+        "transform": {
+          "location": {
+            "x": 92.3890380859375,
+            "y": 125.219970703125,
+            "z": 0.0
+          },
+          "rotation": {
+            "pitch": 360.0,
+            "roll": 0.0,
+            "yaw": 269.99127197265625
+          }
+        },
+        "waypoint_id": 6881806347193737467
+      },
+      {
+        "is_junction": true,
+        "junction_id": 306,
+        "lane_id": 1,
+        "lane_type": "Driving",
+        "lane_width_m": 4.0,
+        "order": 24,
+        "road_id": 330,
+        "s": 3.3802804946899414,
+        "section_id": 0,
+        "transform": {
+          "location": {
+            "x": 92.38873291015625,
+            "y": 123.219970703125,
+            "z": 0.0
+          },
+          "rotation": {
+            "pitch": 360.0,
+            "roll": 0.0,
+            "yaw": 269.99127197265625
+          }
+        },
+        "waypoint_id": 11470148971297946532
+      },
+      {
+        "is_junction": true,
+        "junction_id": 306,
+        "lane_id": 1,
+        "lane_type": "Driving",
+        "lane_width_m": 4.0,
+        "order": 25,
+        "road_id": 330,
+        "s": 1.3802804946899414,
+        "section_id": 0,
+        "transform": {
+          "location": {
+            "x": 92.38843536376953,
+            "y": 121.219970703125,
+            "z": 0.0
+          },
+          "rotation": {
+            "pitch": 360.0,
+            "roll": 0.0,
+            "yaw": 269.99127197265625
+          }
+        },
+        "waypoint_id": 11429618365110894991
+      },
+      {
+        "is_junction": false,
+        "junction_id": -1,
+        "lane_id": 1,
+        "lane_type": "Driving",
+        "lane_width_m": 4.0,
+        "order": 26,
+        "road_id": 22,
+        "s": 51.070281982421875,
+        "section_id": 0,
+        "transform": {
+          "location": {
+            "x": 92.38813018798828,
+            "y": 119.21997833251953,
+            "z": 0.0
+          },
+          "rotation": {
+            "pitch": 360.0,
+            "roll": 0.0,
+            "yaw": 269.99127197265625
+          }
+        },
+        "waypoint_id": 8419804005023497834
+      },
+      {
+        "is_junction": false,
+        "junction_id": -1,
+        "lane_id": 1,
+        "lane_type": "Driving",
+        "lane_width_m": 4.0,
+        "order": 27,
+        "road_id": 22,
+        "s": 49.070281982421875,
+        "section_id": 0,
+        "transform": {
+          "location": {
+            "x": 92.38782501220703,
+            "y": 117.21997833251953,
+            "z": 0.0
+          },
+          "rotation": {
+            "pitch": 360.0,
+            "roll": 0.0,
+            "yaw": 269.99127197265625
+          }
+        },
+        "waypoint_id": 8659771946492197718
+      },
+      {
+        "is_junction": false,
+        "junction_id": -1,
+        "lane_id": 1,
+        "lane_type": "Driving",
+        "lane_width_m": 4.0,
+        "order": 28,
+        "road_id": 22,
+        "s": 47.070281982421875,
+        "section_id": 0,
+        "transform": {
+          "location": {
+            "x": 92.38751983642578,
+            "y": 115.21997833251953,
+            "z": 0.0
+          },
+          "rotation": {
+            "pitch": 360.0,
+            "roll": 0.0,
+            "yaw": 269.99127197265625
+          }
+        },
+        "waypoint_id": 8619325989590280292
+      },
+      {
+        "is_junction": false,
+        "junction_id": -1,
+        "lane_id": 1,
+        "lane_type": "Driving",
+        "lane_width_m": 4.0,
+        "order": 29,
+        "road_id": 22,
+        "s": 45.070281982421875,
+        "section_id": 0,
+        "transform": {
+          "location": {
+            "x": 92.38721466064453,
+            "y": 113.21997833251953,
+            "z": 0.0
+          },
+          "rotation": {
+            "pitch": 360.0,
+            "roll": 0.0,
+            "yaw": 269.99127197265625
+          }
+        },
+        "waypoint_id": 7706774665725765667
+      },
+      {
+        "is_junction": false,
+        "junction_id": -1,
+        "lane_id": 1,
+        "lane_type": "Driving",
+        "lane_width_m": 4.0,
+        "order": 30,
+        "road_id": 22,
+        "s": 43.070281982421875,
+        "section_id": 0,
+        "transform": {
+          "location": {
+            "x": 92.38690948486328,
+            "y": 111.21997833251953,
+            "z": 0.0
+          },
+          "rotation": {
+            "pitch": 360.0,
+            "roll": 0.0,
+            "yaw": 269.99127197265625
+          }
+        },
+        "waypoint_id": 11536348503512268020
+      },
+      {
+        "is_junction": false,
+        "junction_id": -1,
+        "lane_id": 1,
+        "lane_type": "Driving",
+        "lane_width_m": 4.0,
+        "order": 31,
+        "road_id": 22,
+        "s": 41.070281982421875,
+        "section_id": 0,
+        "transform": {
+          "location": {
+            "x": 92.38660430908203,
+            "y": 109.21997833251953,
+            "z": 0.0
+          },
+          "rotation": {
+            "pitch": 360.0,
+            "roll": 0.0,
+            "yaw": 269.99127197265625
+          }
+        },
+        "waypoint_id": 7396449610194521073
+      },
+      {
+        "is_junction": false,
+        "junction_id": -1,
+        "lane_id": 1,
+        "lane_type": "Driving",
+        "lane_width_m": 4.0,
+        "order": 32,
+        "road_id": 22,
+        "s": 39.070281982421875,
+        "section_id": 0,
+        "transform": {
+          "location": {
+            "x": 92.38629913330078,
+            "y": 107.21997833251953,
+            "z": 0.0
+          },
+          "rotation": {
+            "pitch": 360.0,
+            "roll": 0.0,
+            "yaw": 269.99127197265625
+          }
+        },
+        "waypoint_id": 5035582085342415426
+      },
+      {
+        "is_junction": false,
+        "junction_id": -1,
+        "lane_id": 1,
+        "lane_type": "Driving",
+        "lane_width_m": 4.0,
+        "order": 33,
+        "road_id": 22,
+        "s": 37.070281982421875,
+        "section_id": 0,
+        "transform": {
+          "location": {
+            "x": 92.38600158691406,
+            "y": 105.21997833251953,
+            "z": 0.0
+          },
+          "rotation": {
+            "pitch": 360.0,
+            "roll": 0.0,
+            "yaw": 269.99127197265625
+          }
+        },
+        "waypoint_id": 8322672739243796912
+      },
+      {
+        "is_junction": false,
+        "junction_id": -1,
+        "lane_id": 1,
+        "lane_type": "Driving",
+        "lane_width_m": 4.0,
+        "order": 34,
+        "road_id": 22,
+        "s": 35.070281982421875,
+        "section_id": 0,
+        "transform": {
+          "location": {
+            "x": 92.38569641113281,
+            "y": 103.21997833251953,
+            "z": 0.0
+          },
+          "rotation": {
+            "pitch": 360.0,
+            "roll": 0.0,
+            "yaw": 269.99127197265625
+          }
+        },
+        "waypoint_id": 15351353778652175806
+      },
+      {
+        "is_junction": false,
+        "junction_id": -1,
+        "lane_id": 1,
+        "lane_type": "Driving",
+        "lane_width_m": 4.0,
+        "order": 35,
+        "road_id": 22,
+        "s": 33.070281982421875,
+        "section_id": 0,
+        "transform": {
+          "location": {
+            "x": 92.38539123535156,
+            "y": 101.21997833251953,
+            "z": 0.0
+          },
+          "rotation": {
+            "pitch": 360.0,
+            "roll": 0.0,
+            "yaw": 269.99127197265625
+          }
+        },
+        "waypoint_id": 15891229403403962902
+      },
+      {
+        "is_junction": false,
+        "junction_id": -1,
+        "lane_id": 1,
+        "lane_type": "Driving",
+        "lane_width_m": 4.0,
+        "order": 36,
+        "road_id": 22,
+        "s": 31.070280075073242,
+        "section_id": 0,
+        "transform": {
+          "location": {
+            "x": 92.38508605957031,
+            "y": 99.21997833251953,
+            "z": 0.0
+          },
+          "rotation": {
+            "pitch": 360.0,
+            "roll": 0.0,
+            "yaw": 269.99127197265625
+          }
+        },
+        "waypoint_id": 297159088782582236
+      },
+      {
+        "is_junction": false,
+        "junction_id": -1,
+        "lane_id": 1,
+        "lane_type": "Driving",
+        "lane_width_m": 4.0,
+        "order": 37,
+        "road_id": 22,
+        "s": 29.070280075073242,
+        "section_id": 0,
+        "transform": {
+          "location": {
+            "x": 92.38478088378906,
+            "y": 97.21997833251953,
+            "z": 0.0
+          },
+          "rotation": {
+            "pitch": 360.0,
+            "roll": 0.0,
+            "yaw": 269.99127197265625
+          }
+        },
+        "waypoint_id": 15744864273000007719
+      },
+      {
+        "is_junction": false,
+        "junction_id": -1,
+        "lane_id": 1,
+        "lane_type": "Driving",
+        "lane_width_m": 4.0,
+        "order": 38,
+        "road_id": 22,
+        "s": 27.070280075073242,
+        "section_id": 0,
+        "transform": {
+          "location": {
+            "x": 92.38447570800781,
+            "y": 95.21997833251953,
+            "z": 0.0
+          },
+          "rotation": {
+            "pitch": 360.0,
+            "roll": 0.0,
+            "yaw": 269.99127197265625
+          }
+        },
+        "waypoint_id": 7789387039382336272
+      },
+      {
+        "is_junction": false,
+        "junction_id": -1,
+        "lane_id": 1,
+        "lane_type": "Driving",
+        "lane_width_m": 4.0,
+        "order": 39,
+        "road_id": 22,
+        "s": 25.070280075073242,
+        "section_id": 0,
+        "transform": {
+          "location": {
+            "x": 92.3841781616211,
+            "y": 93.21997833251953,
+            "z": 0.0
+          },
+          "rotation": {
+            "pitch": 360.0,
+            "roll": 0.0,
+            "yaw": 269.99127197265625
+          }
+        },
+        "waypoint_id": 15016439814757940335
+      },
+      {
+        "is_junction": false,
+        "junction_id": -1,
+        "lane_id": 1,
+        "lane_type": "Driving",
+        "lane_width_m": 4.0,
+        "order": 40,
+        "road_id": 22,
+        "s": 23.070280075073242,
+        "section_id": 0,
+        "transform": {
+          "location": {
+            "x": 92.38387298583984,
+            "y": 91.21997833251953,
+            "z": 0.0
+          },
+          "rotation": {
+            "pitch": 360.0,
+            "roll": 0.0,
+            "yaw": 269.99127197265625
+          }
+        },
+        "waypoint_id": 10441221801001107766
+      },
+      {
+        "is_junction": false,
+        "junction_id": -1,
+        "lane_id": 1,
+        "lane_type": "Driving",
+        "lane_width_m": 4.0,
+        "order": 41,
+        "road_id": 22,
+        "s": 21.070280075073242,
+        "section_id": 0,
+        "transform": {
+          "location": {
+            "x": 92.3835678100586,
+            "y": 89.21997833251953,
+            "z": 0.0
+          },
+          "rotation": {
+            "pitch": 360.0,
+            "roll": 0.0,
+            "yaw": 269.99127197265625
+          }
+        },
+        "waypoint_id": 10405312795602269383
+      },
+      {
+        "is_junction": false,
+        "junction_id": -1,
+        "lane_id": 1,
+        "lane_type": "Driving",
+        "lane_width_m": 4.0,
+        "order": 42,
+        "road_id": 22,
+        "s": 19.070280075073242,
+        "section_id": 0,
+        "transform": {
+          "location": {
+            "x": 92.38326263427734,
+            "y": 87.21997833251953,
+            "z": 0.0
+          },
+          "rotation": {
+            "pitch": 360.0,
+            "roll": 0.0,
+            "yaw": 269.99127197265625
+          }
+        },
+        "waypoint_id": 15978696731478417865
+      },
+      {
+        "is_junction": false,
+        "junction_id": -1,
+        "lane_id": 1,
+        "lane_type": "Driving",
+        "lane_width_m": 4.0,
+        "order": 43,
+        "road_id": 22,
+        "s": 17.070280075073242,
+        "section_id": 0,
+        "transform": {
+          "location": {
+            "x": 92.3829574584961,
+            "y": 85.21997833251953,
+            "z": 0.0
+          },
+          "rotation": {
+            "pitch": 360.0,
+            "roll": 0.0,
+            "yaw": 269.99127197265625
+          }
+        },
+        "waypoint_id": 7331716769728966905
+      },
+      {
+        "is_junction": false,
+        "junction_id": -1,
+        "lane_id": 1,
+        "lane_type": "Driving",
+        "lane_width_m": 4.0,
+        "order": 44,
+        "road_id": 22,
+        "s": 15.070280075073242,
+        "section_id": 0,
+        "transform": {
+          "location": {
+            "x": 92.38265228271484,
+            "y": 83.21997833251953,
+            "z": 0.0
+          },
+          "rotation": {
+            "pitch": 360.0,
+            "roll": 0.0,
+            "yaw": 269.99127197265625
+          }
+        },
+        "waypoint_id": 14083400091724207354
+      },
+      {
+        "is_junction": false,
+        "junction_id": -1,
+        "lane_id": 1,
+        "lane_type": "Driving",
+        "lane_width_m": 4.0,
+        "order": 45,
+        "road_id": 22,
+        "s": 13.070280075073242,
+        "section_id": 0,
+        "transform": {
+          "location": {
+            "x": 92.3823471069336,
+            "y": 81.21997833251953,
+            "z": 0.0
+          },
+          "rotation": {
+            "pitch": 360.0,
+            "roll": 0.0,
+            "yaw": 269.99127197265625
+          }
+        },
+        "waypoint_id": 3606236629676224024
+      },
+      {
+        "is_junction": false,
+        "junction_id": -1,
+        "lane_id": 1,
+        "lane_type": "Driving",
+        "lane_width_m": 4.0,
+        "order": 46,
+        "road_id": 22,
+        "s": 11.070280075073242,
+        "section_id": 0,
+        "transform": {
+          "location": {
+            "x": 92.38204956054688,
+            "y": 79.21997833251953,
+            "z": 0.0
+          },
+          "rotation": {
+            "pitch": 360.0,
+            "roll": 0.0,
+            "yaw": 269.99127197265625
+          }
+        },
+        "waypoint_id": 6336767589447701313
+      },
+      {
+        "is_junction": false,
+        "junction_id": -1,
+        "lane_id": 1,
+        "lane_type": "Driving",
+        "lane_width_m": 4.0,
+        "order": 47,
+        "road_id": 22,
+        "s": 9.070280075073242,
+        "section_id": 0,
+        "transform": {
+          "location": {
+            "x": 92.38174438476562,
+            "y": 77.21997833251953,
+            "z": 0.0
+          },
+          "rotation": {
+            "pitch": 360.0,
+            "roll": 0.0,
+            "yaw": 269.99127197265625
+          }
+        },
+        "waypoint_id": 8689209601912762190
+      },
+      {
+        "is_junction": false,
+        "junction_id": -1,
+        "lane_id": 1,
+        "lane_type": "Driving",
+        "lane_width_m": 4.0,
+        "order": 48,
+        "road_id": 22,
+        "s": 7.0702805519104,
+        "section_id": 0,
+        "transform": {
+          "location": {
+            "x": 92.38143920898438,
+            "y": 75.21997833251953,
+            "z": 0.0
+          },
+          "rotation": {
+            "pitch": 360.0,
+            "roll": 0.0,
+            "yaw": 269.99127197265625
+          }
+        },
+        "waypoint_id": 11471654741422868352
+      },
+      {
+        "is_junction": false,
+        "junction_id": -1,
+        "lane_id": 1,
+        "lane_type": "Driving",
+        "lane_width_m": 4.0,
+        "order": 49,
+        "road_id": 22,
+        "s": 5.0702805519104,
+        "section_id": 0,
+        "transform": {
+          "location": {
+            "x": 92.38113403320312,
+            "y": 73.21997833251953,
+            "z": 0.0
+          },
+          "rotation": {
+            "pitch": 360.0,
+            "roll": 0.0,
+            "yaw": 269.99127197265625
+          }
+        },
+        "waypoint_id": 9010811828182099047
+      },
+      {
+        "is_junction": false,
+        "junction_id": -1,
+        "lane_id": 1,
+        "lane_type": "Driving",
+        "lane_width_m": 4.0,
+        "order": 50,
+        "road_id": 22,
+        "s": 3.0702805519104004,
+        "section_id": 0,
+        "transform": {
+          "location": {
+            "x": 92.38082885742188,
+            "y": 71.21997833251953,
+            "z": 0.0
+          },
+          "rotation": {
+            "pitch": 360.0,
+            "roll": 0.0,
+            "yaw": 269.99127197265625
+          }
+        },
+        "waypoint_id": 4414152626391062683
+      },
+      {
+        "is_junction": false,
+        "junction_id": -1,
+        "lane_id": 1,
+        "lane_type": "Driving",
+        "lane_width_m": 4.0,
+        "order": 51,
+        "road_id": 22,
+        "s": 1.0702804327011108,
+        "section_id": 0,
+        "transform": {
+          "location": {
+            "x": 92.38052368164062,
+            "y": 69.21997833251953,
+            "z": 0.0
+          },
+          "rotation": {
+            "pitch": 360.0,
+            "roll": 0.0,
+            "yaw": 269.99127197265625
+          }
+        },
+        "waypoint_id": 3758812784164882133
+      },
+      {
+        "is_junction": true,
+        "junction_id": 171,
+        "lane_id": 1,
+        "lane_type": "Driving",
+        "lane_width_m": 4.0,
+        "order": 52,
+        "road_id": 179,
+        "s": 21.070280075073242,
+        "section_id": 0,
+        "transform": {
+          "location": {
+            "x": 92.38021850585938,
+            "y": 67.21997833251953,
+            "z": 0.0
+          },
+          "rotation": {
+            "pitch": 360.0,
+            "roll": 0.0,
+            "yaw": -90.00869750976562
+          }
+        },
+        "waypoint_id": 12430151862289143994
+      },
+      {
+        "is_junction": true,
+        "junction_id": 171,
+        "lane_id": 1,
+        "lane_type": "Driving",
+        "lane_width_m": 4.0,
+        "order": 53,
+        "road_id": 179,
+        "s": 19.070280075073242,
+        "section_id": 0,
+        "transform": {
+          "location": {
+            "x": 92.37992095947266,
+            "y": 65.219970703125,
+            "z": 0.0
+          },
+          "rotation": {
+            "pitch": 360.0,
+            "roll": 0.0,
+            "yaw": -90.00869750976562
+          }
+        },
+        "waypoint_id": 8566575837433430895
+      },
+      {
+        "is_junction": true,
+        "junction_id": 171,
+        "lane_id": 1,
+        "lane_type": "Driving",
+        "lane_width_m": 4.0,
+        "order": 54,
+        "road_id": 179,
+        "s": 17.070280075073242,
+        "section_id": 0,
+        "transform": {
+          "location": {
+            "x": 92.3796157836914,
+            "y": 63.219970703125,
+            "z": 0.0
+          },
+          "rotation": {
+            "pitch": 360.0,
+            "roll": 0.0,
+            "yaw": -90.00869750976562
+          }
+        },
+        "waypoint_id": 3713544342591888104
+      },
+      {
+        "is_junction": true,
+        "junction_id": 171,
+        "lane_id": 1,
+        "lane_type": "Driving",
+        "lane_width_m": 4.0,
+        "order": 55,
+        "road_id": 179,
+        "s": 15.070280075073242,
+        "section_id": 0,
+        "transform": {
+          "location": {
+            "x": 92.37931060791016,
+            "y": 61.219970703125,
+            "z": 0.0
+          },
+          "rotation": {
+            "pitch": 360.0,
+            "roll": 0.0,
+            "yaw": -90.00869750976562
+          }
+        },
+        "waypoint_id": 3470776095461165996
+      }
+    ]
+  },
+  "finish": {
+    "x": 92.37931060791016,
+    "y": 61.219970703125,
+    "z": 0.0
+  },
+  "length_m": 110.0,
+  "map_name": "Carla/Maps/Town01_Opt",
+  "review_status": "user_requested_contiguous_shortening",
+  "schema_version": 1,
+  "spawn_point_index_in_carla_map": null,
+  "spawn_policy": "first retained waypoint transform plus 0.35 m z, as used by spawn_at_route_start",
+  "spawn_transform": {
+    "location": {
+      "x": 92.39602661132812,
+      "y": 171.219970703125,
+      "z": 0.0
+    },
+    "rotation": {
+      "pitch": 360.0,
+      "roll": 0.0,
+      "yaw": 269.99127197265625
+    }
+  },
+  "start": {
+    "x": 92.39602661132812,
+    "y": 171.219970703125,
+    "z": 0.0
+  },
+  "status": "trimmed_geometry_pending_drive_validation",
+  "trimmed_from": {
+    "dense_end_index_inclusive": 83,
+    "dense_start_index": 28,
+    "old_adaptive_waypoint_count": 23,
+    "old_length_m": 220.0609724521637,
+    "route_id": "route_01_straight",
+    "source_path": "/home/Ubuntu/carlas_tasks/runs/20260919T154916Z-route-numbering-swap-b5e941/routes/route_01_straight.json",
+    "source_sha256": "f4892e0426bc7f3d5f5cb084003f77c55ce820afb8aa85df0c80bc8322f7e36a"
+  },
+  "turn_events": [],
+  "validation": {
+    "checks": {
+      "adaptive_endpoints_and_order": true,
+      "contiguous_source_waypoints_unchanged": true,
+      "length_reduced": true,
+      "middle_half_within_dense_step": true,
+      "minimum_ten_working_waypoints": true,
+      "turn_profile": true,
+      "unique_dense_waypoints": true
+    },
+    "scope": "stored geometry checks; CARLA direct-next connectivity and actual driving tested separately",
+    "status": "passed"
+  }
+}

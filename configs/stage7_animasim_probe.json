@@ -2,7 +2,7 @@
   "schema_version": 1,
   "description": "Minimal Stage-7 AnimaSim deer probe. This is deliberately a one-camera asset/motion validation, not an 18-camera dataset drive.",
   "map_name": "Town01_Opt",
-  "approved_routes_run": "runs/20260923T160431Z-shorter-routes-b72a9d",
+  "approved_routes_run": "inputs/routes/town01_opt_short_v1",
   "route_id": "route_01_straight",
   "scene_spec_config": "configs/stage7_scene_editing.json",
   "weather_source_config": "configs/stage4_baseline_matrix.json",
