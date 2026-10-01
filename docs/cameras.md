@@ -16,7 +16,7 @@ Callbacks are grouped by frame and matched with the same snapshot pose. Drain fi
 
 ## New rigs and formats
 
-Declare the changed layout, resolution, sampling and storage format as an experiment; preserve the baseline. Share recorder/validation mechanics rather than copying stage scripts. Current migration preserves the AV2 preset; a general configurable-rig feature is future work. Validators for new rigs must derive expected streams from the saved rig rather than assume nine positions.
+Declare the changed layout, resolution, sampling and storage format as an experiment; preserve the baseline. Share recorder/validation mechanics rather than copying stage scripts. The library now has a versioned perspective RGB/semantic rig contract and a shared recorder/validator that derive streams from it. Their offline synthetic path supports variable camera count; live CARLA integration remains M1 in [library handoff](library-handoff.md). Existing live executors still use the AV2 preset.
 
 Start with a short recording on one route/weather and validate before a matrix. Switching semantic IDs to lossy storage is incompatible with data invariants. Format changes need decode and frame/pose completeness checks, not only file counts.
 

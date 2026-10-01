@@ -2,6 +2,8 @@
 
 **Decision record:** R01/R02 in [decisions](decisions.md). **Authority:** the user approved implementing the discussed repository restructuring after reviewing its rationale and Mac/VM transfer rules. This document is the durable explanation for future developers and a detailed commit description. It records intended architecture and current migration scope; local checks do not substitute for a GPU run.
 
+**October 2 follow-up:** the original changes are now preserved as four commits; audit lifecycle/identity fixes and the reusable library foundation have separate commits. [Library handoff](library-handoff.md) and R03 describe the implemented rig/capture contracts and remaining live migration. Historical audit measurements below remain evidence of the original restructuring.
+
 ## Problem and audit evidence
 
 The repository grew coherently through assignment stages, but active agent memory combined requirements, current state, run chronology, technical references and report material. Each task was instructed to load AGENTS, STATUS, requirements, decisions and plan, then additional guides. The audit presented in this conversation measured **107,035 bytes / 14,622 English words** in mandatory startup text before code. English translation did not solve the structural repetition.
@@ -81,4 +83,4 @@ Local acceptance checks must cover archive bytes/hashes; Markdown links and star
 
 No CARLA/API/network run is performed on Mac. Moving functions/defaults and mocked runtime checks preserves intended compatibility but does not prove live recorder behavior. The next validation is a short baseline recording on a new VM restored from Git alone, followed by actual external export verification.
 
-Deferred: general camera-rig schema, arbitrary format support, general config override resolver, complete modularization of scene executors, authored-map toolchain, derived-asset restoration automation, complete live recorder progress and statistical repeats. These are separate tasks, not hidden DONE claims. Optimize throughput after measuring writer/disk/API/application costs rather than assuming all repeated tool output is repeated simulation.
+October 2 adds a versioned perspective RGB/semantic rig schema and an offline-tested recording kernel. Still deferred: its live CARLA backend and route/scene integration, additional formats/projections, a general config override resolver, authored-map toolchain, derived-asset restoration automation, complete live recorder progress and statistical repeats. See the handoff for bounded migration tasks. Optimize throughput after measuring writer/disk/API/application costs rather than assuming all repeated tool output is repeated simulation.

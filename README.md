@@ -43,6 +43,8 @@ python3 -m unittest discover -s tests
 
 Input checking, matrix planning and static SceneSpec v1.0 validation are offline operations. The scene-check command does not support the animal v1.1 policy. See [experiment commands](docs/experiments.md) for registry/process/export operations and [VM workflow](docs/vm-workflow.md) for actual captures. A new rig or live server is not validated by these checks.
 
+The reusable library foundation has a rig-driven recording kernel, bounded frame/writer queues and a lossless capture writer. Try `python3 examples/record_synthetic.py --output /tmp/carla-synthetic-UNIQUE`; this uses synthetic data and requires a new directory. The live CARLA backend and route/scene migration remain pending. [Library handoff](docs/library-handoff.md) contains contracts, runnable checks and ordered implementation tasks; the core can also be installed as one package without CARLA dependencies.
+
 ## Historical evidence
 
 Stages 0–7 were recorded complete; stage 8 was declined and remains TODO; delivery remained IN_PROGRESS. The [archived status](docs/archive/assignment-2026/docs/STATUS.md), [English working report](report/report.md), [Russian report](report/final_report_ru.md) and [artifact registry](artifacts/index.csv) retain evidence and backup limits. This restructuring does not publish materials or close historical acceptance criteria.

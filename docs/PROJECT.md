@@ -11,6 +11,7 @@ The active project explores CARLA cameras and scene editing. The assignment is a
 | Configuration, repeats, process state? | [experiments](experiments.md) |
 | Recover/end a VM and preserve data? | [VM workflow](vm-workflow.md) |
 | Rationale and deferred scope? | [architecture](architecture.md), [decisions](decisions.md) |
+| Continue implementing the reusable library? | [library handoff](library-handoff.md), only the active M1–M4 task |
 | Historical claim or stage N? | [assignment archive](archive/assignment-2026/index.md), [reports](../report/report.md) |
 
 Code and small inputs travel through Git; images, full run evidence and large logs through rsync with integrity checks. `inputs/` supplies approved routes without historical datasets; `configs/av2/` preserves source calibration.

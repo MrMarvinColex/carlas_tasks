@@ -1,0 +1,151 @@
+{
+  "av2_compatibility": {
+    "cameras": 9,
+    "live_validation": false,
+    "method": "executed pre-extraction function with transform-only test objects; compared to pure adapter",
+    "result": "all applied evidence dictionaries equal before/after extraction",
+    "vehicle_geometry": "synthetic rear axle (-1.4,0,0.3), bbox centre (0,0,0.6), extent (2.3,1,0.6), z offset 0.5"
+  },
+  "commit_split": {
+    "audit_fixes": "f7205bd",
+    "docs_archive_audit": "bf3695f",
+    "execution": "046279c",
+    "inputs": "2110973",
+    "library_kernel": "ecef1a8",
+    "pure_extraction": "552481c"
+  },
+  "created_at_utc": "2026-10-01T22:24:27.099431+00:00",
+  "development_findings": [
+    "Stopped old pip whole-worktree copy; subsequent package checks used only package/packaging files in a temporary directory.",
+    "Old setuptools ignored unsupported project metadata and made an empty UNKNOWN wheel; setup.cfg compatibility metadata plus content/import assertions corrected this."
+  ],
+  "documentation": {
+    "archive_files_verified": 10,
+    "checked_local_links": 127,
+    "errors": [],
+    "optional_missing_evidence_links": [],
+    "startup_budget_bytes": 15360,
+    "startup_bytes": 8836,
+    "valid": true
+  },
+  "inputs": {
+    "calibrations_verified": 1,
+    "checks": [
+      {
+        "config": "configs/stage4_baseline_matrix.json",
+        "route_count": 5,
+        "valid": true
+      },
+      {
+        "config": "configs/stage6_scene_editing.json",
+        "route_count": 1,
+        "valid": true
+      },
+      {
+        "config": "configs/stage7_scene_editing.json",
+        "route_count": 1,
+        "valid": true
+      },
+      {
+        "config": "configs/stage7_animasim_probe.json",
+        "route_count": 1,
+        "valid": true
+      }
+    ],
+    "errors": [],
+    "route_sets_verified": 1,
+    "scope": "Portable inputs only; historical runs, GPU, CARLA and APIs are not accessed.",
+    "valid": true
+  },
+  "limits": [
+    "No live backend yet; sensor phase discovery and actual CARLA resource/callback behavior require M1.",
+    "Capture bundles are not complete accepted experiments; baseline-specific import needs explicit versioned integration in M2.",
+    "Route/scene/provider migration remains M2-M4; no invented remote results or backup proof.",
+    "No push; user .gitignore edit remains uncommitted."
+  ],
+  "matrix_plan": {
+    "cells": 10,
+    "config_fingerprint": "56b6ccc30f32b1b1c707b0a37a006415063570cc9cb77fdb5d383d83aca09d59",
+    "experiment_id": "baseline-av2-short-v1"
+  },
+  "packaging": {
+    "all_package_modules_match_worktree": true,
+    "bytes": 53120,
+    "entries": 26,
+    "isolated_wheel_capture_check": {
+      "format": "research-capture-v1",
+      "images": 18,
+      "samples": 3,
+      "scope": "Capture integrity only; no route/scene acceptance, manifest or backup claim.",
+      "status": "passed",
+      "streams": 6
+    },
+    "name": "carla_research_tasks-0.1.0-py3-none-any.whl",
+    "scope": "Temporary offline build from package-only source; no install or publication. Wheel not retained as a backup.",
+    "sha256": "88bf3cb5a45f6beb4784d86d2549931e6ec5e9d7c2a091d29dd6d24f17d23e7c",
+    "status": "passed"
+  },
+  "platform": "Mac; Python 3.9.6",
+  "rig_check": {
+    "cameras": 3,
+    "frame_stride": 2,
+    "rig_id": "three-camera-v1",
+    "sample_bytes": 1843200,
+    "scope": "Offline specification only",
+    "streams": 6,
+    "valid": true
+  },
+  "schema_version": 1,
+  "scope": "Library foundation and audit fixes, no CARLA/GPU/API/remote execution",
+  "source_code_commit": "ecef1a82f0a116e2c57ae749a55e4efd20247a0d",
+  "static_scene_check": {
+    "edit_count": 1,
+    "route_id": "route_01_straight",
+    "scope": "Local policy and geometry only; no CARLA execution",
+    "valid": true,
+    "version": "1.0"
+  },
+  "status": "passed_offline",
+  "synthetic_example": {
+    "capture": {
+      "first_frame": 2,
+      "frame_stride": 2,
+      "last_frame": 6,
+      "peak_pending_writes": 2,
+      "peak_sensor_bytes": 1843200,
+      "samples": 3,
+      "scope": "Capture only; experiment acceptance and export verification are separate.",
+      "status": "captured",
+      "termination": "sample_limit"
+    },
+    "synthetic_only": true,
+    "validation": {
+      "format": "research-capture-v1",
+      "images": 18,
+      "samples": 3,
+      "scope": "Capture integrity only; no route/scene acceptance, manifest or backup claim.",
+      "status": "passed",
+      "streams": 6
+    }
+  },
+  "tests": {
+    "command": "python3 -m unittest discover -s tests",
+    "context": "git checkout-index isolated staged checkout immediately before library commit",
+    "count": 123,
+    "coverage": [
+      "audit F1-F5 regression workflows",
+      "1/3/9-camera complete capture",
+      "frame/timestamp/dimension/duplicate/drop/overflow rejection",
+      "detached mutable buffers",
+      "ordered asynchronous writers and byte budget",
+      "setup/tick/disk/cancellation/cleanup failures",
+      "route condition versus sample cap",
+      "lossless semantic IDs and RGB channel order",
+      "full transforms and corruption rejection",
+      "offline imports and no package-to-stage imports"
+    ],
+    "elapsed_seconds": 7.396,
+    "result": "OK"
+  },
+  "worktree": "Committed implementation; final documentation/evidence changes and pre-existing user .gitignore edit are separate."
+}

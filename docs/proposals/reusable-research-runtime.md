@@ -1,6 +1,6 @@
 # Reusable Research Runtime
 
-**Status: PROPOSED, 2026-10-02.** Follow-up to the [audit](../reviews/restructuring-2026-10-02.md). This is a design proposal; the interfaces below are illustrative and implementation has not started.
+**Status: ACCEPTED DIRECTION; FOUNDATION IMPLEMENTED OFFLINE, 2026-10-02.** Follow-up to the [audit](../reviews/restructuring-2026-10-02.md). Rig/sample/ownership/capture contracts and the common kernel now exist; [library handoff](../library-handoff.md) is the implementation authority and ordered task list. The broader route/scene/provider migration below remains future work; no live backend or GPU run is claimed.
 
 ## Goal and package boundary
 
