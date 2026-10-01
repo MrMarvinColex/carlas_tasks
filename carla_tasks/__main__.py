@@ -24,6 +24,11 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     commands = parser.add_subparsers(dest="command", required=True)
     commands.add_parser("check-docs", help="check startup budget, links and preserved archive hashes")
+    rig_check = commands.add_parser("rig-check", help="validate a perspective RGB/semantic rig without CARLA")
+    rig_check.add_argument("rig", type=Path)
+    rig_check.add_argument("--fixed-delta", type=float, default=0.05)
+    capture_check = commands.add_parser("capture-check", help="validate research-capture-v1 images and complete poses")
+    capture_check.add_argument("directory", type=Path)
     check = commands.add_parser("check-inputs", help="verify small Git-tracked runtime inputs")
     check.add_argument("--config", type=Path, action="append")
     scene = commands.add_parser("scene-check", help="offline validation of the static SceneSpec v1.0 envelope")
@@ -69,7 +74,16 @@ def main() -> int:
     copied.add_argument("--report", type=Path, required=True)
     args = parser.parse_args()
     try:
-        if args.command == "check-docs":
+        if args.command == "rig-check":
+            from .rigs import RigSpec
+            rig = RigSpec.from_dict(json.loads(args.rig.read_text()))
+            emit({"valid": True, "rig_id": rig.rig_id, "cameras": len(rig.cameras),
+                  "streams": len(rig.streams), "sample_bytes": rig.sample_bytes,
+                  "frame_stride": rig.frame_stride(args.fixed_delta), "scope": "Offline specification only"})
+        elif args.command == "capture-check":
+            from .capture_io import validate_capture
+            emit(validate_capture(args.directory))
+        elif args.command == "check-docs":
             from .maintenance import check_docs
             result = check_docs(Path.cwd())
             emit(result)

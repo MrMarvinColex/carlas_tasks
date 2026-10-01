@@ -147,57 +147,15 @@ def applied_camera_configuration(
     bbox_centre: tuple[float, float, float],
     bbox_extent: tuple[float, float, float],
 ) -> tuple[carla.Transform, dict[str, object]]:
-    extrinsic = camera["egovehicle_SE3_sensor"]
-    av2_rotation = quaternion_to_matrix(*(float(extrinsic[key]) for key in ("qw", "qx", "qy", "qz")))
-    actor_matrix = av2_camera_to_carla_actor_matrix(av2_rotation)
-    euler = matrix_to_carla_euler_deg(actor_matrix)
-    rebuilt = carla_euler_to_matrix(**euler)
-    location = list(
-        av2_translation_to_carla(
-            (float(extrinsic["tx_m"]), float(extrinsic["ty_m"]), float(extrinsic["tz_m"])),
-            rear_axle_origin_m,
-        )
-    )
-    location[2] += mount_z_offset_m
-    transform = carla.Transform(
-        carla.Location(x=location[0], y=location[1], z=location[2]),
-        carla.Rotation(roll=euler["roll"], pitch=euler["pitch"], yaw=euler["yaw"]),
-    )
-    intrinsics = camera["intrinsics"]
-    width, height = int(intrinsics["width_px"]), int(intrinsics["height_px"])
-    fov = horizontal_fov_deg(width, float(intrinsics["fx_px"]))
-    forward = (actor_matrix[0][0], actor_matrix[1][0], actor_matrix[2][0])
-    origin_inside = point_inside_box(location, bbox_centre, bbox_extent)
-    optical_axis_hits_body = ray_intersects_box(location, forward, bbox_centre, bbox_extent)
-    if origin_inside:
-        raise RuntimeError(f"{camera['sensor_name']} origin is inside the CARLA vehicle bounding box")
-    if optical_axis_hits_body:
-        raise RuntimeError(f"{camera['sensor_name']} optical axis intersects the CARLA vehicle bounding box")
-    applied = {
-        "sensor_name": camera["sensor_name"],
-        "raw_av2": camera,
-        "carla_relative_transform": transform_to_dict(transform),
-        "carla_local_to_vehicle_rotation_matrix": actor_matrix,
-        "carla_camera_forward_axis_in_vehicle": list(forward),
-        "horizontal_fov_deg": fov,
-        "image_width_px": width,
-        "image_height_px": height,
-        "principal_point_offset_from_image_centre_px": {
-            "x": float(intrinsics["cx_px"]) - width / 2.0,
-            "y": float(intrinsics["cy_px"]) - height / 2.0,
-        },
-        "numeric_checks": {
-            "rotation_determinant": matrix_determinant(actor_matrix),
-            "orthonormal_max_error": max_identity_error(actor_matrix),
-            "euler_roundtrip_max_error": matrix_max_difference(actor_matrix, rebuilt),
-            "origin_outside_vehicle_bbox": not origin_inside,
-            "optical_axis_misses_vehicle_bbox": not optical_axis_hits_body,
-        },
-        "projection_limits": (
-            "CARLA receives AV2 width/height and the horizontal FOV derived from fx. "
-            "CARLA 0.9.16 cannot set AV2 cx/cy or the full k1/k2/k3 model; distortion is disabled."
-        ),
-    }
+    # Compatibility boundary: pure adaptation is shared with arbitrary rigs.
+    from carla_tasks.rigs import resolve_av2_camera
+    try:
+        specification, applied = resolve_av2_camera(
+            camera, rear_axle_origin_m, mount_z_offset_m, bbox_centre, bbox_extent)
+    except ValueError as exc:
+        raise RuntimeError(str(exc)) from exc
+    pose = specification.vehicle_from_camera.legacy_dict()
+    transform = carla.Transform(carla.Location(**pose["location"]), carla.Rotation(**pose["rotation"]))
     return transform, applied
 
 

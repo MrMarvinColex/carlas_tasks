@@ -18,6 +18,11 @@ class CliTests(unittest.TestCase):
             code = main()
         return code, json.loads(output.getvalue())
 
+    def test_custom_rig_check_is_available_without_carla(self):
+        code, result = self.call(["rig-check", "configs/rigs/three_camera_v1.json"])
+        self.assertEqual(code, 0)
+        self.assertEqual((result["cameras"], result["streams"], result["frame_stride"]), (3, 6, 2))
+
     def test_dataset_options_are_forwarded_before_positional_path(self):
         with patch("carla_tasks.dataset.main") as validate, patch(
             "sys.argv", ["carla_tasks", "validate-dataset", "--require-all-nine", "/tmp/example-run"]
