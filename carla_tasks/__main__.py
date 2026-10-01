@@ -120,6 +120,8 @@ def main() -> int:
             else:
                 result = wait_process(args.state, args.timeout)
             emit(result)
+            if args.action == "wait" and result.get("wait_outcome") != "finished":
+                return 4 if result.get("wait_outcome") == "unknown" else 3
             if result.get("state") == "failed":
                 return 1
         elif args.command == "registry":
@@ -149,12 +151,12 @@ def main() -> int:
                 with args.report.open("x") as report:
                     json.dump(evidence, report, indent=2, sort_keys=True)
                     report.write("\n")
-                if result["status"] == "passed":
-                    registry.append({**previous, "recorded_at_utc": utc_now(), "external_copy": {
-                        "status": "verified", "location": result["external_location"],
-                        "manifest_sha256": result["manifest_sha256"], "evidence_path": str(args.report),
-                        "verified_at_utc": evidence["verified_at_utc"], "verification_method": "destination SHA-256",
-                        "source_host_id": source_host, "verification_host_id": verification_host}})
+                registry.record_copy_check(args.run_id, {
+                    "status": "verified" if result["status"] == "passed" else "failed",
+                    "location": result["external_location"],
+                    "manifest_sha256": result["manifest_sha256"], "evidence_path": str(args.report),
+                    "verified_at_utc": evidence["verified_at_utc"], "verification_method": "destination SHA-256",
+                    "source_host_id": source_host, "verification_host_id": verification_host})
                 emit({"status": result["status"], "run_id": args.run_id,
                       "entries": result["entries"], "failure_count": len(result["failures"]),
                       "report": str(args.report)})

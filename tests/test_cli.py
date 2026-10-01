@@ -74,7 +74,34 @@ class CliTests(unittest.TestCase):
                 code, result = self.call(argv)
             self.assertEqual(code, 1)
             self.assertEqual(json.loads(report.read_text())["status"], "failed")
-            self.assertEqual(registry.latest()[0]["external_copy"]["status"], "not_copied")
+            self.assertEqual(registry.latest()[0]["external_copy"]["status"], "failed")
+
+    def test_reverification_revokes_only_the_failed_copy(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            registry, source, destination, report, argv = self.make_copy(root)
+            with patch("carla_tasks.hosts.host_identity", return_value="mac-host"):
+                self.assertEqual(self.call(argv)[0], 0)
+                bad = root / "other-copy"
+                bad.mkdir()
+                other = list(argv)
+                other[other.index("--copy") + 1] = str(bad)
+                other[-1] = str(root / "other-check.json")
+                self.assertEqual(self.call(other)[0], 1)
+                self.assertEqual(registry.latest()[0]["external_copy"]["status"], "verified")
+                self.assertEqual(registry.latest()[0]["last_copy_check"]["status"], "failed")
+                (destination / "data.bin").write_bytes(b"corrupted")
+                argv[-1] = str(root / "recheck.json")
+                self.assertEqual(self.call(argv)[0], 1)
+            self.assertEqual(registry.latest()[0]["external_copy"]["status"], "failed")
+
+    def test_wait_timeout_unknown_and_failure_have_distinct_exit_codes(self):
+        for state, outcome, expected in (("running", "timeout", 3), ("unknown", "unknown", 4),
+                                         ("completed", "finished", 0), ("failed", "finished", 1)):
+            with self.subTest(state=state), patch("carla_tasks.processes.wait_process", return_value={
+                    "state": state, "wait_outcome": outcome}):
+                code, result = self.call(["process", "wait", "--state", "unused.json"])
+                self.assertEqual(code, expected)
 
     def test_different_source_manifest_is_rejected_without_new_evidence(self):
         with tempfile.TemporaryDirectory() as directory:

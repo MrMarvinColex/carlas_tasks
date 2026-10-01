@@ -38,6 +38,24 @@ class RegistryTests(unittest.TestCase):
         changed = fixture_plan(self.root)
         self.assertEqual(self.registry.cell_status(changed, self.cell), "pending")
 
+    def test_expanded_matrix_resumes_only_unchanged_cells(self):
+        self.registry.append(self.record())
+        self.config["weather_profiles"]["rain"] = {"parameters": {"wetness": 90}}
+        write_json(self.root / "config.json", self.config)
+        expanded = fixture_plan(self.root)
+        self.assertEqual(self.registry.cell_status(expanded, self.cell), "complete")
+        self.assertEqual(self.registry.cell_status(expanded, Cell("route1", "rain", 1)), "pending")
+
+    def test_v1_records_do_not_gain_unrecorded_measurement_identity(self):
+        record = self.record()
+        record["schema_version"] = 1
+        record.pop("measurement_fingerprint")
+        self.registry.append(record)
+        self.assertEqual(self.registry.cell_status(self.plan, self.cell), "complete")
+        self.config["weather_profiles"]["rain"] = {"parameters": {"wetness": 90}}
+        write_json(self.root / "config.json", self.config)
+        self.assertEqual(self.registry.cell_status(fixture_plan(self.root), self.cell), "pending")
+
     def test_running_unknown_block_failed_retry_and_latest_event(self):
         self.registry.append(self.record("running"))
         self.assertEqual(self.registry.cell_status(self.plan, self.cell), "blocked")
@@ -85,6 +103,7 @@ class RegistryTests(unittest.TestCase):
         write_json(self.run / "experiment_identity.json", self.plan.identity(self.cell))
         write_json(self.run / "experiment_manifest.json", self.plan.resolved_manifest)
         write_json(self.run / "metadata.json", {**self.plan.identity(self.cell), "state": "complete", "run_id": self.run.name,
+                                              "execution_host_id": "source-host",
                                               "carla_client_version": "0.9.16", "carla_server_version": "0.9.16"})
         write_json(self.run / "baseline_config.json", {"route_id": self.cell.route_id, "weather_id": self.cell.weather_id})
         write_json(self.run / "baseline_validation.json", {"status": "passed"})
@@ -105,6 +124,29 @@ class RegistryTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "legacy"):
             self.registry.import_run(self.run)
         self.assertEqual(self.registry.records(), [])
+
+    def test_reimport_is_idempotent_and_preserves_external_proof(self):
+        self.finalize_fixture()
+        record = self.registry.import_run(self.run)
+        self.registry.record_copy_check(self.run.name, {
+            "status": "verified", "location": "/mac/copy", "evidence_path": "checks/copy.json",
+            "manifest_sha256": record["manifest_sha256"], "source_host_id": "source-host", "verification_host_id": "mac-host"})
+        count = len(self.registry.records())
+        self.registry.import_run(self.run)
+        self.assertEqual(len(self.registry.records()), count)
+        (self.run / "manifest.sha256").unlink()
+        self.assertEqual(self.registry.cell_status(self.plan, self.cell), "complete")
+
+    def test_finalized_run_id_cannot_be_rebound(self):
+        self.finalize_fixture()
+        record = self.registry.import_run(self.run)
+        with self.assertRaisesRegex(ValueError, "different identity"):
+            self.registry.append({**record, "repeat_index": 2})
+        # A self-consistent but changed run under an existing ID is also refused.
+        write_json(self.run / "additional.json", {"changed": True})
+        self.finalize_fixture()
+        with self.assertRaisesRegex(ValueError, "change its manifest"):
+            self.registry.import_run(self.run)
 
 
 if __name__ == "__main__":

@@ -70,4 +70,8 @@ The next improvement should close the identified gaps and follow one actual came
 4. A Git-only checkout can preview resume after the complete Mac export/registry handoff.
 5. Then perform one short GPU baseline pilot and verify its Mac export before a matrix.
 
-These are recommendations and uncovered cases, not implemented fixes. Historical reports, previous validation artifacts and runtime code were preserved. Live capture compatibility remains unverified.
+These were recommendations and uncovered cases at audit time. Historical reports and the original validation artifacts are preserved.
+
+## Follow-up implementation, 2026-10-02
+
+F1–F5 were corrected during the library-foundation work: copy checks retain failure/invalidation, imports preserve evidence and reject ID conflicts, schema-2 measurement identity survives matrix expansion, wait timeouts have distinct exit codes, and the main VM guide includes Mac verification plus the return Git transfer. All 100 offline tests passed after these fixes. Findings and synthetic evidence above describe the audited pre-fix state. Live GPU validation remains pending.

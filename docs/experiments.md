@@ -8,6 +8,8 @@ Use versioned Git inputs for approved routes/calibration/small replay scenes. Gi
 
 Separate experiment_id (study), configuration/input fingerprint (settings identity), run_id (execution) and repeat_index (requested measurement repeat). A matching successful repeat may satisfy a resume; it cannot satisfy a newly requested repeat. Failed/interrupted runs stay separate. Record revision/dirty state and actual environment with each run.
 
+Identity schema 2 also records `measurement_fingerprint`: selected route geometry and weather plus shared settings, calibration, implementation and runtime. The full `config_fingerprint` still records all matrix inputs and detects in-flight drift. Adding another route/weather preserves unchanged measurements; editing selected inputs invalidates them. Source hashes and runtime options remain conservative equivalence boundaries. Schema-1 ledger rows retain exact full-fingerprint matching only; historical evidence is not upgraded by guessing missing hashes.
+
 ## Bounded process control
 
 A tool/orchestration handle completing does not prove its child experiment ended. Check stored PID/process identity, progress and exit status. Use one managed invocation and bounded status output; avoid wide pgrep command lines or continuously recounted output directories. Never start a replacement merely because an outer tool returned.
@@ -57,6 +59,8 @@ python3 -m carla_tasks process wait --state logs/process-RUN_ID.json --timeout 3
 ```
 
 Do not run that capture example on Mac; it needs a prepared run directory and live server. Durable process completion and dataset acceptance remain separate. Inspect the previous state before creating a retry path.
+
+`process wait` returns exit 0 for completed, 1 for failed, 2 for command/input errors, 3 for timeout while still pending, and 4 for unknown supervision. Its JSON includes `wait_outcome`. Timeout neither kills nor relaunches the child. `process status` remains a read-only query. Wait briefly, use progress, and never interpret timeout as a successful experiment.
 
 
 Run `python3 -m carla_tasks --help` from the repository root for the supported entry points. Input checks, matrix planning, registry metadata and export verification work without starting CARLA. Server probing and actual captures require the VM. Existing stage-named scripts remain compatible commands; shared functionality belongs in the package.

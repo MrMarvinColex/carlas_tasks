@@ -4,6 +4,7 @@ import sys
 import tempfile
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 from carla_tasks.processes import read_status, start_process, wait_process
 
@@ -11,6 +12,13 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 class SupervisionTests(unittest.TestCase):
+    def test_timeout_does_not_turn_pending_into_success(self):
+        with patch("carla_tasks.processes.read_status", return_value={"state": "running", "exit_code": None}), patch(
+                "carla_tasks.processes.time.monotonic", side_effect=[0, 2]):
+            status = wait_process(Path("unused"), 1)
+        self.assertEqual(status["state"], "running")
+        self.assertEqual(status["wait_outcome"], "timeout")
+
     def test_child_survives_launcher_exit_and_has_explicit_exit_code(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

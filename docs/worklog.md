@@ -23,3 +23,7 @@ Reviewed memory/data boundaries, executor coupling, process contracts and Mac/VM
 ## 2026-10-02 — Reusable runtime proposal
 
 Reviewed remaining stage-script responsibilities and camera/capture coupling. Proposed one internal package with explicit rig/sample/session contracts, shared capture, separate scene generation/replay, and incremental baseline-first migration. [Design proposal](proposals/reusable-research-runtime.md) records scope and acceptance. Runtime code is unchanged; no additional experiment or runtime test was performed. The proposal remains distinct from an implemented or GPU-validated architecture.
+
+## 2026-10-02 — Preserve reviewed changes and correct audit findings
+
+Split accumulated work into inputs (`2110973`), offline extraction (`552481c`), execution (`046279c`) and documentation/audit (`bf3695f`). Tested staged copies independently. Corrected audit F1–F5 with regression scenarios; all 100 offline tests and documentation checks passed. Schema-2 per-measurement identity keeps matrix provenance separately; registry updates merge under an exclusive lock, preserve proof on reimport, record failed copy checks and refuse finalized-ID conflicts. VM instructions now carry verified Mac evidence back through Git. User `.gitignore` edit remains separate. No push or GPU/API execution.

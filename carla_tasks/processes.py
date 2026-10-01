@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import datetime as dt
 import json
+import math
 import os
 import subprocess
 import sys
@@ -92,7 +93,7 @@ def start_process(command: list[str], state_path: Path, log_path: Path, cwd: Pat
 
 
 def wait_process(path: Path, timeout_seconds: float = 60.0) -> dict[str, Any]:
-    if timeout_seconds <= 0:
+    if not math.isfinite(timeout_seconds) or timeout_seconds <= 0:
         raise ValueError("timeout must be positive")
     deadline = time.monotonic() + timeout_seconds
     while True:
@@ -105,7 +106,9 @@ def wait_process(path: Path, timeout_seconds: float = 60.0) -> dict[str, Any]:
                     _SUPERVISORS.pop(state["attempt_id"], None)
                 except subprocess.TimeoutExpired:
                     pass
-            return state
+            outcome = ("finished" if state.get("state") in TERMINAL else
+                       "unknown" if state.get("observation") or state.get("state") == "unknown" else "timeout")
+            return {**state, "wait_outcome": outcome}
         time.sleep(min(0.5, max(0.0, deadline - time.monotonic())))
 
 

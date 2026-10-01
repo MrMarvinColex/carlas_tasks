@@ -61,6 +61,19 @@ class ExperimentTests(unittest.TestCase):
         self.assertEqual(original.config_fingerprint, revised.config_fingerprint)
         self.assertEqual({cell.repeat_index for cell in revised.cells}, {1, 2, 3})
 
+    def test_matrix_expansion_preserves_existing_measurement_only(self):
+        original = fixture_plan(self.root)
+        cell = original.cells[0]
+        self.config["weather_profiles"]["rain"] = {"parameters": {"wetness": 90}}
+        write_json(self.root / "config.json", self.config)
+        revised = fixture_plan(self.root)
+        self.assertNotEqual(original.config_fingerprint, revised.config_fingerprint)
+        self.assertEqual(original.identity(cell)["measurement_fingerprint"], revised.identity(cell)["measurement_fingerprint"])
+        self.config["weather_profiles"]["clear"]["parameters"]["wetness"] = 1
+        write_json(self.root / "config.json", self.config)
+        changed = fixture_plan(self.root)
+        self.assertNotEqual(original.identity(cell)["measurement_fingerprint"], changed.identity(cell)["measurement_fingerprint"])
+
     def test_cameras_geometry_map_runtime_and_code_change_identity(self):
         original = fixture_plan(self.root).config_fingerprint
         self.config["mount_z_offset_m"] = 0.7

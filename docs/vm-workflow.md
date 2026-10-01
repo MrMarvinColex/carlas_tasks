@@ -14,20 +14,30 @@ Recheck full environment only on recovery or meaningful changes. Use normal repo
 
 Git: code, settings, small input versions and registry/docs. Review changes, commit and push the selected work; verify the expected remote commit before deleting a VM. No automatic commit/push is implied by a simulation command.
 
-rsync: completed or honestly finalized incomplete runs, large logs and selected raw chat evidence. Run transfers from the Mac. Example placeholders must be replaced with actual paths:
+rsync: completed or honestly finalized incomplete runs, large logs and selected raw chat evidence. Use this order for new-format runs; replace placeholders with actual paths:
+
+1. On the VM, finish capture/writes and finalize the run manifest. Import it with `python3 -m carla_tasks registry import --run-dir runs/RUN_ID` unless the batch already registered it. Review, commit and push code plus `artifacts/run_registry.jsonl`; confirm the remote commit. Do not modify finalized run contents.
+2. On the Mac, fetch/merge that commit into a preserved worktree. Copy just the selected run, then verify and register its destination:
 
 ```sh
 rsync -avP carla-vm:/ABSOLUTE/VM/PROJECT/runs/RUN_ID/ /ABSOLUTE/MAC/RESULTS/RUN_ID/
-python3 scripts/verify_export.py /ABSOLUTE/MAC/RESULTS/RUN_ID /ABSOLUTE/MAC/RESULTS/RUN_ID
+python3 -m carla_tasks registry verify-copy --run-id RUN_ID --manifest-dir /ABSOLUTE/MAC/RESULTS/RUN_ID --copy /ABSOLUTE/MAC/RESULTS/RUN_ID --report artifacts/export_verifications/UNIQUE.json
 ```
 
-Do not add --delete. Source/destination trailing slashes mean run contents. Finish capture/queues and create manifest before transfer. The legacy verifier expects the project's digest/size/path manifest. With the copied source manifest, the self-path command validates destination bytes against manifest entries; it does not constitute a second copy. Preserve verification output/time and manifest digest; record actual external location and backup evidence in artifacts/index.csv.
+3. Review, commit and push the Mac's updated `artifacts/run_registry.jsonl` and verification report. Verify the remote commit containing both. A push of the earlier VM commit alone does not carry Mac backup evidence.
+4. On the next VM, fetch that last commit. Inspect `python3 -m carla_tasks registry list` and the batch `--dry-run`; matching verified records support resume without restoring images. Restore specific datasets only when analysis/replay requires their bytes.
+
+Do not add --delete. Source/destination trailing slashes mean run contents. The verifier uses the project's digest/size/path manifest. The example reads the copied manifest but also checks its digest against the previously registered finalized run, plus execution/verification host identities. Running this on the Mac establishes destination evidence; the same command on the origin VM does not. No transfer or push is performed by these documentation examples.
+
+`artifacts/run_registry.jsonl` is the operational resume/copy ledger for identified runs. `artifacts/index.csv` retains historical runs and other evidence (audits/local checks); it does not control new-run resume. For legacy results without identity, use `python3 scripts/verify_export.py COPY COPY` and retain the report/location in the CSV; do not invent current identities. Resolve concurrent Git edits to the JSONL ledger preserving all events and their actual order; a textual merge alone cannot decide conflicting latest copy checks.
 
 A completed transfer or source-to-source check does not prove an external backup. New registry verification additionally requires manifest-covered execution-host identity and a distinct verification host; same-VM rehashes cannot mark an external copy verified. Mac storage is external to a VM; a second folder on that VM is not. Upload/public visibility requires separate authorization.
 
 ## Portable continuation
 
 Transfer the small Git registry to a new VM to continue a series without images. Exact configuration/input identity and repeat matching govern skip decisions; new-format runs need verified identity/manifests; legacy runs without identity remain in the historical registry and cannot be imported as current runs. Read [experiments](experiments.md) for trust limits. Restore historical images only for analysis that needs them.
+
+Rechecking a corrupted copy records failure and revokes that copy's proof. A failure at another destination does not invalidate an independent verified copy. Reimporting an unchanged finalized run retains copy evidence; conflicting contents under the same run ID are refused. Routine status consults recorded evidence, not a fresh dataset scan.
 
 ## End or delete a VM
 

@@ -17,7 +17,7 @@ from .inputs import resolve_routes_dir
 DEFAULT_CALIBRATION = "configs/av2/54bc6dbc-ebfb-3fba-b5b3-57f88b4b79ca/calibration.json"
 DEFAULT_REGISTRY = "artifacts/run_registry.jsonl"
 DEFAULT_CARLA_IMAGE = "carlasim/carla:0.9.16@sha256:aaf1df22702780ece072069e23d03c4879b002ae028c79744b09c4c7ddbae953"
-IDENTITY_VERSION = 1
+IDENTITY_VERSION = 2
 _IDENTIFIER = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_.-]{0,127}$")
 _SECRET_KEYS = {"api_key", "apikey", "token", "access_token", "password", "secret", "authorization"}
 _NON_RUNTIME_KEYS = {
@@ -137,6 +137,22 @@ class Cell:
         return {"route_id": self.route_id, "weather_id": self.weather_id, "repeat_index": self.repeat_index}
 
 
+def measurement_fingerprint(manifest: dict[str, Any], cell: Cell) -> str:
+    """Identity of one measurement's inputs, independent of matrix membership.
+
+    Keep the whole manifest for provenance/drift checks. Select only this route
+    and weather for equivalence; repeat_index remains a separate ledger key.
+    Implementation and runtime hashes intentionally remain conservative.
+    """
+    routes = manifest["routes"]
+    return canonical_hash({
+        **manifest,
+        "weather_profiles": {cell.weather_id: manifest["weather_profiles"][cell.weather_id]},
+        "routes": {**routes, "geometry_sha256": {
+            cell.route_id: routes["geometry_sha256"][cell.route_id]}},
+    })
+
+
 @dataclass(frozen=True)
 class ExperimentPlan:
     experiment_id: str
@@ -152,6 +168,7 @@ class ExperimentPlan:
             "schema_version": IDENTITY_VERSION,
             "experiment_id": self.experiment_id,
             "config_fingerprint": self.config_fingerprint,
+            "measurement_fingerprint": measurement_fingerprint(self.resolved_manifest, cell),
             **cell.as_dict(),
         }
 
