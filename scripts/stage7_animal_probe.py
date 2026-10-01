@@ -27,6 +27,7 @@ from stage2_routes import (
     update_metadata,
     write_json,
 )
+from carla_tasks.progress import write_progress
 from stage3_geometry import homogeneous_transform_point, rear_axle_midpoint_m
 from stage3_recording import (
     SensorRuntime,
@@ -343,7 +344,7 @@ def main() -> None:
         if resolved_map is None:
             raise RuntimeError(f"required map is not available: {map_name}")
         world = client.load_world(resolved_map, reset_settings=False, map_layers=carla.MapLayer.All)
-        original_settings = configure_synchronous_world(world)
+        original_settings = configure_synchronous_world(world, fixed_delta_s)
         map_ = world.get_map()
         road_lines = hide_road_lines(world)
         weather = apply_weather(world, weather_id, weather_profile)
@@ -496,6 +497,7 @@ def main() -> None:
             sample["animal_transform"] = transform_to_dict(actual)
             sample["animal_step_m_since_previous_sensor_sample"] = step_m
             samples.append(sample)
+            write_progress(run_dir, "recording", accepted_samples=len(samples), frame=frame)
             previous_actual = actual
             # Keep snapshot bookkeeping bounded while retaining enough delivery lag.
             snapshots = {key: value for key, value in snapshots.items() if key >= frame - 80}
@@ -638,4 +640,5 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    main()
+    from carla_tasks.runtime import run_capture_entrypoint
+    raise SystemExit(run_capture_entrypoint(main))

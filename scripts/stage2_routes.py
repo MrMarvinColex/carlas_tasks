@@ -15,6 +15,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import sys
 import math
 import queue
 import random
@@ -22,6 +23,8 @@ import time
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Iterable
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 import carla
 
@@ -129,27 +132,8 @@ def distance_2d(first: carla.Location, second: carla.Location) -> float:
     return math.hypot(float(first.x - second.x), float(first.y - second.y))
 
 
-def configure_synchronous_world(world: carla.World) -> dict[str, object]:
-    settings = world.get_settings()
-    original = {
-        "synchronous_mode": bool(settings.synchronous_mode),
-        "fixed_delta_seconds": settings.fixed_delta_seconds,
-        "no_rendering_mode": bool(settings.no_rendering_mode),
-    }
-    settings.synchronous_mode = True
-    settings.fixed_delta_seconds = 0.05
-    settings.no_rendering_mode = False
-    world.apply_settings(settings)
-    world.tick()
-    return original
-
-
-def restore_world_settings(world: carla.World, original: dict[str, object]) -> None:
-    settings = world.get_settings()
-    settings.synchronous_mode = bool(original["synchronous_mode"])
-    settings.fixed_delta_seconds = original["fixed_delta_seconds"]
-    settings.no_rendering_mode = bool(original["no_rendering_mode"])
-    world.apply_settings(settings)
+# Compatibility exports; world lifecycle lives in the shared library.
+from carla_tasks.runtime import configure_synchronous_world, restore_world_settings
 
 
 def hide_road_lines(world: carla.World) -> dict[str, object]:

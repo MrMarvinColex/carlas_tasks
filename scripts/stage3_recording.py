@@ -7,21 +7,24 @@ import hashlib
 import json
 import math
 import queue
-import struct
 import subprocess
 import time
-import zlib
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
 import carla
 
+import sys
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from carla_tasks.cameras import CAMERA_ORDER, MODALITIES
+from carla_tasks.png import png_chunk, write_grayscale_png
+from carla_tasks.progress import write_progress
+from carla_tasks.runtime import configure_synchronous_world, restore_world_settings
+
 from stage2_autopilot_routes import choose_vehicle_blueprint, load_route, spawn_at_route_start
 from stage2_routes import (
-    configure_synchronous_world,
     hide_road_lines,
-    restore_world_settings,
     short_map_name,
     transform_to_dict,
     update_metadata,
@@ -43,20 +46,6 @@ from stage3_geometry import (
 )
 
 
-CAMERA_ORDER = (
-    "ring_front_center",
-    "ring_front_left",
-    "ring_front_right",
-    "ring_side_left",
-    "ring_side_right",
-    "ring_rear_left",
-    "ring_rear_right",
-    "stereo_front_left",
-    "stereo_front_right",
-)
-MODALITIES = ("rgb", "semantic")
-
-
 @dataclass
 class SensorRuntime:
     key: str
@@ -73,25 +62,6 @@ def file_sha256(path: Path) -> str:
         for chunk in iter(lambda: handle.read(1024 * 1024), b""):
             digest.update(chunk)
     return digest.hexdigest()
-
-
-def png_chunk(kind: bytes, payload: bytes) -> bytes:
-    return struct.pack(">I", len(payload)) + kind + payload + struct.pack(">I", zlib.crc32(kind + payload) & 0xFFFFFFFF)
-
-
-def write_grayscale_png(path: Path, width: int, height: int, pixels: bytes) -> None:
-    """Write unmodified 8-bit class IDs without an image-library dependency."""
-    if len(pixels) != width * height:
-        raise ValueError(f"raw semantic buffer has {len(pixels)} bytes, expected {width * height}")
-    scanlines = b"".join(b"\x00" + pixels[row * width : (row + 1) * width] for row in range(height))
-    payload = (
-        b"\x89PNG\r\n\x1a\n"
-        + png_chunk(b"IHDR", struct.pack(">IIBBBBB", width, height, 8, 0, 0, 0, 0))
-        + png_chunk(b"IDAT", zlib.compress(scanlines, level=6))
-        + png_chunk(b"IEND", b"")
-    )
-    path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_bytes(payload)
 
 
 def matrix_max_difference(first: list[list[float]], second: list[list[float]]) -> float:
@@ -307,7 +277,7 @@ def main() -> None:
         default=Path("configs/av2/54bc6dbc-ebfb-3fba-b5b3-57f88b4b79ca/calibration.json"),
     )
     parser.add_argument(
-        "--routes-run", type=Path, default=Path("runs/20260919T154916Z-route-numbering-swap-b5e941")
+        "--routes-dir", "--routes-run", dest="routes_run", type=Path, default=Path("inputs/routes/town01_opt_short_v1")
     )
     parser.add_argument("--route-id", default="route_01_straight")
     parser.add_argument("--camera-name", action="append", default=[])
@@ -366,7 +336,7 @@ def main() -> None:
         if resolved_map is None:
             raise RuntimeError(f"{args.map_name} is not available")
         world = client.load_world(resolved_map, reset_settings=False, map_layers=carla.MapLayer.All)
-        original_settings = configure_synchronous_world(world)
+        original_settings = configure_synchronous_world(world, args.fixed_delta_s)
         map_ = world.get_map()
         road_line_operation = hide_road_lines(world)
         traffic_manager = client.get_trafficmanager(args.traffic_manager_port)
@@ -569,6 +539,7 @@ def main() -> None:
                     run_dir, len(samples), complete_frame, frame_images, runtimes, poses[complete_frame]
                 )
                 samples.append(sample)
+                write_progress(run_dir, "recording", accepted_samples=len(samples), frame=complete_frame)
                 write_json(
                     run_dir / "transforms.partial.json",
                     {
@@ -688,4 +659,5 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    main()
+    from carla_tasks.runtime import run_capture_entrypoint
+    raise SystemExit(run_capture_entrypoint(main))

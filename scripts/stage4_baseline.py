@@ -9,15 +9,20 @@ from dataclasses import dataclass
 import json
 import math
 import queue
-import struct
 import subprocess
 import sys
 import time
-import zlib
 from pathlib import Path
 from typing import Any
 
 import carla
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from carla_tasks.inputs import resolve_routes_dir
+from carla_tasks.cameras import CAMERA_ORDER, MODALITIES
+from carla_tasks.png import write_rgb_png, write_grayscale_png
+from carla_tasks.progress import write_progress
+from carla_tasks.runtime import configure_synchronous_world, restore_world_settings, validate_capture_timing
 
 from stage2_autopilot_routes import (
     RouteDefinition,
@@ -30,11 +35,9 @@ from stage2_autopilot_routes import (
     spawn_at_route_start,
     stop_after_completion,
 )
-from stage2_routes import configure_synchronous_world, hide_road_lines, restore_world_settings, short_map_name, update_metadata, write_json
+from stage2_routes import hide_road_lines, short_map_name, update_metadata, write_json
 from stage3_geometry import homogeneous_transform_point, rear_axle_midpoint_m
 from stage3_recording import (
-    CAMERA_ORDER,
-    MODALITIES,
     SensorRuntime,
     applied_camera_configuration,
     directory_bytes,
@@ -42,7 +45,6 @@ from stage3_recording import (
     resource_sample,
     configure_sensor_blueprint,
     verify_source_files,
-    write_grayscale_png,
 )
 
 
@@ -52,24 +54,6 @@ class PendingWrite:
 
     sample_index: int
     future: Future[dict[str, object]]
-
-
-def png_chunk(kind: bytes, payload: bytes) -> bytes:
-    return struct.pack(">I", len(payload)) + kind + payload + struct.pack(">I", zlib.crc32(kind + payload) & 0xFFFFFFFF)
-
-
-def write_rgb_png(path: Path, width: int, height: int, pixels: bytes) -> None:
-    if len(pixels) != width * height * 3:
-        raise ValueError(f"RGB buffer has {len(pixels)} bytes, expected {width * height * 3}")
-    scanlines = b"".join(b"\x00" + pixels[row * width * 3 : (row + 1) * width * 3] for row in range(height))
-    payload = (
-        b"\x89PNG\r\n\x1a\n"
-        + png_chunk(b"IHDR", struct.pack(">IIBBBBB", width, height, 8, 2, 0, 0, 0))
-        + png_chunk(b"IDAT", zlib.compress(scanlines, level=6))
-        + png_chunk(b"IEND", b"")
-    )
-    path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_bytes(payload)
 
 
 def rgb_from_carla_bgra(image: carla.Image) -> bytes:
@@ -356,6 +340,7 @@ def main() -> None:
     config = load_json(config_path)
     if args.route_id not in config["route_ids"]:
         raise SystemExit(f"route is not in the fixed baseline matrix: {args.route_id}")
+    validate_capture_timing(float(config["fixed_delta_seconds"]), float(config["sensor_tick_seconds"]))
     profiles = config["weather_profiles"]
     if args.weather_id not in profiles:
         raise SystemExit(f"weather is not in the fixed baseline matrix: {args.weather_id}")
@@ -365,12 +350,13 @@ def main() -> None:
         raise SystemExit(f"only {available_before_gib:.1f} GiB free; policy requires {minimum_gib:.1f} GiB")
     calibration = load_json(calibration_path)
     verify_source_files(calibration_path, calibration)
-    routes_run = (Path.cwd() / str(config["approved_routes_run"])).resolve()
+    routes_run = resolve_routes_dir(config, Path.cwd())
     index = load_json(routes_run / "revised_routes.json")
     route_item = next((item for item in index["routes"] if item["route_id"] == args.route_id), None)
     if route_item is None:
         raise RuntimeError(f"route missing from approved index: {args.route_id}")
 
+    write_progress(run_dir, "initializing", accepted_samples=0)
     client = carla.Client(args.host, args.port)
     client.set_timeout(args.timeout)
     world: carla.World | None = None
@@ -400,7 +386,7 @@ def main() -> None:
         if resolved_map is None:
             raise RuntimeError(f"{map_name} is not available")
         world = client.load_world(resolved_map, reset_settings=False, map_layers=carla.MapLayer.All)
-        original_settings = configure_synchronous_world(world)
+        original_settings = configure_synchronous_world(world, float(config["fixed_delta_seconds"]))
         map_ = world.get_map()
         if short_map_name(map_.name).lower() != map_name.lower():
             raise RuntimeError(f"loaded {map_.name}, expected {map_name}")
@@ -507,6 +493,9 @@ def main() -> None:
                     )
                 )
                 scheduled_sample_count += 1
+                write_progress(run_dir, "recording", scheduled_samples=scheduled_sample_count,
+                               accepted_samples=len(samples), pending_writes=len(pending_writes),
+                               simulation_time_s=timestamps[0])
                 last_scheduled_timestamp_s = timestamps[0]
                 if scheduled_sample_count % args.resource_sample_every == 0:
                     resource_samples.append(resource_sample())
@@ -598,8 +587,10 @@ def main() -> None:
         update_metadata(metadata_path, state="running", carla_client_version=client.get_client_version(), carla_server_version=client.get_server_version(), map_name=map_.name, route_id=args.route_id, weather_id=args.weather_id, validation_path=validation_name, validation_status=recording_validation["status"])
         if recording_validation["status"] != "passed":
             raise RuntimeError("recording validation failed")
+        write_progress(run_dir, "validated", accepted_samples=len(samples), validation_status="passed")
         print(run_dir / validation_name)
     except Exception as exc:
+        write_progress(run_dir, "failed", accepted_samples=len(samples), error_type=type(exc).__name__)
         update_metadata(metadata_path, state="failed", stage4_recording_error=str(exc), route_id=args.route_id, weather_id=args.weather_id)
         raise
     finally:
@@ -636,4 +627,5 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    main()
+    from carla_tasks.runtime import run_capture_entrypoint
+    raise SystemExit(run_capture_entrypoint(main))

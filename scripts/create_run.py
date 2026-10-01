@@ -12,6 +12,9 @@ import subprocess
 import sys
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from carla_tasks.hosts import host_identity
+
 
 def command_output(args: list[str]) -> str | None:
     try:
@@ -50,6 +53,7 @@ def main() -> None:
         "git_dirty": bool(command_output(["git", "status", "--porcelain"])),
         "python": sys.version,
         "platform": platform.platform(),
+        "execution_host_id": host_identity(),
         "carla_host": os.environ.get("CARLA_HOST", "127.0.0.1"),
         "carla_port": os.environ.get("CARLA_PORT", "2000"),
     }
