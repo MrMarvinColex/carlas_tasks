@@ -1,0 +1,131 @@
+{
+  "assessment": {
+    "control_plane": "Useful controls added, with lifecycle and handoff gaps requiring targeted fixes",
+    "memory_and_portable_inputs": "Substantial concrete improvement",
+    "runtime_modularization": "Partial; core scene/capture executors still depend on stage scripts",
+    "session_process": "Scope expanded while implementation and documentation changed concurrently; earlier report records an interim missing-target failure",
+    "test_limit": "Existing tests pass while uncovered multi-step workflows reproduce defects",
+    "token_claim": "91.3 percent applies to mandatory Markdown bytes at audit entry, not total tokens or billing"
+  },
+  "audit_date": "2026-10-02",
+  "audit_report_links": {
+    "checked": 4,
+    "valid": true
+  },
+  "audit_status": "complete_with_findings",
+  "base_git_commit": "14e1cf213d9dbec27da673c221475f4b1f311ae8",
+  "checked_at_utc": "2026-10-01T21:19:19.418089+00:00",
+  "entry_documentation_check": {
+    "archive_files_verified": 10,
+    "budget_bytes": 15360,
+    "checked_local_links": 103,
+    "startup_bytes": 9327,
+    "valid": true
+  },
+  "existing_suite": {
+    "command": "python3 -m unittest discover -s tests",
+    "elapsed_seconds": 7.551,
+    "result": "passed",
+    "tests": 92
+  },
+  "findings": [
+    {
+      "id": "F1",
+      "priority": "high",
+      "source": "carla_tasks/__main__.py:143",
+      "summary": "Failed re-verification of the same previously verified copy leaves the registry verified and resume complete",
+      "type": "reproduced_defect"
+    },
+    {
+      "id": "F2",
+      "priority": "medium",
+      "source": "carla_tasks/registry.py:189",
+      "summary": "Reimport of an unchanged run replaces existing verified external-copy evidence with unknown",
+      "type": "reproduced_defect"
+    },
+    {
+      "id": "F3",
+      "priority": "medium",
+      "source": "carla_tasks/experiments.py:242",
+      "summary": "Expanding the matrix with another weather invalidates existing unchanged cells because identity covers the entire matrix",
+      "type": "reproduced_design_gap"
+    },
+    {
+      "id": "F4",
+      "priority": "medium",
+      "source": "carla_tasks/__main__.py:113",
+      "summary": "process wait timeout returns exit code zero while state is running and child exit code is unknown",
+      "type": "reproduced_interface_ambiguity"
+    },
+    {
+      "id": "F5",
+      "priority": "medium",
+      "source": "docs/vm-workflow.md:17",
+      "summary": "Main VM transfer example uses standalone hash verification and CSV; it does not show updating and pushing new registry proof required on a fresh VM",
+      "type": "documentation_workflow_gap"
+    }
+  ],
+  "handoff_documentation_check": {
+    "archive_files_verified": 10,
+    "checked_local_links": 105,
+    "errors": [],
+    "optional_missing_evidence_links": [],
+    "startup_budget_bytes": 15360,
+    "startup_bytes": 8211,
+    "valid": true
+  },
+  "implementation_readiness": "corrections_pending_before_relying_on_portable_resume",
+  "input_check": {
+    "calibrations": 1,
+    "configurations": 4,
+    "route_sets": 1,
+    "valid": true
+  },
+  "next_action": "Correct F1/F2 lifecycle, F3 per-cell reuse, F4 wait contract, and F5 VM handoff documentation; add regression scenarios before a short GPU pilot",
+  "rationale_and_reproduction_steps": "docs/reviews/restructuring-2026-10-02.md",
+  "runtime_code_modified_by_audit": false,
+  "schema_version": 1,
+  "scope": "Review of the uncommitted restructuring; temporary synthetic probes only; no live CARLA, Docker, model API, remote storage or historical datasets used",
+  "structure": {
+    "new_test_files": 10,
+    "new_test_lines": 952,
+    "package_files": 17,
+    "package_lines": 2316,
+    "qualification": "Package lines include moved implementation. Import count includes compatibility wrappers; it is not a count of defects.",
+    "stage_script_import_edges": 38
+  },
+  "synthetic_probes": {
+    "failed_reverification": {
+      "finding_reproduced": true,
+      "initial_check": "passed",
+      "latest_registry_copy_status": "verified",
+      "resume_cell_status": "complete",
+      "second_check": "failed"
+    },
+    "matrix_fingerprint": {
+      "comment_only_change_invalidates_identity": true,
+      "finding_reproduced": true,
+      "port_change_invalidates_identity": true,
+      "same_clear_cell_after_adding_rain": "pending",
+      "same_clear_cell_before": "complete"
+    },
+    "reimport_verified_run": {
+      "after_copy_status": "unknown",
+      "before_copy_status": "verified",
+      "finding_reproduced": true,
+      "resume_without_original_path": "unavailable"
+    },
+    "wait_timeout_contract": {
+      "child_exit_code": null,
+      "cli_exit_code": 0,
+      "finding_reproduced": true,
+      "state": "running"
+    }
+  },
+  "timezone": "Europe/Moscow",
+  "whitespace_check": {
+    "command": "git diff --check",
+    "passed": true
+  },
+  "worktree_dirty": true
+}
