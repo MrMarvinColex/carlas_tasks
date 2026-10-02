@@ -431,9 +431,9 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--run-dir", required=True, type=Path)
     parser.add_argument(
-        "--routes-run",
+        "--routes-dir", "--routes-run", dest="routes_run",
         type=Path,
-        default=Path("runs/20260923T160431Z-shorter-routes-b72a9d"),
+        default=Path("inputs/routes/town01_opt_short_v1"),
     )
     parser.add_argument("--route-id", action="append", default=[])
     parser.add_argument("--host", default="127.0.0.1")

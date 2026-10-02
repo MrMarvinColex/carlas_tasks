@@ -745,7 +745,7 @@ def main() -> None:
         if resolved_map_name is None:
             raise RuntimeError(f"{requested_map} is not available in the connected CARLA server")
         world = client.load_world(resolved_map_name, reset_settings=False, map_layers=carla.MapLayer.All)
-        original_settings = configure_synchronous_world(world)
+        original_settings = configure_synchronous_world(world, float(config["short_validation"]["fixed_delta_seconds"]))
         map_ = world.get_map()
         if short_map_name(map_.name).lower() != requested_map.lower():
             raise RuntimeError(f"loaded {map_.name}, expected {requested_map}")
@@ -849,4 +849,5 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    main()
+    from carla_tasks.runtime import run_capture_entrypoint
+    raise SystemExit(run_capture_entrypoint(main))

@@ -6,10 +6,11 @@ import unittest
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(ROOT / "scripts"))
+sys.path.insert(0, str(ROOT))
 
-from stage3_recording import CAMERA_ORDER, write_grayscale_png  # noqa: E402
-from stage3_validate_dataset import parse_png  # noqa: E402
+from carla_tasks.cameras import CAMERA_ORDER  # noqa: E402
+from carla_tasks.png import write_grayscale_png  # noqa: E402
+from carla_tasks.dataset import parse_png  # noqa: E402
 
 
 class Stage3FileTests(unittest.TestCase):

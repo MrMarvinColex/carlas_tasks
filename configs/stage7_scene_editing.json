@@ -3,7 +3,7 @@
   "scene_spec_version": "1.1",
   "description": "Stage-7 animal protocol exposes only the locally verified AnimaSim deer crossing from the grounded probe.",
   "map_name": "Town01_Opt",
-  "approved_routes_run": "runs/20260923T160431Z-shorter-routes-b72a9d",
+  "approved_routes_run": "inputs/routes/town01_opt_short_v1",
   "weather_source_config": "configs/stage4_baseline_matrix.json",
   "allowed_route_ids": [
     "route_01_straight"

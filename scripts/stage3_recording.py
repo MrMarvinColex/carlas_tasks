@@ -7,21 +7,24 @@ import hashlib
 import json
 import math
 import queue
-import struct
 import subprocess
 import time
-import zlib
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
 import carla
 
+import sys
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from carla_tasks.cameras import CAMERA_ORDER, MODALITIES
+from carla_tasks.png import png_chunk, write_grayscale_png
+from carla_tasks.progress import write_progress
+from carla_tasks.runtime import configure_synchronous_world, restore_world_settings
+
 from stage2_autopilot_routes import choose_vehicle_blueprint, load_route, spawn_at_route_start
 from stage2_routes import (
-    configure_synchronous_world,
     hide_road_lines,
-    restore_world_settings,
     short_map_name,
     transform_to_dict,
     update_metadata,
@@ -43,20 +46,6 @@ from stage3_geometry import (
 )
 
 
-CAMERA_ORDER = (
-    "ring_front_center",
-    "ring_front_left",
-    "ring_front_right",
-    "ring_side_left",
-    "ring_side_right",
-    "ring_rear_left",
-    "ring_rear_right",
-    "stereo_front_left",
-    "stereo_front_right",
-)
-MODALITIES = ("rgb", "semantic")
-
-
 @dataclass
 class SensorRuntime:
     key: str
@@ -73,25 +62,6 @@ def file_sha256(path: Path) -> str:
         for chunk in iter(lambda: handle.read(1024 * 1024), b""):
             digest.update(chunk)
     return digest.hexdigest()
-
-
-def png_chunk(kind: bytes, payload: bytes) -> bytes:
-    return struct.pack(">I", len(payload)) + kind + payload + struct.pack(">I", zlib.crc32(kind + payload) & 0xFFFFFFFF)
-
-
-def write_grayscale_png(path: Path, width: int, height: int, pixels: bytes) -> None:
-    """Write unmodified 8-bit class IDs without an image-library dependency."""
-    if len(pixels) != width * height:
-        raise ValueError(f"raw semantic buffer has {len(pixels)} bytes, expected {width * height}")
-    scanlines = b"".join(b"\x00" + pixels[row * width : (row + 1) * width] for row in range(height))
-    payload = (
-        b"\x89PNG\r\n\x1a\n"
-        + png_chunk(b"IHDR", struct.pack(">IIBBBBB", width, height, 8, 0, 0, 0, 0))
-        + png_chunk(b"IDAT", zlib.compress(scanlines, level=6))
-        + png_chunk(b"IEND", b"")
-    )
-    path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_bytes(payload)
 
 
 def matrix_max_difference(first: list[list[float]], second: list[list[float]]) -> float:
@@ -177,57 +147,15 @@ def applied_camera_configuration(
     bbox_centre: tuple[float, float, float],
     bbox_extent: tuple[float, float, float],
 ) -> tuple[carla.Transform, dict[str, object]]:
-    extrinsic = camera["egovehicle_SE3_sensor"]
-    av2_rotation = quaternion_to_matrix(*(float(extrinsic[key]) for key in ("qw", "qx", "qy", "qz")))
-    actor_matrix = av2_camera_to_carla_actor_matrix(av2_rotation)
-    euler = matrix_to_carla_euler_deg(actor_matrix)
-    rebuilt = carla_euler_to_matrix(**euler)
-    location = list(
-        av2_translation_to_carla(
-            (float(extrinsic["tx_m"]), float(extrinsic["ty_m"]), float(extrinsic["tz_m"])),
-            rear_axle_origin_m,
-        )
-    )
-    location[2] += mount_z_offset_m
-    transform = carla.Transform(
-        carla.Location(x=location[0], y=location[1], z=location[2]),
-        carla.Rotation(roll=euler["roll"], pitch=euler["pitch"], yaw=euler["yaw"]),
-    )
-    intrinsics = camera["intrinsics"]
-    width, height = int(intrinsics["width_px"]), int(intrinsics["height_px"])
-    fov = horizontal_fov_deg(width, float(intrinsics["fx_px"]))
-    forward = (actor_matrix[0][0], actor_matrix[1][0], actor_matrix[2][0])
-    origin_inside = point_inside_box(location, bbox_centre, bbox_extent)
-    optical_axis_hits_body = ray_intersects_box(location, forward, bbox_centre, bbox_extent)
-    if origin_inside:
-        raise RuntimeError(f"{camera['sensor_name']} origin is inside the CARLA vehicle bounding box")
-    if optical_axis_hits_body:
-        raise RuntimeError(f"{camera['sensor_name']} optical axis intersects the CARLA vehicle bounding box")
-    applied = {
-        "sensor_name": camera["sensor_name"],
-        "raw_av2": camera,
-        "carla_relative_transform": transform_to_dict(transform),
-        "carla_local_to_vehicle_rotation_matrix": actor_matrix,
-        "carla_camera_forward_axis_in_vehicle": list(forward),
-        "horizontal_fov_deg": fov,
-        "image_width_px": width,
-        "image_height_px": height,
-        "principal_point_offset_from_image_centre_px": {
-            "x": float(intrinsics["cx_px"]) - width / 2.0,
-            "y": float(intrinsics["cy_px"]) - height / 2.0,
-        },
-        "numeric_checks": {
-            "rotation_determinant": matrix_determinant(actor_matrix),
-            "orthonormal_max_error": max_identity_error(actor_matrix),
-            "euler_roundtrip_max_error": matrix_max_difference(actor_matrix, rebuilt),
-            "origin_outside_vehicle_bbox": not origin_inside,
-            "optical_axis_misses_vehicle_bbox": not optical_axis_hits_body,
-        },
-        "projection_limits": (
-            "CARLA receives AV2 width/height and the horizontal FOV derived from fx. "
-            "CARLA 0.9.16 cannot set AV2 cx/cy or the full k1/k2/k3 model; distortion is disabled."
-        ),
-    }
+    # Compatibility boundary: pure adaptation is shared with arbitrary rigs.
+    from carla_tasks.rigs import resolve_av2_camera
+    try:
+        specification, applied = resolve_av2_camera(
+            camera, rear_axle_origin_m, mount_z_offset_m, bbox_centre, bbox_extent)
+    except ValueError as exc:
+        raise RuntimeError(str(exc)) from exc
+    pose = specification.vehicle_from_camera.legacy_dict()
+    transform = carla.Transform(carla.Location(**pose["location"]), carla.Rotation(**pose["rotation"]))
     return transform, applied
 
 
@@ -307,7 +235,7 @@ def main() -> None:
         default=Path("configs/av2/54bc6dbc-ebfb-3fba-b5b3-57f88b4b79ca/calibration.json"),
     )
     parser.add_argument(
-        "--routes-run", type=Path, default=Path("runs/20260919T154916Z-route-numbering-swap-b5e941")
+        "--routes-dir", "--routes-run", dest="routes_run", type=Path, default=Path("inputs/routes/town01_opt_short_v1")
     )
     parser.add_argument("--route-id", default="route_01_straight")
     parser.add_argument("--camera-name", action="append", default=[])
@@ -366,7 +294,7 @@ def main() -> None:
         if resolved_map is None:
             raise RuntimeError(f"{args.map_name} is not available")
         world = client.load_world(resolved_map, reset_settings=False, map_layers=carla.MapLayer.All)
-        original_settings = configure_synchronous_world(world)
+        original_settings = configure_synchronous_world(world, args.fixed_delta_s)
         map_ = world.get_map()
         road_line_operation = hide_road_lines(world)
         traffic_manager = client.get_trafficmanager(args.traffic_manager_port)
@@ -569,6 +497,7 @@ def main() -> None:
                     run_dir, len(samples), complete_frame, frame_images, runtimes, poses[complete_frame]
                 )
                 samples.append(sample)
+                write_progress(run_dir, "recording", accepted_samples=len(samples), frame=complete_frame)
                 write_json(
                     run_dir / "transforms.partial.json",
                     {
@@ -688,4 +617,5 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    main()
+    from carla_tasks.runtime import run_capture_entrypoint
+    raise SystemExit(run_capture_entrypoint(main))

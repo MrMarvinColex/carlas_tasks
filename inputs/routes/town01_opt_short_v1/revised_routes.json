@@ -1,0 +1,183 @@
+{
+  "adaptive_policy": {
+    "straight_spacing_m": 10.0,
+    "turn_context_m": 12.0,
+    "turn_spacing_m": 2.0
+  },
+  "dense_step_m": 2.0,
+  "map_name": "Carla/Maps/Town01_Opt",
+  "routes": [
+    {
+      "adaptive_waypoint_count": 12,
+      "dense_waypoint_count": 56,
+      "finish": {
+        "x": 92.37931060791016,
+        "y": 61.219970703125,
+        "z": 0.0
+      },
+      "kind": "straight",
+      "label": "Straight control (middle half)",
+      "length_m": 110.0,
+      "path": "routes/route_01_straight.json",
+      "route_id": "route_01_straight",
+      "start": {
+        "x": 92.39602661132812,
+        "y": 171.219970703125,
+        "z": 0.0
+      },
+      "turn_events": []
+    },
+    {
+      "adaptive_waypoint_count": 32,
+      "dense_waypoint_count": 62,
+      "finish": {
+        "x": -2.0490477085113525,
+        "y": 59.40718078613281,
+        "z": 0.0
+      },
+      "kind": "left",
+      "label": "Single left turn (middle half)",
+      "length_m": 125.10618913173676,
+      "path": "routes/route_02_left.json",
+      "route_id": "route_02_left",
+      "start": {
+        "x": 66.36443328857422,
+        "y": -2.038034200668335,
+        "z": 0.0
+      },
+      "turn_events": [
+        {
+          "center_dense_index": 32,
+          "direction": "left",
+          "end_dense_index": 37,
+          "location": {
+            "x": 1.6233826875686646,
+            "y": 0.7587411403656006,
+            "z": 0.0
+          },
+          "progress_fraction": 0.5245901639344263,
+          "signed_heading_change_deg": -89.95925903320312,
+          "start_dense_index": 27
+        }
+      ]
+    },
+    {
+      "adaptive_waypoint_count": 32,
+      "dense_waypoint_count": 64,
+      "finish": {
+        "x": 262.9275207519531,
+        "y": 326.6070251464844,
+        "z": 0.0
+      },
+      "kind": "right",
+      "label": "Single right turn (middle half)",
+      "length_m": 122.83796608448029,
+      "path": "routes/route_03_right.json",
+      "route_id": "route_03_right",
+      "start": {
+        "x": 334.7352294921875,
+        "y": 272.6703186035156,
+        "z": 0.0
+      },
+      "turn_events": [
+        {
+          "center_dense_index": 27,
+          "direction": "right",
+          "end_dense_index": 32,
+          "location": {
+            "x": 332.7664489746094,
+            "y": 324.648193359375,
+            "z": 0.0
+          },
+          "progress_fraction": 0.42857142857142855,
+          "signed_heading_change_deg": 89.96540069580078,
+          "start_dense_index": 22
+        }
+      ]
+    },
+    {
+      "adaptive_waypoint_count": 44,
+      "dense_waypoint_count": 125,
+      "finish": {
+        "x": 396.29052734375,
+        "y": 101.6612319946289,
+        "z": 0.0
+      },
+      "kind": "turn_then_bridge",
+      "label": "One left turn followed by the complete outer bridge crossing",
+      "length_m": 251.10838675498962,
+      "path": "routes/route_04_turn_then_bridge.json",
+      "route_id": "route_04_turn_then_bridge",
+      "start": {
+        "x": 369.34014892578125,
+        "y": 330.6099853515625,
+        "z": 0.0
+      },
+      "turn_events": [
+        {
+          "center_dense_index": 11,
+          "direction": "left",
+          "end_dense_index": 16,
+          "location": {
+            "x": 392.0957336425781,
+            "y": 328.1451110839844,
+            "z": 0.0
+          },
+          "progress_fraction": 0.08870967741935484,
+          "signed_heading_change_deg": -90.02226257324219,
+          "start_dense_index": 6
+        }
+      ]
+    },
+    {
+      "adaptive_waypoint_count": 60,
+      "dense_waypoint_count": 114,
+      "finish": {
+        "x": 270.7602844238281,
+        "y": 129.4905548095703,
+        "z": 0.0
+      },
+      "kind": "two_turns",
+      "label": "Two consecutive turns: left then right",
+      "length_m": 225.9389773607254,
+      "path": "routes/route_05_two_turns.json",
+      "route_id": "route_05_two_turns",
+      "start": {
+        "x": 372.484130859375,
+        "y": -1.986431360244751,
+        "z": 0.0
+      },
+      "turn_events": [
+        {
+          "center_dense_index": 16,
+          "direction": "left",
+          "end_dense_index": 21,
+          "location": {
+            "x": 339.66937255859375,
+            "y": -0.5250961780548096,
+            "z": 0.0
+          },
+          "progress_fraction": 0.1415929203539823,
+          "signed_heading_change_deg": -89.99581909179688,
+          "start_dense_index": 12
+        },
+        {
+          "center_dense_index": 81,
+          "direction": "right",
+          "end_dense_index": 86,
+          "location": {
+            "x": 332.8243408203125,
+            "y": 127.55390930175781,
+            "z": 0.0
+          },
+          "progress_fraction": 0.7168141592920354,
+          "signed_heading_change_deg": 89.99100494384766,
+          "start_dense_index": 76
+        }
+      ]
+    }
+  ],
+  "schema_version": 1,
+  "source_run": "/home/Ubuntu/carlas_tasks/runs/20260919T154916Z-route-numbering-swap-b5e941",
+  "trim_validation_path": "trim_validation.json"
+}

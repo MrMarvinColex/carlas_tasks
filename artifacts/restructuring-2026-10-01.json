@@ -1,0 +1,154 @@
+{
+  "base_git_commit": "14e1cf213d9dbec27da673c221475f4b1f311ae8",
+  "baseline_plan": {
+    "cells": 10,
+    "config_fingerprint": "bba5bb3aad5b206c1a402a6afd1508dd8eeb34ff3505fa1e5e86f90ecb796bb4",
+    "experiment_id": "baseline-av2-short-v1",
+    "legacy_runs": "Preserved in artifacts/index.csv; not automatically assigned current identity",
+    "registry_contains_runs": false
+  },
+  "checked_at_utc": "2026-10-01T11:35:33.936143+00:00",
+  "checks": {
+    "archive_equals_original_HEAD": {
+      "files": [
+        "AGENTS.snapshot.md",
+        "README.md",
+        "docs/STATUS.md",
+        "docs/requirements.md",
+        "docs/decisions.md",
+        "docs/plan.md",
+        "docs/knowledge.md",
+        "docs/environment.md",
+        "docs/runbook.md",
+        "docs/worklog.md"
+      ],
+      "passed": true
+    },
+    "cli_help": {
+      "commands": [
+        "python3 -m carla_tasks --help",
+        "python3 -m carla_tasks validate-dataset --help"
+      ],
+      "passed": true
+    },
+    "dependency_direction": {
+      "passed": true,
+      "scope": "AST of carla_tasks/*.py; no imports of scripts or stage entry points"
+    },
+    "documentation": {
+      "archive_files_verified": 10,
+      "checked_local_links": 103,
+      "errors": [],
+      "optional_missing_evidence_links": [],
+      "startup_budget_bytes": 15360,
+      "startup_bytes": 9327,
+      "valid": true
+    },
+    "isolated_checkout": {
+      "commands": [
+        "check-inputs",
+        "plan",
+        "scene-check",
+        "scripts/stage4_batch.py --dry-run"
+      ],
+      "contains_historical_runs": false,
+      "generated_runs_or_logs": false,
+      "passed": true,
+      "planned_cells": 10
+    },
+    "portable_inputs": {
+      "calibrations_verified": 1,
+      "checks": [
+        {
+          "config": "configs/stage4_baseline_matrix.json",
+          "route_count": 5,
+          "valid": true
+        },
+        {
+          "config": "configs/stage6_scene_editing.json",
+          "route_count": 1,
+          "valid": true
+        },
+        {
+          "config": "configs/stage7_scene_editing.json",
+          "route_count": 1,
+          "valid": true
+        },
+        {
+          "config": "configs/stage7_animasim_probe.json",
+          "route_count": 1,
+          "valid": true
+        }
+      ],
+      "errors": [],
+      "route_sets_verified": 1,
+      "scope": "Portable inputs only; historical runs, GPU, CARLA and APIs are not accessed.",
+      "valid": true
+    },
+    "scene_check": {
+      "edit_count": 1,
+      "fixture": "fixtures/stage6/valid_parked_vehicle.json",
+      "passed": true,
+      "version": "1.0"
+    },
+    "shell_syntax": {
+      "commands": [
+        "bash -n scripts/run_carla.sh",
+        "bash -n scripts/stop_carla.sh",
+        "bash -n scripts/setup.sh",
+        "bash -n scripts/preflight.sh"
+      ],
+      "passed": true
+    },
+    "unchanged_historical_material": {
+      "passed": true,
+      "scope": "Reports, source AV2 calibration and historical artifact rows unchanged; original user .gitignore addition preserved"
+    },
+    "unit_tests": {
+      "command": "python3 -m unittest discover -s tests",
+      "elapsed_seconds": 7.406,
+      "status": "passed",
+      "tests": 92,
+      "warnings": 0
+    },
+    "whitespace": {
+      "command": "git diff --check",
+      "passed": true
+    }
+  },
+  "environment": {
+    "os": "Darwin",
+    "python": "3.9.6"
+  },
+  "intermediate_validation": [
+    {
+      "result": "passed",
+      "tests": 90
+    },
+    {
+      "resolution": "Created linked validation artifact before final check",
+      "result": "one temporary missing documentation-target failure",
+      "tests": 92
+    }
+  ],
+  "limitations": [
+    "No live recorder/server compatibility claim",
+    "Arbitrary camera layouts/formats and Unreal map authoring remain separate work",
+    "Shared locks protect supported capture commands in one checkout, not external clients or manual legacy map probes",
+    "No commit or push performed; external preservation of this change is not established"
+  ],
+  "next_action": "Review and preserve changes through Git; on GPU VM restored from Git validate a short baseline pilot, then export to Mac and verify destination hashes",
+  "rationale": "docs/architecture.md",
+  "schema_version": 1,
+  "scope": "Offline local checks only; no live CARLA, actual Docker commands, LLM API, remote execution or publishing",
+  "startup_context": {
+    "after_bytes": 9327,
+    "before_bytes": 107035,
+    "budget_bytes": 15360,
+    "measure": "Mandatory Markdown file bytes, not billed tokens",
+    "reduction_percent": 91.3
+  },
+  "status": "passed",
+  "task": "Research-oriented local restructuring",
+  "worktree_dirty": true
+}

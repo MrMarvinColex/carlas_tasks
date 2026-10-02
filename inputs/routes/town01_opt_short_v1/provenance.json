@@ -1,0 +1,59 @@
+{
+  "schema_version": 1,
+  "input_set_id": "town01_opt_short_v1",
+  "map_name": "Town01_Opt",
+  "carla_client_version": "0.9.16",
+  "carla_server_version": "0.9.16",
+  "carla_image_identifier": "carlasim/carla@sha256:aaf1df22702780ece072069e23d03c4879b002ae028c79744b09c4c7ddbae953",
+  "promoted_on": "2026-10-01",
+  "source_run": "runs/20260923T160431Z-shorter-routes-b72a9d",
+  "source_run_git_commit": "6bd8cac90ccb229ffe0f89a0effb6c1912ba2865",
+  "source_run_git_dirty": true,
+  "source_manifest_sha256": "fba3937c30c8487f3a8ec52f50f0731b1c6c1172c4131f7faa65f70a249fb0c2",
+  "source_acceptance_sha256": "57b5f349ef14d060b0bfdb9a2f498a6a1e4623c8b54fc594bb0605020a599436",
+  "drive_validation_run": "runs/20260923T160409Z-shorter-routes-autopilot-b8548d",
+  "selection": {
+    "route_ids": [
+      "route_01_straight",
+      "route_02_left",
+      "route_03_right",
+      "route_04_turn_then_bridge",
+      "route_05_two_turns"
+    ],
+    "baseline_config": "configs/stage4_baseline_matrix.json"
+  },
+  "evidence": {
+    "label": "artifact-confirmed",
+    "acceptance_status": "passed",
+    "scope": "Supersedes the pending-drive status in the generated route documents: all five reconstructed dense chains and actual drives passed. No camera dataset recorded.",
+    "promotion_check": "Each copied file matches its historical manifest SHA-256 and byte count."
+  },
+  "files": {
+    "revised_routes.json": {
+      "sha256": "14737214c1dabce34db6ed96395120b083412f51e8444cfecfb931d5879b9704",
+      "bytes": 5012
+    },
+    "routes/route_01_straight.json": {
+      "sha256": "7b1f6dad5a4057eec57096acf24aeefeaa84650bac2f688ae473743c77621778",
+      "bytes": 42570
+    },
+    "routes/route_02_left.json": {
+      "sha256": "a9150cc3bccc66bec602523b154f270a7109b191b73d62dcf1ac8e36adf4167f",
+      "bytes": 58534
+    },
+    "routes/route_03_right.json": {
+      "sha256": "555b5976b840935a2d3a91c2c8c864e99f65fc7511dfed6d7f20c4fded29546a",
+      "bytes": 59259
+    },
+    "routes/route_04_turn_then_bridge.json": {
+      "sha256": "f2e6d6ff02cc93b2b10769c9e5dc21d416ac2c13482cfb1c1011fa0449b39cf6",
+      "bytes": 103199
+    },
+    "routes/route_05_two_turns.json": {
+      "sha256": "eae3f983e735fd544848c0ab55340d7495503d29739cc3461262a143e8936f1e",
+      "bytes": 106540
+    }
+  },
+  "historical_references_are_runtime_dependencies": false,
+  "notes": "Geometry/index bytes are unchanged. Embedded source_run, trimmed_from, trim_validation_path and pending-drive status preserve history; source acceptance supersedes pending-drive status. Only files declared here are required at runtime. Historical run directories need not exist in a fresh checkout."
+}

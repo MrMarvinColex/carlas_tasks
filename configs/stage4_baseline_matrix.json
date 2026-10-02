@@ -1,8 +1,9 @@
 {
   "schema_version": 1,
+  "experiment_id": "baseline-av2-short-v1",
   "description": "Stage-4 baseline matrix. Weather labels describe CARLA parameters, not simulated seasons.",
   "map_name": "Town01_Opt",
-  "approved_routes_run": "runs/20260923T160431Z-shorter-routes-b72a9d",
+  "approved_routes_run": "inputs/routes/town01_opt_short_v1",
   "route_validation_run": "runs/20260923T160409Z-shorter-routes-autopilot-b8548d",
   "route_ids": [
     "route_01_straight",
