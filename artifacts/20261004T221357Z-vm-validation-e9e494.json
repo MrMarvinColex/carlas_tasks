@@ -1,0 +1,807 @@
+{
+  "schema_version": 1,
+  "session_id": "20261004T221357Z-vm-validation-e9e494",
+  "state": "passed",
+  "started_at_utc": "2026-10-04T22:13:57.604475+00:00",
+  "goal": "Prepare the current desktop GPU VM and validate the latest repository changes with offline tests and bounded live CARLA capture.",
+  "git_commit": "7b1a04bec275dccb549a947499072b30ab878c5a",
+  "initial_git_status": "",
+  "repository": "/home/Ubuntu/carlas_tasks",
+  "log_directory": "logs/20261004T221357Z-vm-validation-e9e494",
+  "checks": [
+    {
+      "name": "preflight",
+      "exit_code": 0,
+      "status": "passed",
+      "wall_seconds": 0.9807278149999092,
+      "log": "logs/20261004T221357Z-vm-validation-e9e494/preflight.log",
+      "finished_at_utc": "2026-10-04T22:20:04.280133+00:00"
+    },
+    {
+      "name": "desktop-target",
+      "exit_code": 0,
+      "status": "passed",
+      "wall_seconds": 0.004032736999988629,
+      "log": "logs/20261004T221357Z-vm-validation-e9e494/desktop-target.log",
+      "finished_at_utc": "2026-10-04T22:20:04.284885+00:00"
+    },
+    {
+      "name": "desktop-service",
+      "exit_code": 0,
+      "status": "passed",
+      "wall_seconds": 0.0037914229999387317,
+      "log": "logs/20261004T221357Z-vm-validation-e9e494/desktop-service.log",
+      "finished_at_utc": "2026-10-04T22:20:04.289028+00:00"
+    },
+    {
+      "name": "gpu-idle",
+      "exit_code": 0,
+      "status": "passed",
+      "wall_seconds": 0.03208690300016315,
+      "log": "logs/20261004T221357Z-vm-validation-e9e494/gpu-idle.log",
+      "finished_at_utc": "2026-10-04T22:20:04.321488+00:00"
+    },
+    {
+      "name": "package-versions",
+      "exit_code": 0,
+      "status": "passed",
+      "wall_seconds": 0.36525192199997036,
+      "log": "logs/20261004T221357Z-vm-validation-e9e494/package-versions.log",
+      "finished_at_utc": "2026-10-04T22:20:04.687251+00:00"
+    },
+    {
+      "name": "offline-tests",
+      "exit_code": 0,
+      "status": "passed",
+      "wall_seconds": 5.681985696000083,
+      "log": "logs/20261004T221357Z-vm-validation-e9e494/offline-tests.log",
+      "finished_at_utc": "2026-10-04T22:20:10.369914+00:00"
+    },
+    {
+      "name": "check-inputs",
+      "exit_code": 0,
+      "status": "passed",
+      "wall_seconds": 0.06418999700008499,
+      "log": "logs/20261004T221357Z-vm-validation-e9e494/check-inputs.log",
+      "finished_at_utc": "2026-10-04T22:20:10.434713+00:00"
+    },
+    {
+      "name": "check-docs",
+      "exit_code": 0,
+      "status": "passed",
+      "wall_seconds": 0.06458991700014849,
+      "log": "logs/20261004T221357Z-vm-validation-e9e494/check-docs.log",
+      "finished_at_utc": "2026-10-04T22:20:10.499822+00:00"
+    },
+    {
+      "name": "planning",
+      "exit_code": 0,
+      "status": "passed",
+      "wall_seconds": 0.16674409400002332,
+      "log": "logs/20261004T221357Z-vm-validation-e9e494/planning.log",
+      "finished_at_utc": "2026-10-04T22:20:10.667243+00:00"
+    },
+    {
+      "name": "static-scene",
+      "exit_code": 0,
+      "status": "passed",
+      "wall_seconds": 0.06448109800021484,
+      "log": "logs/20261004T221357Z-vm-validation-e9e494/static-scene.log",
+      "finished_at_utc": "2026-10-04T22:20:10.732424+00:00"
+    },
+    {
+      "name": "rig-contract",
+      "exit_code": 0,
+      "status": "passed",
+      "wall_seconds": 0.06461542500005635,
+      "log": "logs/20261004T221357Z-vm-validation-e9e494/rig-contract.log",
+      "finished_at_utc": "2026-10-04T22:20:10.797904+00:00"
+    },
+    {
+      "name": "batch-dry-run",
+      "exit_code": 0,
+      "status": "passed",
+      "wall_seconds": 0.16495466299988948,
+      "log": "logs/20261004T221357Z-vm-validation-e9e494/batch-dry-run.log",
+      "finished_at_utc": "2026-10-04T22:20:10.963759+00:00"
+    },
+    {
+      "name": "synthetic-capture",
+      "exit_code": 0,
+      "status": "passed",
+      "wall_seconds": 0.11480261800011249,
+      "log": "logs/20261004T221357Z-vm-validation-e9e494/synthetic-capture.log",
+      "finished_at_utc": "2026-10-04T22:20:11.079345+00:00"
+    },
+    {
+      "name": "package-wheel",
+      "exit_code": 0,
+      "status": "passed",
+      "wall_seconds": 3.976153196000041,
+      "log": "logs/20261004T221357Z-vm-validation-e9e494/package-wheel.log",
+      "finished_at_utc": "2026-10-04T22:20:15.056102+00:00"
+    },
+    {
+      "name": "isolated-wheel-import",
+      "exit_code": 0,
+      "status": "passed",
+      "wall_seconds": 0.11455467100017813,
+      "log": "logs/20261004T221357Z-vm-validation-e9e494/isolated-wheel-import.log",
+      "finished_at_utc": "2026-10-04T22:20:15.171652+00:00"
+    },
+    {
+      "name": "docker-image-identity",
+      "exit_code": 0,
+      "status": "passed",
+      "wall_seconds": 0.03215635299989117,
+      "log": "logs/20261004T221357Z-vm-validation-e9e494/docker-image-identity.log",
+      "finished_at_utc": "2026-10-04T22:20:15.204822+00:00"
+    },
+    {
+      "name": "container-gpu",
+      "exit_code": 0,
+      "status": "passed",
+      "wall_seconds": 0.7164671349999026,
+      "log": "logs/20261004T221357Z-vm-validation-e9e494/container-gpu.log",
+      "finished_at_utc": "2026-10-04T22:20:15.922028+00:00"
+    },
+    {
+      "name": "server-launch",
+      "exit_code": 2,
+      "status": "failed",
+      "wall_seconds": 0.16494104700018397,
+      "log": "logs/20261004T221357Z-vm-validation-e9e494/server-launch.log",
+      "finished_at_utc": "2026-10-04T22:20:16.087727+00:00"
+    },
+    {
+      "name": "server-stop",
+      "exit_code": 0,
+      "status": "passed",
+      "wall_seconds": 0.164733182999953,
+      "log": "logs/20261004T221357Z-vm-validation-e9e494/server-stop.log",
+      "finished_at_utc": "2026-10-04T22:20:16.253102+00:00"
+    },
+    {
+      "name": "server-launch",
+      "exit_code": 0,
+      "status": "passed",
+      "wall_seconds": 18.70026241100004,
+      "log": "logs/20261004T221357Z-vm-validation-e9e494/retry-02-server-launch.log",
+      "finished_at_utc": "2026-10-04T22:22:24.957137+00:00"
+    },
+    {
+      "name": "server-rpc",
+      "exit_code": 0,
+      "status": "passed",
+      "wall_seconds": 0.2670841980000205,
+      "log": "logs/20261004T221357Z-vm-validation-e9e494/retry-02-server-rpc.log",
+      "finished_at_utc": "2026-10-04T22:22:25.225236+00:00"
+    },
+    {
+      "name": "short-create",
+      "exit_code": 0,
+      "status": "passed",
+      "wall_seconds": 0.06500818099993921,
+      "log": "logs/20261004T221357Z-vm-validation-e9e494/retry-02-short-create.log",
+      "finished_at_utc": "2026-10-04T22:22:25.291743+00:00"
+    },
+    {
+      "name": "short-capture",
+      "exit_code": 0,
+      "status": "passed",
+      "wall_seconds": 99.50634335899986,
+      "log": "logs/20261004T221357Z-vm-validation-e9e494/retry-02-short-capture.log",
+      "finished_at_utc": "2026-10-04T22:24:04.799773+00:00"
+    },
+    {
+      "name": "short-dataset-validation",
+      "exit_code": 0,
+      "status": "passed",
+      "wall_seconds": 3.4773887090000244,
+      "log": "logs/20261004T221357Z-vm-validation-e9e494/retry-02-short-dataset-validation.log",
+      "finished_at_utc": "2026-10-04T22:24:08.278224+00:00"
+    },
+    {
+      "name": "short-contact-sheet",
+      "exit_code": 0,
+      "status": "passed",
+      "wall_seconds": 2.695533867999984,
+      "log": "logs/20261004T221357Z-vm-validation-e9e494/retry-02-short-contact-sheet.log",
+      "finished_at_utc": "2026-10-04T22:24:10.975145+00:00"
+    },
+    {
+      "name": "short-actor-cleanup",
+      "exit_code": 0,
+      "status": "passed",
+      "wall_seconds": 0.16535473899989483,
+      "log": "logs/20261004T221357Z-vm-validation-e9e494/retry-02-short-actor-cleanup.log",
+      "finished_at_utc": "2026-10-04T22:24:11.141565+00:00"
+    },
+    {
+      "name": "short-finalize",
+      "exit_code": 0,
+      "status": "passed",
+      "wall_seconds": 0.3174554580000404,
+      "log": "logs/20261004T221357Z-vm-validation-e9e494/retry-02-short-finalize.log",
+      "finished_at_utc": "2026-10-04T22:24:11.460632+00:00"
+    },
+    {
+      "name": "short-local-integrity",
+      "exit_code": 0,
+      "status": "passed",
+      "wall_seconds": 0.36535945200012065,
+      "log": "logs/20261004T221357Z-vm-validation-e9e494/retry-02-short-local-integrity.log",
+      "finished_at_utc": "2026-10-04T22:24:11.826900+00:00"
+    },
+    {
+      "name": "full-route-batch",
+      "exit_code": 0,
+      "status": "passed",
+      "wall_seconds": 132.10970301899988,
+      "log": "logs/20261004T221357Z-vm-validation-e9e494/retry-02-full-route-batch.log",
+      "finished_at_utc": "2026-10-04T22:26:23.941206+00:00"
+    },
+    {
+      "name": "full-route-actor-cleanup",
+      "exit_code": 0,
+      "status": "passed",
+      "wall_seconds": 0.16699239800004761,
+      "log": "logs/20261004T221357Z-vm-validation-e9e494/retry-02-full-route-actor-cleanup.log",
+      "finished_at_utc": "2026-10-04T22:26:24.110540+00:00"
+    },
+    {
+      "name": "registry-reimport",
+      "exit_code": 0,
+      "status": "passed",
+      "wall_seconds": 3.228358764999939,
+      "log": "logs/20261004T221357Z-vm-validation-e9e494/retry-02-registry-reimport.log",
+      "finished_at_utc": "2026-10-04T22:26:27.342801+00:00"
+    },
+    {
+      "name": "server-stop",
+      "exit_code": 0,
+      "status": "passed",
+      "wall_seconds": 10.953060085000061,
+      "log": "logs/20261004T221357Z-vm-validation-e9e494/retry-02-server-stop.log",
+      "finished_at_utc": "2026-10-04T22:26:38.297267+00:00"
+    },
+    {
+      "name": "offline-suite-after-lease-isolation-fix",
+      "status": "passed",
+      "exit_code": 0,
+      "wall_seconds": 5.62831510199976,
+      "log": "logs/20261004T221357Z-vm-validation-e9e494/offline-tests-lease-regression.log",
+      "finished_at_utc": "2026-10-04T22:31:35.858366+00:00"
+    }
+  ],
+  "controls": {
+    "carla_client": "0.9.16",
+    "carla_image": "carlasim/carla:0.9.16@sha256:aaf1df22702780ece072069e23d03c4879b002ae028c79744b09c4c7ddbae953",
+    "map": "Town01_Opt",
+    "layout": "nine AV2 RGB/semantic camera pairs",
+    "desktop": "keep active"
+  },
+  "limits": [
+    "No remote backup is established by local checks.",
+    "Generic record kernel has a synthetic backend; live backend M1 remains outside this setup task.",
+    "Hosted LLM calls were not made; API adapter tests use controlled fixtures/mocks.",
+    "Desktop impact is supported by active-desktop captures and idle VRAM; no desktop-on/off throughput comparison was performed.",
+    "Short readiness capture initially lacked FFmpeg contact sheets; a separate ImageMagick grid was inspected. FFmpeg was installed before full-route validation, which generated both contact sheets without warnings.",
+    "Live batch used --attach-server against the session-owned server; launcher readiness and lease-scoped shutdown were exercised separately. No full matrix or animal asset/API deployment was performed."
+  ],
+  "validation_supervisor_environment": "actual VM, outside command sandbox",
+  "initial_sandbox_test_attempt": {
+    "state_record": "logs/20261004T221357Z-vm-validation-e9e494/offline-tests-process.json",
+    "supervisor_matches_on_host": [],
+    "result": "no test result; sandbox process namespace ended"
+  },
+  "environment_preflight_log": "logs/20261004T221357Z-vm-validation-e9e494/preflight.log",
+  "updated_at_utc": "2026-10-04T22:26:38.298499+00:00",
+  "desktop_target": "graphical.target",
+  "desktop_active": "active",
+  "gpu_idle": "NVIDIA RTX A6000, 580.126.20, 49140 MiB, 35 MiB, 2 %",
+  "packages": [
+    "carla==0.9.16",
+    "carla-research-tasks==0.1.0"
+  ],
+  "offline_suite_tail": [
+    "",
+    "----------------------------------------------------------------------",
+    "Ran 123 tests in 5.466s",
+    "",
+    "OK"
+  ],
+  "credentials": {
+    "dotenv_present": false,
+    "live_api_calls": false,
+    "api_key_variable_present": {
+      "DASHSCOPE_API_KEY": false,
+      "OPENAI_API_KEY": false
+    }
+  },
+  "image_pull_state": {
+    "state": "completed",
+    "exit_code": 0,
+    "elapsed_seconds": 194.003036824
+  },
+  "actual_image": {
+    "Id": "sha256:98d224668ad013627b63b9c42d4fa5f87c4f5d267f6e10a647788e39b48983b5",
+    "RepoDigests": [
+      "carlasim/carla@sha256:aaf1df22702780ece072069e23d03c4879b002ae028c79744b09c4c7ddbae953"
+    ],
+    "Size": 20705974366,
+    "Architecture": "amd64",
+    "Os": "linux"
+  },
+  "server_stopped": true,
+  "failures": [
+    {
+      "attempt": "01",
+      "status": "failed",
+      "error": "server-launch failed with exit code 2; inspect /home/Ubuntu/carlas_tasks/logs/20261004T221357Z-vm-validation-e9e494/server-launch.log",
+      "evidence": "logs/20261004T221357Z-vm-validation-e9e494/attempt-01-evidence.json",
+      "cause": "Diagnostic harness passed a real lease path into offline launcher fakes. Preserved fake-id lease; isolate the lease to the actual server launch and use a new lease for retry."
+    }
+  ],
+  "active_lease": "logs/20261004T221357Z-vm-validation-e9e494/server-lease-02.txt",
+  "owned_server_container_id": "3a61cc4db6422195dcf014e03591e1345a81c5ed2d807cb603ef746c63913d85",
+  "server_status": {
+    "client_version": "0.9.16",
+    "host": "127.0.0.1",
+    "map_name": "Carla/Maps/Town10HD_Opt",
+    "port": 2000,
+    "ready": true,
+    "server_version": "0.9.16"
+  },
+  "short_capture_run_id": "20261004T221357Z-vm-validation-e9e494-rig-smoke",
+  "short_capture_validation": {
+    "checks": {
+      "expected_png_count_including_previews": 81,
+      "json_parseable": true,
+      "maximum_ego_body_pixels_in_bottom_strip": 0,
+      "raw_semantic_encoding": "PNG grayscale, 8 bits, each value is the unmodified CARLA R-channel class ID",
+      "same_frame_pose_and_sensor_timestamps": true,
+      "sample_count": 3,
+      "selected_camera_count": 9,
+      "sensor_count": 18,
+      "unique_increasing_frames": true,
+      "validated_png_bytes": 106571619,
+      "validated_png_count": 81
+    },
+    "contact_sheets": {
+      "rgb": {
+        "created": false,
+        "reason": "ffmpeg not installed"
+      },
+      "semantic": {
+        "created": false,
+        "reason": "ffmpeg not installed"
+      }
+    },
+    "errors": [],
+    "interval_tolerance_s": 0.0001,
+    "status": "passed",
+    "warnings": [
+      "one or more contact sheets could not be generated"
+    ]
+  },
+  "short_capture_summary": {
+    "accepted_capture_span_simulation_s": 1.0000000149011612,
+    "bytes_at_summary_time": 106616947,
+    "bytes_per_accepted_simulation_second": 106616945.41128372,
+    "duplicate_sensor_keys": [],
+    "image_count": 54,
+    "late_events_drained_after_stop": 0,
+    "preview_count": 27,
+    "resource_samples": [
+      {
+        "gpu_memory_total_mib": 49140,
+        "gpu_memory_used_mib": 4911,
+        "gpu_utilization_percent": 28,
+        "host_memory_total_bytes": 101247066112,
+        "host_memory_used_bytes": 8849547264,
+        "wall_monotonic_s": 1606.026140517
+      },
+      {
+        "gpu_memory_total_mib": 49140,
+        "gpu_memory_used_mib": 7134,
+        "gpu_utilization_percent": 0,
+        "host_memory_total_bytes": 101247066112,
+        "host_memory_used_bytes": 7836688384,
+        "wall_monotonic_s": 1644.990454902
+      },
+      {
+        "gpu_memory_total_mib": 49140,
+        "gpu_memory_used_mib": 7125,
+        "gpu_utilization_percent": 0,
+        "host_memory_total_bytes": 101247066112,
+        "host_memory_used_bytes": 7921352704,
+        "wall_monotonic_s": 1675.368600618
+      },
+      {
+        "gpu_memory_total_mib": 49140,
+        "gpu_memory_used_mib": 7127,
+        "gpu_utilization_percent": 0,
+        "host_memory_total_bytes": 101247066112,
+        "host_memory_used_bytes": 7904714752,
+        "wall_monotonic_s": 1705.249560475
+      }
+    ],
+    "sample_count": 3,
+    "selected_camera_names": [
+      "ring_front_center",
+      "ring_front_left",
+      "ring_front_right",
+      "ring_side_left",
+      "ring_side_right",
+      "ring_rear_left",
+      "ring_rear_right",
+      "stereo_front_left",
+      "stereo_front_right"
+    ],
+    "sensor_count": 18,
+    "wall_duration_s": 99.36409548699999,
+    "warmup_discarded_complete_frames": [
+      129,
+      139
+    ]
+  },
+  "short-actor-cleanup": {
+    "client_version": "0.9.16",
+    "server_version": "0.9.16",
+    "map": "Carla/Maps/Town01_Opt",
+    "synchronous_mode": false,
+    "remaining_dynamic_actors": []
+  },
+  "full_route_records": [
+    {
+      "config_fingerprint": "6a55104c194d9ef90a664a31dd561d99935b608d41e6d37a8bf2ec1402dc28f0",
+      "evidence": [
+        "experiment_identity.json",
+        "metadata.json",
+        "baseline_validation.json",
+        "manifest.sha256"
+      ],
+      "execution_host_id": "6db93b9b05d89a3a539ee29c66b0bcb186a83f5e3d33c622a5f4e5eedbc19a55",
+      "experiment_id": "vm-validation-desktop-20261005",
+      "external_copy": {
+        "status": "not_copied"
+      },
+      "finalization_verified": true,
+      "local_run_dir": "/home/Ubuntu/carlas_tasks/runs/20261004T222412Z-baseline-route_01_straight-clear_day-r1-f5304f",
+      "manifest_sha256": "99bb645b96f50c179d96019dac5cc8d94e5dc7098cf69128be31d1aff849a634",
+      "measurement_fingerprint": "6a55104c194d9ef90a664a31dd561d99935b608d41e6d37a8bf2ec1402dc28f0",
+      "origin": "batch",
+      "recorded_at_utc": "2026-10-04T22:26:23Z",
+      "recorder_exit_code": 0,
+      "repeat_index": 1,
+      "route_id": "route_01_straight",
+      "run_id": "20261004T222412Z-baseline-route_01_straight-clear_day-r1-f5304f",
+      "runtime_versions": {
+        "carla_client_version": "0.9.16",
+        "carla_server_version": "0.9.16",
+        "image": "carlasim/carla:0.9.16@sha256:aaf1df22702780ece072069e23d03c4879b002ae028c79744b09c4c7ddbae953"
+      },
+      "schema_version": 2,
+      "state": "complete",
+      "validation_status": "passed",
+      "weather_id": "clear_day"
+    }
+  ],
+  "full_route_baseline_validation": {
+    "checks": {
+      "all_dataset_checks_passed": true,
+      "expected_recording_outcome": true,
+      "no_collision": true,
+      "post_finish_vehicle_stopped": true,
+      "route_deviation_within_limit": true
+    },
+    "dataset_validation_path": "validation.json",
+    "drive_result_path": "drive_result.json",
+    "status": "passed"
+  },
+  "full_route_drive_result": {
+    "collision_count": 0,
+    "completion_record": {
+      "distance_to_finish_m": 4.774429424307601,
+      "frame": 2903,
+      "nearest_dense_index": 53,
+      "nearest_route_distance_m": 0.7744309786095106,
+      "nearest_route_progress_m": 106.000001223656,
+      "simulation_time_s": 20.97278516483493,
+      "speed_mps": 5.372842316808729,
+      "transform": {
+        "location": {
+          "x": 92.3783187866211,
+          "y": 65.99440002441406,
+          "z": 0.0017725372454151511
+        },
+        "rotation": {
+          "pitch": 0.039533134549856186,
+          "roll": -3.0517410777974874e-05,
+          "yaw": -90.0033187866211
+        }
+      }
+    },
+    "maximum_deviation_m": 0.9999619685448468,
+    "maximum_progress_m": 106.000001223656,
+    "outcome": "completed",
+    "post_finish_stop": {
+      "braking_duration_s": 3.0,
+      "displacement_m": 0.0,
+      "maximum_braking_speed_mps": 5.380215188865254,
+      "maximum_stationary_speed_mps": 0.0,
+      "observation_duration_s": 1.0,
+      "stopped": true
+    },
+    "required_completion_progress_m": 104.5,
+    "route_id": "route_01_straight",
+    "route_length_m": 110.0,
+    "stuck_diagnostic": null,
+    "weather_id": "clear_day"
+  },
+  "full_route_capture_summary": {
+    "accepted_capture_span_simulation_s": 15.000000223517418,
+    "benchmark_simulation_s": null,
+    "bytes_at_summary_time": 945579501,
+    "bytes_per_accepted_simulation_second": 63038632.460651174,
+    "duplicate_sensor_keys": [],
+    "image_count": 558,
+    "late_events_drained_after_stop": 126,
+    "preview_count": 279,
+    "resource_samples": [
+      {
+        "gpu_memory_total_mib": 49140,
+        "gpu_memory_used_mib": 3081,
+        "gpu_utilization_percent": 34,
+        "host_memory_total_bytes": 101247066112,
+        "host_memory_used_bytes": 5951102976,
+        "wall_monotonic_s": 1713.170152362
+      },
+      {
+        "gpu_memory_total_mib": 49140,
+        "gpu_memory_used_mib": 4186,
+        "gpu_utilization_percent": 0,
+        "host_memory_total_bytes": 101247066112,
+        "host_memory_used_bytes": 9053552640,
+        "wall_monotonic_s": 1750.355879541
+      },
+      {
+        "gpu_memory_total_mib": 49140,
+        "gpu_memory_used_mib": 4096,
+        "gpu_utilization_percent": 0,
+        "host_memory_total_bytes": 101247066112,
+        "host_memory_used_bytes": 8960573440,
+        "wall_monotonic_s": 1776.99009555
+      },
+      {
+        "gpu_memory_total_mib": 49140,
+        "gpu_memory_used_mib": 3988,
+        "gpu_utilization_percent": 0,
+        "host_memory_total_bytes": 101247066112,
+        "host_memory_used_bytes": 9008939008,
+        "wall_monotonic_s": 1803.672829486
+      },
+      {
+        "gpu_memory_total_mib": 49140,
+        "gpu_memory_used_mib": 3894,
+        "gpu_utilization_percent": 0,
+        "host_memory_total_bytes": 101247066112,
+        "host_memory_used_bytes": 8607850496,
+        "wall_monotonic_s": 1811.962050507
+      }
+    ],
+    "sample_count": 31,
+    "selected_camera_names": [
+      "ring_front_center",
+      "ring_front_left",
+      "ring_front_right",
+      "ring_side_left",
+      "ring_side_right",
+      "ring_rear_left",
+      "ring_rear_right",
+      "stereo_front_left",
+      "stereo_front_right"
+    ],
+    "sensor_count": 18,
+    "wall_duration_s": 98.7879663010001,
+    "warmup_discarded_complete_frames": [
+      2583,
+      2593
+    ],
+    "writer": {
+      "backpressure_wall_s": 1.8165577489999123,
+      "max_pending_write_samples": 8,
+      "scheduled_sample_count": 31,
+      "workers": 4
+    }
+  },
+  "full_route_validation": {
+    "checks": {
+      "expected_png_count_including_previews": 837,
+      "json_parseable": true,
+      "maximum_ego_body_pixels_in_bottom_strip": 0,
+      "raw_semantic_encoding": "PNG grayscale, 8 bits, each value is the unmodified CARLA R-channel class ID",
+      "same_frame_pose_and_sensor_timestamps": true,
+      "sample_count": 31,
+      "selected_camera_count": 9,
+      "sensor_count": 18,
+      "unique_increasing_frames": true,
+      "validated_png_bytes": 945044235,
+      "validated_png_count": 837
+    },
+    "contact_sheets": {
+      "rgb": {
+        "camera_order": [
+          "ring_front_center",
+          "ring_front_left",
+          "ring_front_right",
+          "ring_side_left",
+          "ring_side_right",
+          "ring_rear_left",
+          "ring_rear_right",
+          "stereo_front_left",
+          "stereo_front_right"
+        ],
+        "created": true,
+        "path": "/home/Ubuntu/carlas_tasks/runs/20261004T222412Z-baseline-route_01_straight-clear_day-r1-f5304f/previews/contact_sheet_rgb.png"
+      },
+      "semantic": {
+        "camera_order": [
+          "ring_front_center",
+          "ring_front_left",
+          "ring_front_right",
+          "ring_side_left",
+          "ring_side_right",
+          "ring_rear_left",
+          "ring_rear_right",
+          "stereo_front_left",
+          "stereo_front_right"
+        ],
+        "created": true,
+        "path": "/home/Ubuntu/carlas_tasks/runs/20261004T222412Z-baseline-route_01_straight-clear_day-r1-f5304f/previews/contact_sheet_semantic.png"
+      }
+    },
+    "errors": [],
+    "interval_tolerance_s": 0.0001,
+    "status": "passed",
+    "warnings": []
+  },
+  "full-route-actor-cleanup": {
+    "client_version": "0.9.16",
+    "server_version": "0.9.16",
+    "map": "Carla/Maps/Town01_Opt",
+    "synchronous_mode": false,
+    "remaining_dynamic_actors": []
+  },
+  "finished_at_utc": "2026-10-04T22:33:08.271210+00:00",
+  "final_host_checks": {
+    "gpu-final": {
+      "exit_code": 0,
+      "log": "logs/20261004T221357Z-vm-validation-e9e494/gpu-final.log",
+      "output": "NVIDIA RTX A6000, 580.126.20, 49140 MiB, 44 MiB, 0 %"
+    },
+    "services-final": {
+      "exit_code": 0,
+      "log": "logs/20261004T221357Z-vm-validation-e9e494/services-final.log",
+      "output": "active\nactive"
+    },
+    "owned-containers-final": {
+      "exit_code": 0,
+      "log": "logs/20261004T221357Z-vm-validation-e9e494/owned-containers-final.log",
+      "output": ""
+    },
+    "kernel-final": {
+      "exit_code": 0,
+      "log": "logs/20261004T221357Z-vm-validation-e9e494/kernel-final.log",
+      "nvidia_error_lines": []
+    },
+    "ffmpeg-version": {
+      "exit_code": 0,
+      "log": "logs/20261004T221357Z-vm-validation-e9e494/ffmpeg-version.log",
+      "version_line": "ffmpeg version 4.4.2-0ubuntu0.22.04.1 Copyright (c) 2000-2021 the FFmpeg developers"
+    },
+    "carla_ports_connect_codes": {
+      "2000": 111,
+      "2001": 111
+    },
+    "free_disk_bytes": 244549484544
+  },
+  "installed_for_this_session": [
+    "python3.10-venv",
+    "vulkan-tools",
+    "ffmpeg",
+    "carla==0.9.16 in .venv",
+    "carla-research-tasks==0.1.0 editable in .venv"
+  ],
+  "existing_components_reused": {
+    "nvidia_driver": "580.126.20",
+    "nvidia_container_toolkit": "1.19.0",
+    "docker": "29.4.0",
+    "driver_reinstallation": false,
+    "reboot_required": false,
+    "desktop_reconfigured": false,
+    "docker_permissions_changed": false
+  },
+  "preview_tools_installation": {
+    "attempt_id": "ef89c03b56fd44d681cdb60b07881409",
+    "child_pid": 10164,
+    "cwd": "/home/Ubuntu/carlas_tasks",
+    "elapsed_seconds": 12.778470794999976,
+    "exit_code": 0,
+    "log_path": "/home/Ubuntu/carlas_tasks/logs/20261004T221357Z-vm-validation-e9e494/preview-tools.log",
+    "program": "sudo",
+    "schema_version": 1,
+    "started_at_utc": "2026-10-04T22:25:44.866011+00:00",
+    "state": "completed",
+    "supervisor_pid": 10163,
+    "updated_at_utc": "2026-10-04T22:25:57.676217+00:00"
+  },
+  "visual_review": {
+    "status": "passed",
+    "reviewed_at_utc": "2026-10-04T22:28:26.054963+00:00",
+    "paths": [
+      "runs/20261004T221357Z-vm-validation-e9e494-rig-smoke/previews/vm-rgb-grid.png",
+      "/home/Ubuntu/carlas_tasks/runs/20261004T222412Z-baseline-route_01_straight-clear_day-r1-f5304f/previews/contact_sheet_rgb.png",
+      "/home/Ubuntu/carlas_tasks/runs/20261004T222412Z-baseline-route_01_straight-clear_day-r1-f5304f/previews/contact_sheet_semantic.png"
+    ],
+    "observations": "All nine views render the expected environment. RGB and semantic preview geometry agree; no visible ego body or debug drawing occlusion. First-sample visual review only; all recorded PNGs passed automated integrity and class-ID validation."
+  },
+  "checks_complete_at_utc": "2026-10-04T22:28:26.054984+00:00",
+  "outcome": "VM ready for the existing CARLA capture path. All 123 offline tests, package/CLI/synthetic checks, a three-sample nine-camera capture and one full straight-route capture passed. Working host driver was reused; desktop stayed active; no owned server or dynamic capture actors remain.",
+  "completed_run_ids": [
+    "20261004T221357Z-vm-validation-e9e494-rig-smoke",
+    "20261004T222412Z-baseline-route_01_straight-clear_day-r1-f5304f"
+  ],
+  "test_fixture_fix": {
+    "path": "tests/test_launch.py",
+    "change": "Discard ambient CARLA_SERVER_LEASE before mock launcher subprocesses; each test supplies its own owned path when needed.",
+    "regression": "All 123 tests passed with an ambient real lease sentinel; the sentinel path stayed absent.",
+    "runtime_source_changed": false,
+    "execution_context": "Final regression suite ran synchronously inside the command sandbox; the earlier complete suite also passed outside it on the host."
+  },
+  "final_repository_checks": {
+    "docs": {
+      "archive_files_verified": 10,
+      "checked_local_links": 131,
+      "errors": [],
+      "optional_missing_evidence_links": [
+        "../logs_chats/2026/09/23/rollout-2026-09-23T11-58-28-01a0ce21-addb-7eb0-ab61-4673042371cb.jsonl",
+        "../logs_chats/2026/09/24/rollout-2026-09-24T10-38-35-01a0d2fe-e799-7f83-a711-23445b9d0464.jsonl"
+      ],
+      "startup_budget_bytes": 15360,
+      "startup_bytes": 10981,
+      "valid": true
+    },
+    "acceptance-resume": {
+      "blocked_cells": [],
+      "completed_cells": [
+        {
+          "repeat_index": 1,
+          "route_id": "route_01_straight",
+          "weather_id": "clear_day"
+        }
+      ],
+      "config_fingerprint": "6a55104c194d9ef90a664a31dd561d99935b608d41e6d37a8bf2ec1402dc28f0",
+      "experiment_id": "vm-validation-desktop-20261005",
+      "remaining_cells": [],
+      "unavailable_cells": []
+    },
+    "supervisor-completion": {
+      "attempt_id": "f6e3965be93740dcbca58b45dfa8e07b",
+      "child_pid": 9382,
+      "cwd": "/home/Ubuntu/carlas_tasks",
+      "elapsed_seconds": 272.10391168599995,
+      "exit_code": 0,
+      "log_path": "/home/Ubuntu/carlas_tasks/logs/20261004T221357Z-vm-validation-e9e494/validation-retry-02.log",
+      "program": "python",
+      "schema_version": 1,
+      "started_at_utc": "2026-10-04T22:22:06.182555+00:00",
+      "state": "completed",
+      "supervisor_pid": 9381,
+      "updated_at_utc": "2026-10-04T22:26:38.318296+00:00",
+      "wait_outcome": "finished"
+    },
+    "diff-whitespace": ""
+  }
+}

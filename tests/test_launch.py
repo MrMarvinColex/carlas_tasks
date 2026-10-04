@@ -41,6 +41,8 @@ sys.exit(0 if os.environ.get('FAKE_RPC')=='1' else 1)
                     "FAKE_ROOT": str(self.root), "CARLA_PYTHON": str(client),
                     "CARLA_PORT": "2345", "CARLA_STARTUP_TIMEOUT": "1",
                     "CARLA_LOG_DIR": str(self.root / "logs")}
+        # Mock launchers must never inherit a real server's lease path.
+        self.env.pop("CARLA_SERVER_LEASE", None)
 
     def tearDown(self):
         self.temporary.cleanup()
