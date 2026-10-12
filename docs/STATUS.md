@@ -16,6 +16,8 @@ Original work: `2110973` portable inputs, `552481c` pure extraction, `046279c` e
 
 All **123 offline tests passed from an isolated staged checkout**. Pipelines with 1/3/9 paired cameras, failure/cancellation/cleanup and writer ordering are covered. Nine AV2 camera calculations match their previous evidence exactly with synthetic vehicle geometry. Three-camera synthetic capture, wheel import and documentation/input checks are recorded in the evidence. None establishes live CARLA compatibility.
 
+**Imported VM evidence (2026-10-05):** remote commit `158ae20` records dependency preparation, all 123 offline tests, a nine-pair three-sample readiness capture and one completed straight/clear-day drive (31 samples; 837 validated PNGs, no collision), using the existing live executors. [Session evidence](../artifacts/20261004T221357Z-vm-validation-e9e494.json), [acceptance configuration](../configs/vm_validation_20261005.json) and run-registry events are preserved. The documented VM session left no unfinished process or owned server; its runs had no verified external copies. This imported evidence is not a new execution on this Mac. The generic `record` backend remains synthetic-only.
+
 ## Exact continuation
 
 User next action: include the updated reports in the delivered materials and verify the supplied Google Drive folder's uploaded contents/access. Local report changes do not update an already uploaded cloud copy. Staging alone is not delivery verification.
@@ -26,7 +28,7 @@ M2 then migrates route control/acceptance and new-format experiment finalization
 
 ## Preserved constraints
 
-- No GPU/CARLA/API/remote execution, push, publication or VM deletion. Commits are local. Git status was clean before the upload-staging task; this task adds only local evidence/documentation changes in the repository.
+- No new GPU/CARLA/API execution, cloud upload, repository visibility change or VM deletion in this Mac task. The user authorized commit/push to `origin/Dev` on 12 October. First commit: `206f3cf`; initial push was rejected because `158ae20` was remote-only. Merge preserves both artifact/worklog histories and the remote run registry; normal push follows merge verification.
 - Original routes/calibration, archive hashes, reports, chats and historical run/backup claims are preserved. New-format captured data is not a completed experiment or verified backup.
 - A new VM restores Git inputs and the verified-copy registry, not the full runs tree. Follow [VM workflow](vm-workflow.md), including pushing Mac verification evidence back through Git when authorized.
 - No unfinished task process remains. Record process state/log/identity here if future work is interrupted.

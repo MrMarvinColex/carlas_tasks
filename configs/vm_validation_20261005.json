@@ -1,0 +1,56 @@
+{
+  "schema_version": 1,
+  "experiment_id": "vm-validation-desktop-20261005",
+  "description": "One-cell VM acceptance check. Preserve baseline capture settings; test the current desktop GPU environment.",
+  "map_name": "Town01_Opt",
+  "approved_routes_run": "inputs/routes/town01_opt_short_v1",
+  "route_validation_run": "runs/20260923T160409Z-shorter-routes-autopilot-b8548d",
+  "route_ids": [
+    "route_01_straight"
+  ],
+  "repeats_per_route_weather": 1,
+  "execution_order_seed": 2026092304,
+  "traffic_manager_seed": 2026092305,
+  "fixed_delta_seconds": 0.05,
+  "sensor_tick_seconds": 0.5,
+  "mount_z_offset_m": 0.5,
+  "warmup_seconds": 1.0,
+  "route_timeout_seconds": 180.0,
+  "finish_radius_m": 8.0,
+  "path_deviation_limit_m": 15.0,
+  "stuck_window_seconds": 10.0,
+  "stuck_grace_seconds": 15.0,
+  "disk_budget": {
+    "minimum_free_gib_before_run": 100,
+    "maximum_unexported_batch_gib": 100,
+    "export_after_completed_runs": 2,
+    "basis": "Stage-3 short-rig measurement was about 109.34 MB per accepted simulation second; replace this provisional budget with the full-route pilot measurement before bulk recording."
+  },
+  "baseline_scene": {
+    "vehicle_blueprint": "vehicle.tesla.model3",
+    "traffic_manager_command": "set_route",
+    "debug_drawings": "none",
+    "road_line_operation": "World.enable_environment_objects(ids, False) on Town01_Opt after every map load"
+  },
+  "weather_profiles": {
+    "clear_day": {
+      "description": "Clear daytime weather; not a season label.",
+      "parameters": {
+        "cloudiness": 10.0,
+        "precipitation": 0.0,
+        "precipitation_deposits": 0.0,
+        "wind_intensity": 5.0,
+        "sun_azimuth_angle": 45.0,
+        "sun_altitude_angle": 60.0,
+        "fog_density": 0.0,
+        "fog_distance": 0.0,
+        "wetness": 0.0
+      }
+    }
+  },
+  "pilot": {
+    "route_id": "route_01_straight",
+    "weather_id": "clear_day",
+    "purpose": "Full-route acceptance after a three-sample nine-camera readiness capture."
+  }
+}
