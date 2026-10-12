@@ -27,6 +27,7 @@ dist/
 /dataset/
 /datasets/
 /logs/
+/logs_chats/
 /work/
 /tmp/
 /outputs/

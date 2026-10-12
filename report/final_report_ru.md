@@ -116,6 +116,7 @@ PNG кодирование (из-за большого объёма) было в
 
 ## Ключевые ссылки
 
+- [Датасет и результаты экспериментов на Google Диске](https://drive.google.com/drive/folders/1VVr3LYjmNyNil5vb7l7p8LWWO4ljKxx5?usp=sharing)
 - [Репозиторий реализации](https://github.com/MrMarvinColex/carlas_tasks)
 - [CARLA Simulator](https://github.com/carla-simulator/carla) и [документация Python API](https://carla.readthedocs.io/en/latest/python_api/)
 - [Argoverse 2](https://www.argoverse.org/av2.html) и [AV2 API](https://github.com/argoverse/av2-api)

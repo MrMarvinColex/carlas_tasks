@@ -1,0 +1,113 @@
+{
+  "destination": "/Users/madness/Science/CARLA/google_disk",
+  "link_type": "hard_link_files_in_regular_directories",
+  "selected_sources": [
+    {
+      "source": "/Users/madness/Science/CARLA/carlas_tasks/runs/20260923T161516Z-baseline-pilot-route05-two-turns-clear-day-895150",
+      "relative_destination": "baseline/20260923T161516Z-baseline-pilot-route05-two-turns-clear-day-895150"
+    },
+    {
+      "source": "/Users/madness/Science/CARLA/carlas_tasks/runs/20260923T163333Z-baseline-route_03_right-clear_day-dd2127",
+      "relative_destination": "baseline/20260923T163333Z-baseline-route_03_right-clear_day-dd2127"
+    },
+    {
+      "source": "/Users/madness/Science/CARLA/carlas_tasks/runs/20260923T163544Z-baseline-route_02_left-clear_day-bb18c8",
+      "relative_destination": "baseline/20260923T163544Z-baseline-route_02_left-clear_day-bb18c8"
+    },
+    {
+      "source": "/Users/madness/Science/CARLA/carlas_tasks/runs/20260923T163730Z-baseline-route_04_turn_then_bridge-wet_cloudy_day-c5ef71",
+      "relative_destination": "baseline/20260923T163730Z-baseline-route_04_turn_then_bridge-wet_cloudy_day-c5ef71"
+    },
+    {
+      "source": "/Users/madness/Science/CARLA/carlas_tasks/runs/20260923T163932Z-baseline-route_03_right-wet_cloudy_day-7c7c11",
+      "relative_destination": "baseline/20260923T163932Z-baseline-route_03_right-wet_cloudy_day-7c7c11"
+    },
+    {
+      "source": "/Users/madness/Science/CARLA/carlas_tasks/runs/20260923T164139Z-baseline-route_05_two_turns-wet_cloudy_day-e977c7",
+      "relative_destination": "baseline/20260923T164139Z-baseline-route_05_two_turns-wet_cloudy_day-e977c7"
+    },
+    {
+      "source": "/Users/madness/Science/CARLA/carlas_tasks/runs/20260923T164532Z-baseline-route_01_straight-wet_cloudy_day-d1881e",
+      "relative_destination": "baseline/20260923T164532Z-baseline-route_01_straight-wet_cloudy_day-d1881e"
+    },
+    {
+      "source": "/Users/madness/Science/CARLA/carlas_tasks/runs/20260923T164739Z-baseline-route_04_turn_then_bridge-clear_day-049fdd",
+      "relative_destination": "baseline/20260923T164739Z-baseline-route_04_turn_then_bridge-clear_day-049fdd"
+    },
+    {
+      "source": "/Users/madness/Science/CARLA/carlas_tasks/runs/20260923T165906Z-baseline-route_02_left-wet_cloudy_day-3f76c7",
+      "relative_destination": "baseline/20260923T165906Z-baseline-route_02_left-wet_cloudy_day-3f76c7"
+    },
+    {
+      "source": "/Users/madness/Science/CARLA/carlas_tasks/runs/20260923T170103Z-baseline-route_01_straight-clear_day-0b2a98",
+      "relative_destination": "baseline/20260923T170103Z-baseline-route_01_straight-clear_day-0b2a98"
+    },
+    {
+      "source": "/Users/madness/Science/CARLA/carlas_tasks/runs/20260924T123600Z-api-openai-simple-carla-retry",
+      "relative_destination": "llm_objects/20260924T123600Z-api-openai-simple-carla-retry"
+    },
+    {
+      "source": "/Users/madness/Science/CARLA/carlas_tasks/runs/20260924T123800Z-api-qwen27-simple-carla",
+      "relative_destination": "llm_objects/20260924T123800Z-api-qwen27-simple-carla"
+    },
+    {
+      "source": "/Users/madness/Science/CARLA/carlas_tasks/runs/20260924T123801Z-api-qwen8-simple-carla",
+      "relative_destination": "llm_objects/20260924T123801Z-api-qwen8-simple-carla"
+    },
+    {
+      "source": "/Users/madness/Science/CARLA/carlas_tasks/runs/20260924T123802Z-api-openai-composite-carla",
+      "relative_destination": "llm_objects/20260924T123802Z-api-openai-composite-carla"
+    },
+    {
+      "source": "/Users/madness/Science/CARLA/carlas_tasks/runs/20260924T123803Z-api-qwen27-composite-carla",
+      "relative_destination": "llm_objects/20260924T123803Z-api-qwen27-composite-carla"
+    },
+    {
+      "source": "/Users/madness/Science/CARLA/carlas_tasks/runs/20260924T123804Z-api-qwen8-composite-carla",
+      "relative_destination": "llm_objects/20260924T123804Z-api-qwen8-composite-carla"
+    },
+    {
+      "source": "/Users/madness/Science/CARLA/carlas_tasks/runs/20260924T123036Z-api-fixed-protocol-884ef7",
+      "relative_destination": "llm_objects/20260924T123036Z-api-fixed-protocol-884ef7"
+    },
+    {
+      "source": "/Users/madness/Science/CARLA/carlas_tasks/runs/20260924T140639Z-api-gpt-deer-crossing-9284ba",
+      "relative_destination": "llm_animals/20260924T140639Z-api-gpt-deer-crossing-9284ba"
+    },
+    {
+      "source": "/Users/madness/Science/CARLA/carlas_tasks/runs/20260924T140639Z-api-qwen27-deer-crossing-4146e3",
+      "relative_destination": "llm_animals/20260924T140639Z-api-qwen27-deer-crossing-4146e3"
+    },
+    {
+      "source": "/Users/madness/Science/CARLA/carlas_tasks/runs/20260924T140639Z-api-qwen8-deer-crossing-9490d8",
+      "relative_destination": "llm_animals/20260924T140639Z-api-qwen8-deer-crossing-9490d8"
+    },
+    {
+      "source": "/Users/madness/Science/CARLA/carlas_tasks/runs/20260924T140505Z-api-verified-deer-crossing-e6313d",
+      "relative_destination": "llm_animals/20260924T140505Z-api-verified-deer-crossing-e6313d"
+    },
+    {
+      "source": "/Users/madness/Science/CARLA/carlas_tasks/report",
+      "relative_destination": "report"
+    }
+  ],
+  "file_count": 10190,
+  "logical_bytes": 13651933396,
+  "files_by_group": {
+    "baseline": 9313,
+    "llm_objects": 668,
+    "llm_animals": 202,
+    "report": 7
+  },
+  "excluded_names": [
+    ".DS_Store"
+  ],
+  "upload_performed": false,
+  "independent_backup": false,
+  "created_at_utc": "2026-10-11T12:58:09.380933+00:00",
+  "verification": "all selected files share source device/inode and size; no data copied",
+  "created_directory_count": 624,
+  "additional_regular_files": [
+    "README_UPLOAD.md"
+  ]
+}
