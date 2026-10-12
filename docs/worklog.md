@@ -55,3 +55,7 @@ Replaced the English submission table's unpublished-repository placeholder with 
 ## 2026-10-12 — Preserve delivery updates and integrate remote VM evidence
 
 User authorized commit/push to `origin/Dev`. Commit `206f3cf` preserves delivery links and local upload-selection evidence; the earlier `.gitignore` commit `67410a4` is also outgoing. Initial normal push was rejected because remote commit `158ae20` added VM validation. Fetched and merged both histories: preserved both CSV/worklog additions, all remote run-registry events, acceptance config/evidence, VM guide and launcher fixture fix. STATUS retains the current Mac task with a bounded summary of the imported VM results. No force push, new simulation/API calls or cloud upload. Verify the integrated tree before completing the merge and normal push.
+
+## 2026-10-12 — Git handoff completed
+
+Integrated Mac tree passed all 123 tests in 10.033 s, documentation/archive checks, Git whitespace checks, artifact-ID uniqueness and run-registry JSON parsing. Merge `1207a6a` preserves both histories; normal push updated `origin/Dev` from `158ae20` to `1207a6a`. This follow-up documentation commit records that confirmed outcome and is pushed to the same branch. No force push, dataset/cloud upload or backup-status changes. Next: include the updated report revision in the Google Drive delivery.
