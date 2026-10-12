@@ -247,6 +247,8 @@ If the scope is reopened later, compare completion time, collisions, animal visi
 
 ## 6. Dataset and Reproducibility
 
+Dataset and experiment artifacts: [Google Drive folder](https://drive.google.com/drive/folders/1VVr3LYjmNyNil5vb7l7p8LWWO4ljKxx5?usp=sharing). The user supplied this delivery link on 12 October 2026; cloud contents, completeness and access have not been independently verified.
+
 The implementation records the actual JSON schema, frame/timestamp convention, coordinate units, calibrations, lossless semantic IDs, configuration, code state, container identity, and real launch commands. Each completed run has a SHA-256 manifest; failed diagnostics are retained rather than rewritten as successes.
 
 | Metric | Actual value |
@@ -278,9 +280,9 @@ The reader-facing conclusions and limitations are consolidated in [`final_report
 
 | Material | Link | Access verified |
 |---|---|---|
-| Public Git repository | Not published | No |
+| Public Git repository | [MrMarvinColex/carlas_tasks](https://github.com/MrMarvinColex/carlas_tasks) | User-confirmed |
 | Report on Google Drive | Not published | No |
-| Dataset on Google Drive | Not published | No |
+| Dataset on Google Drive | [User-provided dataset folder](https://drive.google.com/drive/folders/1VVr3LYjmNyNil5vb7l7p8LWWO4ljKxx5?usp=sharing) | Not independently verified |
 | Manifests/instructions | Not published | No |
 
 Publication occurs only after explicit instruction. Before publishing, check secrets, personal information, and rights to third-party materials.
